@@ -64,6 +64,9 @@ export class BrowserSigner implements Signer {
       };
     });
   }
+  peek(): SigningRequest | undefined {
+    return this.pending?.request;
+  }
   take(): SigningRequest | undefined {
     if (!this.pending || this.pending.claimed) return;
     this.pending.claimed = true;

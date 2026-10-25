@@ -3,6 +3,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
 import { rpc } from "@stellar/stellar-sdk";
 import { loadConfig } from "./config.js";
+import { ingestAsset, parseAmount, formatAmount } from "./assets.js";
+import { Product } from "./product.js";
 import { Store } from "./store.js";
 import { inspectUpload, ingest } from "./ingestion.js";
 import { envelope, fail } from "./errors.js";
@@ -13,7 +15,7 @@ export async function main(argv = process.argv.slice(2)) {
   const [command, ...args] = argv;
   if (!command || command === "help" || command === "--help") {
     console.log(
-      "Orloj Stellar: migrate | inspect <wasm> | register <contractId> [wasm] | credential <principal> <new-token-file> | revoke <token-file> | list <contractId> | call <contractId> <tool> <args-json-file> [idempotency-key] | status <idempotency-key> | serve",
+      "Orloj Stellar: migrate | inspect <wasm> | register <contractId> [wasm] | register-asset <native|code> [issuer] | amount <parse|format> <value> <decimals> | inventory <contractId> | credential <principal> <new-token-file> | revoke <token-file> | list <contractId> | call <contractId> <tool> <args-json-file> [idempotency-key] | status <idempotency-key> | recover-operation <operation-id> [--prove-expired] | serve",
     );
     return;
   }
@@ -33,12 +35,47 @@ export async function main(argv = process.argv.slice(2)) {
   );
   let serving = false;
   try {
-    if (["register", "call", "status"].includes(command)) {
+    if (
+      [
+        "register",
+        "register-asset",
+        "call",
+        "status",
+        "recover-operation",
+      ].includes(command)
+    ) {
       const network = await server.getNetwork();
       if (network.passphrase !== c.networkPassphrase) fail("INVALID_ARGUMENT");
     }
     let result: unknown;
     switch (command) {
+      case "recover-operation": {
+        if (c.network !== "testnet") fail("WRITE_NOT_PERMITTED");
+        const o = (
+          await store.pool.query(
+            "SELECT * FROM stellar_operations WHERE id=$1",
+            [args[0]],
+          )
+        ).rows[0];
+        if (!o) fail("INVALID_ARGUMENT");
+        const product = new Product(c, server, store, {
+          serviceToken: "operator-recovery-only-never-served",
+          signerToken: "operator-recovery-only-never-served",
+          signerUrl: "http://127.0.0.1:3005",
+          origin: process.env.APP_ORIGIN ?? "http://localhost:3000",
+        });
+        result = await product.reconcile(
+          {
+            agentId: o.agent_id,
+            instanceId: o.instance_id,
+            ownerId: o.owner_id,
+            credentialId: o.credential_id,
+          },
+          o.id,
+          args[1] === "--prove-expired",
+        );
+        break;
+      }
       case "migrate":
         await store.migrate();
         result = { ok: true };
@@ -61,6 +98,42 @@ export async function main(argv = process.argv.slice(2)) {
         if (!args[0]) fail("INVALID_ARGUMENT");
         result = inspectUpload(await readFile(args[0]), c);
         break;
+      case "amount":
+        if (!["parse", "format"].includes(args[0]) || args.length !== 3)
+          fail("INVALID_ARGUMENT");
+        result = {
+          value: (args[0] === "parse" ? parseAmount : formatAmount)(
+            args[1],
+            Number(args[2]),
+          ),
+        };
+        break;
+      case "register-asset": {
+        if (!args[0]) fail("INVALID_ARGUMENT");
+        const i = await ingestAsset(
+          server,
+          c,
+          args[0] === "native"
+            ? { kind: "native" }
+            : { kind: "issued", code: args[0], issuer: args[1] },
+        );
+        await store.save(i);
+        result = i;
+        break;
+      }
+      case "inventory": {
+        const i = await store.get(c.network, args[0]);
+        if (!i) fail("INVALID_CONTRACT_ID");
+        result = {
+          network: i.network,
+          contract_id: i.contractId,
+          source_kind: i.sourceKind ?? "wasm",
+          interface_hash: i.interfaceHash ?? i.wasmHash,
+          inventory: i.inventory ?? [],
+          excluded: i.excluded,
+        };
+        break;
+      }
       case "register": {
         if (!args[0]) fail("INVALID_ARGUMENT");
         const i = await ingest(
@@ -128,12 +201,25 @@ export async function main(argv = process.argv.slice(2)) {
         if (
           !(
             await store.pool.query(
-              "SELECT version FROM stellar_migrations WHERE version=2",
+              "SELECT version FROM stellar_migrations WHERE version=6",
             )
           ).rowCount
         )
           fail("INTERNAL_ERROR");
-        const http = httpServer(executor);
+        const product = c.productMode
+          ? new Product(c, server, store, {
+              serviceToken: (
+                await readFile(process.env.CONTROL_TOKEN_FILE!, "utf8")
+              ).trim(),
+              signerToken: (
+                await readFile(process.env.SIGNER_TOKEN_FILE!, "utf8")
+              ).trim(),
+              signerUrl: process.env.SIGNER_URL ?? "http://127.0.0.1:3005",
+              origin: process.env.APP_ORIGIN ?? "http://localhost:3000",
+            })
+          : undefined;
+        product?.start();
+        const http = httpServer(executor, product);
         http.listen(c.port, c.host);
         await once(http, "listening");
         serving = true;
@@ -148,7 +234,8 @@ export async function main(argv = process.argv.slice(2)) {
         for (const signal of ["SIGINT", "SIGTERM"] as const)
           process.once(signal, () =>
             http.close(() => {
-              void store.close();
+              void product?.stop().then(() => store.close());
+              if (!product) void store.close();
             }),
           );
         return;

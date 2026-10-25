@@ -1,0 +1,71 @@
+{
+  "network": "testnet",
+  "wallet": "GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK",
+  "contractId": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+  "testedAt": "2026-10-25T13:32:02.282Z",
+  "checks": [
+    {
+      "check": "recipient_before",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "source_kind": "stellar_asset",
+      "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+      "function_name": "balance",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T13:32:02.936Z",
+      "data": "99999853658"
+    },
+    {
+      "check": "asset_transfer",
+      "ok": true,
+      "data": null,
+      "mode": "WRITE",
+      "ledger": 5382311,
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "fee_charged": "6943",
+      "source_kind": "stellar_asset",
+      "function_name": "transfer",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+      "transaction_hash": "9eceeeeac7a61007427ebadbb199ab09d3cddabf4958df32d94a11669f4e3bdc"
+    },
+    {
+      "check": "duplicate_reconciled",
+      "ok": true,
+      "data": null,
+      "mode": "WRITE",
+      "ledger": 5382311,
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "fee_charged": "6943",
+      "source_kind": "stellar_asset",
+      "function_name": "transfer",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+      "transaction_hash": "9eceeeeac7a61007427ebadbb199ab09d3cddabf4958df32d94a11669f4e3bdc"
+    },
+    {
+      "check": "recipient_after",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "source_kind": "stellar_asset",
+      "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+      "function_name": "balance",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T13:32:23.353Z",
+      "data": "99999853659"
+    },
+    {
+      "check": "wallet_signature_proof",
+      "ok": true,
+      "source_account": "GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK",
+      "transaction_hash": "9eceeeeac7a61007427ebadbb199ab09d3cddabf4958df32d94a11669f4e3bdc",
+      "freighter_signatures": 1
+    }
+  ]
+}

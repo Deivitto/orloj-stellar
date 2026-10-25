@@ -16,6 +16,7 @@ const schema = z
     databaseUrl: z.string().min(1),
     simulationSource: z.string(),
     writeMode: z.boolean().default(false),
+    productMode: z.boolean().default(false),
     signerSecret: z.string().optional(),
     externalSignerAddress: z.string().optional(),
     maxFee: z
@@ -55,7 +56,7 @@ export function parseConfig(input: unknown): Config {
   }
   if (c.writeMode) {
     if (c.network !== "testnet") fail("WRITE_NOT_PERMITTED");
-    if (!!c.signerSecret === !!c.externalSignerAddress)
+    if (!c.productMode && !!c.signerSecret === !!c.externalSignerAddress)
       fail("SIGNER_NOT_CONFIGURED");
     if (
       c.externalSignerAddress &&
@@ -89,6 +90,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
       databaseUrl: env.DATABASE_URL,
       simulationSource: env.SIMULATION_SOURCE,
       writeMode: env.WRITE_MODE === "true",
+      productMode: env.PRODUCT_MODE === "true",
       signerSecret: env.STELLAR_SIGNER_SECRET,
       maxFee: env.MAX_FEE,
       policies: JSON.parse(env.STELLAR_POLICIES ?? "[]"),

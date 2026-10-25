@@ -1,5 +1,13 @@
 export const codes = [
   "INVALID_CONTRACT_ID",
+  "UNSUPPORTED_PROTOCOL",
+  "ASSET_OPERATION_UNSUPPORTED",
+  "ASSET_BALANCE_ERROR",
+  "ASSET_NOT_AUTHORIZED",
+  "ASSET_TRUSTLINE_REQUIRED",
+  "ASSET_ALLOWANCE_ERROR",
+  "ASSET_RESERVE_ERROR",
+
   "SPEC_PARSE_FAILED",
   "DUPLICATE_FUNCTION_NAME",
   "UNSUPPORTED_SOROBAN_TYPE",
@@ -29,6 +37,16 @@ export const codes = [
 ] as const;
 export type ErrorCode = (typeof codes)[number];
 const messages: Record<ErrorCode, string> = {
+  UNSUPPORTED_PROTOCOL: "This network protocol has no verified asset adapter.",
+  ASSET_BALANCE_ERROR:
+    "The asset balance is insufficient or below its required reserve.",
+  ASSET_NOT_AUTHORIZED:
+    "The asset balance or trustline is not authorized for this operation.",
+  ASSET_TRUSTLINE_REQUIRED: "The destination needs a trustline for this asset.",
+  ASSET_ALLOWANCE_ERROR: "The delegated allowance is insufficient or expired.",
+  ASSET_RESERVE_ERROR:
+    "The account has insufficient XLM reserve to create the trustline.",
+  ASSET_OPERATION_UNSUPPORTED: "This operation is unavailable for this asset.",
   INVALID_CONTRACT_ID: "A valid Stellar contract address is required.",
   SPEC_PARSE_FAILED: "The contract specification could not be read.",
   DUPLICATE_FUNCTION_NAME: "The specification has duplicate functions.",

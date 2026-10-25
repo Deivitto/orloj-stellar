@@ -1,9 +1,9 @@
 name: Stellar registry
 on:
   push:
-    paths: ['packages/stellar-registry/**', 'pnpm-lock.yaml', '.github/workflows/stellar.yml']
+    paths: ['packages/stellar-registry/**', 'packages/app/**', 'infra/local/**', 'scripts/**', 'pnpm-lock.yaml', '.github/workflows/stellar.yml']
   pull_request:
-    paths: ['packages/stellar-registry/**', 'pnpm-lock.yaml', '.github/workflows/stellar.yml']
+    paths: ['packages/stellar-registry/**', 'packages/app/**', 'infra/local/**', 'scripts/**', 'pnpm-lock.yaml', '.github/workflows/stellar.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: 24.15.0
           cache: pnpm
-      - run: pnpm install --frozen-lockfile --filter @orloj/stellar-registry
+      - run: pnpm install --frozen-lockfile --filter @orloj/stellar-registry --filter @orloj/skills-marketplace
       - run: rustup target add wasm32v1-none
       - name: Build real specification fixture
         working-directory: packages/stellar-registry/demo-contract
@@ -43,3 +43,14 @@ jobs:
       - run: pnpm --filter @orloj/stellar-registry typecheck
       - run: pnpm --filter @orloj/stellar-registry test
       - run: pnpm --filter @orloj/stellar-registry build
+      - run: pnpm --dir packages/app install --frozen-lockfile
+      - run: pnpm --dir packages/app exec tsc --noEmit
+      - run: node --test packages/app/test/*.test.mts
+      - run: pnpm --dir packages/app build
+        env:
+          BETTER_AUTH_SECRET: ci-build-only-not-a-runtime-secret-0000
+      - name: Verify real runtime isolation and restart lifecycle
+        run: |
+          docker build -t orloj-zeroclaw:0.8.6 -f infra/local/Runtime.Dockerfile .
+          docker pull node:24.15.0-bookworm-slim
+          node scripts/test-runtime-isolation.mjs

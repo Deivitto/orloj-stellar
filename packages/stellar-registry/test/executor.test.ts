@@ -221,10 +221,9 @@ it.skipIf(!database)(
           throw new Error("secret");
         };
       if (stage === "database")
-        vi.spyOn(x.store, "update").mockImplementation(async (_id, state) => {
-          if (state === "INTENT") throw new Error("db unavailable");
-          return null;
-        });
+        vi.spyOn(x.store, "intent").mockRejectedValue(
+          new Error("db unavailable"),
+        );
       const result = await x.executor.call(x.i, x.f, {}, x.principal, "key");
       expect(result.ok).toBe(false);
       expect(x.send).not.toHaveBeenCalled();
@@ -239,6 +238,7 @@ it.skipIf(!database)(
     vi.mocked(x.server.getTransaction).mockResolvedValue({
       status: "FAILED",
       ledger: 101,
+      resultXdr: { feeCharged: 1n },
     } as rpc.Api.GetTransactionResponse);
     expect(
       await x.executor.call(x.i, x.f, {}, x.principal, "key"),
@@ -401,5 +401,125 @@ it.skipIf(!database)(
         result_status: "SUBMITTED_AND_CONFIRMED",
       });
     expect(x.send).toHaveBeenCalledTimes(1);
+  },
+);
+it.skipIf(!database)(
+  "reconciles pre-migration fingerprints and original metadata after interface backfill",
+  async () => {
+    const { canonical, digest } = await import("../src/store.js");
+    const x = setup(true);
+    await x.store.migrate();
+    const legacyContext = {
+      mode: x.f.mode,
+      network: x.i.network,
+      contract_id: x.i.contractId,
+      wasm_hash: x.i.wasmHash,
+      function_name: x.f.sorobanName,
+    };
+    const fingerprint = digest(
+      canonical({
+        ...legacyContext,
+        arguments: {},
+        source: x.executor.signer!.address,
+      }),
+    );
+    await x.store.lock(
+      "testnet",
+      x.executor.signer!.address,
+      async (client) => {
+        const a = await x.store.begin(client, {
+          principal: x.principal,
+          network: "testnet",
+          idempotency_key: "old-key",
+          fingerprint,
+          source_account: x.executor.signer!.address,
+          request: { ...legacyContext, returns: x.f.returns },
+        });
+        await x.store.update(a.id, "INTENT", undefined, "oldhash");
+      },
+    );
+    x.i.sourceKind = "wasm";
+    x.i.interfaceHash = "backfilledhash";
+    const result = await x.executor.call(x.i, x.f, {}, x.principal, "old-key");
+    expect(result).toMatchObject({
+      ok: true,
+      transaction_hash: "oldhash",
+      wasm_hash: x.i.wasmHash,
+    });
+    expect(result).not.toHaveProperty("interface_hash");
+    expect(x.send).not.toHaveBeenCalled();
+  },
+);
+it.skipIf(!database)(
+  "retains intent and hash after an accepted send when PENDING persistence fails",
+  async () => {
+    const x = setup(true);
+    await x.store.migrate();
+    const update = x.store.update.bind(x.store);
+    vi.spyOn(x.store, "update").mockImplementation(async (...args) => {
+      if (args[1] === "PENDING") throw new Error("lost persistence");
+      return update(...args);
+    });
+    vi.mocked(x.server.getTransaction).mockResolvedValue({
+      status: "NOT_FOUND",
+    } as rpc.Api.GetTransactionResponse);
+    const result = await x.executor.call(
+      x.i,
+      x.f,
+      {},
+      x.principal,
+      "post-send",
+    );
+    expect(result).toMatchObject({
+      ok: false,
+      result_status: "TIMEOUT",
+      error_code: "TRANSACTION_PENDING_TIMEOUT",
+    });
+    expect(result.transaction_hash).toMatch(/^[a-f0-9]{64}$/);
+    expect(x.send).toHaveBeenCalledTimes(1);
+    expect(
+      (await x.store.find(x.principal, "testnet", "post-send"))?.state,
+    ).toBe("TIMEOUT");
+    vi.mocked(x.server.getTransaction).mockResolvedValue({
+      status: "SUCCESS",
+      ledger: 101,
+      resultXdr: { feeCharged: 4n },
+      returnValue: xdr.ScVal.scvU32(1),
+    } as rpc.Api.GetTransactionResponse);
+    const again = await x.executor.call(x.i, x.f, {}, x.principal, "post-send");
+    expect(again).toMatchObject({
+      ok: true,
+      fee_charged: "4",
+      transaction_hash: result.transaction_hash,
+    });
+    expect(x.send).toHaveBeenCalledTimes(1);
+  },
+);
+it.skipIf(!database)(
+  "never sends after an ambiguous durable-intent commit response",
+  async () => {
+    const x = setup(true);
+    await x.store.migrate();
+    const intent = x.store.intent.bind(x.store);
+    vi.spyOn(x.store, "intent").mockImplementation(async (...args) => {
+      await intent(...args);
+      throw new Error("commit reply lost");
+    });
+    vi.mocked(x.server.getTransaction).mockResolvedValue({
+      status: "NOT_FOUND",
+    } as rpc.Api.GetTransactionResponse);
+    const result = await x.executor.call(
+      x.i,
+      x.f,
+      {},
+      x.principal,
+      "commit-unknown",
+    );
+    expect(result).toMatchObject({ result_status: "TIMEOUT" });
+    expect(x.send).not.toHaveBeenCalled();
+    expect(
+      (await x.store.find(x.principal, "testnet", "commit-unknown"))
+        ?.transaction_hash,
+    ).toBe(result.transaction_hash);
   },
 );

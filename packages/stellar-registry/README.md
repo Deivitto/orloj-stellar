@@ -1,6 +1,6 @@
 # Orloj Stellar registry
 
-A separate TypeScript service for Soroban WASM contracts. It exposes strict MCP tools, simulates reads, and supports explicitly allowed testnet writes. The existing EVM registry and web app remain separate. See the repository's master specification v1.1.
+A separate TypeScript service for Soroban WASM and built-in Stellar asset contracts. It exposes strict MCP tools, simulates reads, and supports explicitly allowed testnet writes. The existing EVM registry remains separate. The app has a Stellar-first local product mode. See the repository's master specification v1.3 and the [full local product runbook](../../infra/local/README.md) for app login, wallets, managed limits, runtime isolation, backup and recovery.
 
 ## Local setup
 
@@ -43,7 +43,7 @@ The credential command writes a new token file with mode 0600 and never prints i
 - Operator CLI: `inspect <wasm>`, `register <contractId> [matching-wasm]`, `credential <principal> <new-token-file>`, `revoke <token-file>`, `migrate`.
 - Authenticated CLI: `list <contractId>`, `call <contractId> <tool> <arguments-json-file> [idempotency-key]`, `status <idempotency-key>`. Arguments are read from a file to avoid shell quoting and accidental secret interpolation. JSON envelopes go to stdout; sanitized operational events go to stderr.
 
-WASM uploads are inspection-only until matched to a deployed contract. Built-in Stellar Asset Contracts have no deployed WASM and are outside this release. Unsupported functions are reported with exclusion reasons. Re-register after a WASM upgrade; invocation rejects stale cached code.
+WASM uploads are inspection-only until matched to a deployed contract. Built-in Stellar Asset Contracts use a verified protocol-specific specification and have no WASM hash. Unsupported functions are reported with exclusion reasons. Re-register after a WASM upgrade; invocation rejects stale cached code.
 
 ## Writes and recovery
 
@@ -57,7 +57,7 @@ A crash after durable intent but before submission can leave an attempt that was
 
 If on-chain execution succeeds but its result cannot be decoded, the response retains `SUBMITTED_AND_CONFIRMED`, the hash, and a decoding error. Do not repeat that action. Confirmed failures use `FAILED_ON_CHAIN`; polling deadlines use `TIMEOUT` and `TRANSACTION_PENDING_TIMEOUT`.
 
-Credentials are hashed at rest. Logs omit arguments, secrets, signatures, raw XDR, RPC exceptions, and stacks. Requests are limited to 2 MiB and 60 requests per principal/contract per minute, shared through PostgreSQL. The HTTP server binds to loopback by default; place it behind a TLS reverse proxy for remote use. Protect operator filesystem/database access separately from agent credentials.
+Credentials are hashed at rest. Logs omit arguments, secrets, signatures, raw XDR, RPC exceptions, and stacks. Requests are limited to 1 MiB and 60 requests per principal/contract per minute, shared through PostgreSQL. The HTTP server binds to loopback by default; place it behind a TLS reverse proxy for remote use. Protect operator filesystem/database access separately from agent credentials.
 
 ## Tests and reproducible testnet demo
 
@@ -102,3 +102,37 @@ The browser SDK is pinned and served locally from the installed package. Signing
 Keep this operator harness on loopback. It injects `BrowserSigner` into the existing executor; the normal service CLI retains its environment-signer setup. Each explicit process restart can start a new test, subject to the durable account reservation rules. Use Ctrl+C to close the local harness and revoke its temporary MCP credential.
 
 Evidence is written to `demo-contract/wallet-read-evidence.json` and `demo-contract/freighter-evidence.json`, containing public account/transaction data only. Built-in USDC contract support remains a separate adapter task; this wallet test uses the WASM counter contract.
+
+## Complete interfaces and assets (v1.2)
+
+Run `pnpm cli migrate` before starting this release. Migration 003 adds source kind and interface identity, backfills existing WASM records, and preserves write attempts and hashes. Re-register contracts to regenerate expanded schemas and the complete inventory. Existing WASM responses retain `wasm_hash`; all new responses include `source_kind` and `interface_hash`. Asset responses omit `wasm_hash`.
+
+```sh
+pnpm cli register-asset native
+pnpm cli register-asset USDC GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5
+pnpm cli inventory YOUR_CONTRACT_ID
+pnpm cli amount parse 1.0000001 7
+```
+
+Registration verifies the executable and never deploys or signs. A contract ID works for both WASM and assets. Asset descriptors derive IDs using the configured network; they do not prove deployment until RPC verification succeeds. The initial SAC adapter verifies protocol **29** only. Other protocols return `UNSUPPORTED_PROTOCOL`; upgrades require a verified adapter and re-registration. Provenance and the upstream license are in `fixtures/`.
+
+MCP `resources/list` exposes `orloj://contracts/<contractId>/interface`; `resources/read` returns all public signatures, eligibility, native-asset restrictions, exclusion reasons and the caller's current tool availability. `tools/list` exposes policy-enabled methods only. All 17 public asset methods are represented, including `trust`, allowance operations and administrative methods. Initialization belongs to deployment and is excluded. Native XLM cannot mint, burn, claw back, change administrators or create asset trustlines. Issued assets require actual admin authority; balances, trustlines, authorization and clawback flags still govern calls. Currently, the signer supports one G account per executor; arbitrary multisignature or contract-account authorization is not implemented.
+
+SAC parameter names follow the pinned host interface: `balance` takes `addr`, `transfer` takes `from`, `to_mux`, `amount`, and `approve` takes `from`, `spender`, `amount`, `live_until_ledger`. Use discovery for exact names. `Address` accepts G/C; protocol-29 `MuxedAddress` also accepts M. Future W addresses remain disabled until the protocol adapter is verified. Stable asset error codes explain balance, authorization, missing trustline, allowance, reserve and unsupported-operation failures without exposing RPC diagnostics.
+
+Amounts are i128 decimal strings in **base units**. Verified SAC decimals are 7, so 1 USDC is `"10000000"`. `parseAmount`/`formatAmount` in `src/assets.ts` and the `amount` CLI convert exactly without rounding. Resolve asset identity by network and contract/issuer, not symbol alone. The AI client translates plain text into these discovered tools; Orloj does not add an AI chat model.
+
+The expanded grammar supports bounded vectors, typed maps as pair arrays, fixed tuples, enums as case-name strings, unions as strict `{tag,values}` objects and nested nonrecursive structs. Options use null for None; nested options and Option<void> remain excluded. u64/i64/u128/i128 retain decimal strings. Limits: type depth 8, 100 items per collection, 1,000 aggregate value nodes and 1 MiB arguments/results. A function with any unsupported type is excluded in full. Recursive definitions, untyped Val, Result, u256/i256 and other unimplemented leaves remain excluded. Map keys are encoded and canonically sorted by the SDK; duplicate encoded keys are rejected.
+
+### Reproducible asset checks
+
+```sh
+pnpm build
+pnpm assets:read YOUR_PUBLIC_G_ADDRESS
+pnpm assets:test
+pnpm wallet:test YOUR_PUBLIC_G_ADDRESS PROJECT_TEST_RECIPIENT_G_ADDRESS
+```
+
+The read script checks live XLM and Circle USDC through authenticated MCP. The write script creates isolated Friendbot-funded accounts and a disposable ORLOJTEST asset, then exercises all 17 public methods, expected authorization failures and duplicate reconciliation. Its keys exist only inside the test process. Setup uses classic operations separately; registry registration never submits them. Freighter's optional recipient argument selects a single **one-stroop testnet XLM transfer**, while omitting it retains the counter test. The local page displays the recipient and amount before running.
+
+Public evidence is saved in `demo-contract/assets-read-evidence.json`, `assets-write-evidence.json`, and `freighter-asset-evidence.json`. The Freighter asset test confirmed transaction `9eceeeeac7a61007427ebadbb199ab09d3cddabf4958df32d94a11669f4e3bdc` at ledger 5382311 with one signature; its duplicate returned the same hash. Tests do not enable production write policies or mainnet writes.

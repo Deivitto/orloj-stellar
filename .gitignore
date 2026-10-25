@@ -47,3 +47,6 @@ yarn-error.log*
 # Stellar contract build artifacts
 packages/stellar-registry/demo-contract/target/
 packages/stellar-registry/demo-contract/artifacts/
+
+# Local product secrets, runtime downloads and operator configuration
+.local/

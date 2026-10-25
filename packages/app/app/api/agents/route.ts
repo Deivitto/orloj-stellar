@@ -1,10 +1,7 @@
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { getOneclawClient } from "@/lib/oneclaw";
-import {
-  registerAgent,
-  listAgentIdsForUser,
-} from "@/lib/agent-ownership";
+import { getAgentClient } from "@/lib/agent-client";
+import { registerAgent, listAgentIdsForUser } from "@/lib/agent-ownership";
 import { getActiveTokenForAgent, issueTokenForAgent } from "@/lib/mcp-tokens";
 
 const NAME_MAX = 80;
@@ -18,7 +15,7 @@ export async function GET() {
 
   let client;
   try {
-    client = await getOneclawClient();
+    client = await getAgentClient();
   } catch (err) {
     console.error("[agents] 1claw client init failed", err);
     return Response.json(
@@ -73,10 +70,7 @@ export async function POST(request: Request) {
   const { name, description, scopes } = body as Record<string, unknown>;
 
   if (typeof name !== "string") {
-    return Response.json(
-      { error: "`name` must be a string" },
-      { status: 400 },
-    );
+    return Response.json({ error: "`name` must be a string" }, { status: 400 });
   }
 
   const trimmedName = name.trim();
@@ -108,7 +102,7 @@ export async function POST(request: Request) {
 
   let client;
   try {
-    client = await getOneclawClient();
+    client = await getAgentClient();
   } catch (err) {
     console.error("[agents] 1claw client init failed", err);
     return Response.json(
@@ -154,7 +148,7 @@ export async function POST(request: Request) {
 
   let issued;
   try {
-    issued = await issueTokenForAgent(data.agent.id);
+    issued = await issueTokenForAgent(data.agent.id, session.user.id);
   } catch (tokenErr) {
     console.error(
       "[agents] mcp token issuance failed; rolling back upstream agent",

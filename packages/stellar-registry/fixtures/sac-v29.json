@@ -1,0 +1,221 @@
+{
+  "protocols": [
+    29
+  ],
+  "source": "https://raw.githubusercontent.com/stellar/rs-soroban-env/a721944b5a4ea830a4bf5c2dbb8dbe8c1e1354c5/soroban-env-host/src/builtin_contracts/stellar_asset_contract/contract.rs",
+  "sourceSha256": "5fe6f53f7da37861501ae6e6205907f3473679a8cabe1eca61759d50210e997a",
+  "adapterVersion": 1,
+  "encodingVersion": 2,
+  "methods": [
+    {
+      "name": "allowance",
+      "params": [
+        {
+          "name": "from",
+          "type": "Address"
+        },
+        {
+          "name": "spender",
+          "type": "Address"
+        }
+      ],
+      "returns": "i128"
+    },
+    {
+      "name": "approve",
+      "params": [
+        {
+          "name": "from",
+          "type": "Address"
+        },
+        {
+          "name": "spender",
+          "type": "Address"
+        },
+        {
+          "name": "amount",
+          "type": "i128"
+        },
+        {
+          "name": "live_until_ledger",
+          "type": "u32"
+        }
+      ],
+      "returns": "void"
+    },
+    {
+      "name": "balance",
+      "params": [
+        {
+          "name": "addr",
+          "type": "Address"
+        }
+      ],
+      "returns": "i128"
+    },
+    {
+      "name": "authorized",
+      "params": [
+        {
+          "name": "addr",
+          "type": "Address"
+        }
+      ],
+      "returns": "bool"
+    },
+    {
+      "name": "transfer",
+      "params": [
+        {
+          "name": "from",
+          "type": "Address"
+        },
+        {
+          "name": "to_mux",
+          "type": "MuxedAddress"
+        },
+        {
+          "name": "amount",
+          "type": "i128"
+        }
+      ],
+      "returns": "void"
+    },
+    {
+      "name": "transfer_from",
+      "params": [
+        {
+          "name": "spender",
+          "type": "Address"
+        },
+        {
+          "name": "from",
+          "type": "Address"
+        },
+        {
+          "name": "to",
+          "type": "Address"
+        },
+        {
+          "name": "amount",
+          "type": "i128"
+        }
+      ],
+      "returns": "void"
+    },
+    {
+      "name": "burn",
+      "params": [
+        {
+          "name": "from",
+          "type": "Address"
+        },
+        {
+          "name": "amount",
+          "type": "i128"
+        }
+      ],
+      "returns": "void"
+    },
+    {
+      "name": "burn_from",
+      "params": [
+        {
+          "name": "spender",
+          "type": "Address"
+        },
+        {
+          "name": "from",
+          "type": "Address"
+        },
+        {
+          "name": "amount",
+          "type": "i128"
+        }
+      ],
+      "returns": "void"
+    },
+    {
+      "name": "clawback",
+      "params": [
+        {
+          "name": "from",
+          "type": "Address"
+        },
+        {
+          "name": "amount",
+          "type": "i128"
+        }
+      ],
+      "returns": "void"
+    },
+    {
+      "name": "set_authorized",
+      "params": [
+        {
+          "name": "addr",
+          "type": "Address"
+        },
+        {
+          "name": "authorize",
+          "type": "bool"
+        }
+      ],
+      "returns": "void"
+    },
+    {
+      "name": "mint",
+      "params": [
+        {
+          "name": "to",
+          "type": "Address"
+        },
+        {
+          "name": "amount",
+          "type": "i128"
+        }
+      ],
+      "returns": "void"
+    },
+    {
+      "name": "set_admin",
+      "params": [
+        {
+          "name": "new_admin",
+          "type": "Address"
+        }
+      ],
+      "returns": "void"
+    },
+    {
+      "name": "admin",
+      "params": [],
+      "returns": "Address"
+    },
+    {
+      "name": "decimals",
+      "params": [],
+      "returns": "u32"
+    },
+    {
+      "name": "name",
+      "params": [],
+      "returns": "String"
+    },
+    {
+      "name": "symbol",
+      "params": [],
+      "returns": "String"
+    },
+    {
+      "name": "trust",
+      "params": [
+        {
+          "name": "addr",
+          "type": "Address"
+        }
+      ],
+      "returns": "void"
+    }
+  ]
+}

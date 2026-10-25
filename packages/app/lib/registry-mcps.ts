@@ -1,3 +1,7 @@
+import { headers } from "next/headers";
+import { auth } from "./auth";
+import { getPool } from "./db";
+import { stellarRequest } from "./stellar";
 import type { Mcp } from "@/components/data";
 
 const CHAIN_NAMES: Record<number, string> = {
@@ -24,6 +28,8 @@ const MULTICHAIN_ID = 0;
 const COLORS = ["verdigris", "brass", "wine", "blue"] as const;
 
 interface RegistryMcp {
+  family?: string;
+  network?: string;
   name: string;
   url: string;
   chainId: number | null;
@@ -40,9 +46,7 @@ interface RegistryMcp {
   decimals?: number;
 }
 
-function interactionType(
-  value: string | undefined,
-): Mcp["interactionType"] {
+function interactionType(value: string | undefined): Mcp["interactionType"] {
   if (value === "transactional" || value === "mixed") return value;
   return "read-only";
 }
@@ -60,7 +64,10 @@ function chainLabel(chainId: number | null): string {
 
 function mapToMcp(item: RegistryMcp, registryUrl: string): Mcp {
   const chainId = item.chainId ?? MULTICHAIN_ID;
-  const chain = chainLabel(item.chainId);
+  const chain =
+    item.family === "stellar"
+      ? `Stellar ${item.network ?? "testnet"}`
+      : chainLabel(item.chainId);
   const tokens = Array.isArray(item.tokens)
     ? [
         ...new Set(
@@ -88,7 +95,7 @@ function mapToMcp(item: RegistryMcp, registryUrl: string): Mcp {
     contract: typeof item.address === "string" ? item.address : "",
     mcpUrl: `${registryUrl}${item.url}`,
     tags: item.nativeToken ? ["Native Token"] : [],
-    interfaces: Number.isFinite(item.toolCount) ? item.toolCount ?? 0 : 0,
+    interfaces: Number.isFinite(item.toolCount) ? (item.toolCount ?? 0) : 0,
     callsLast24h: 0,
     audited: false,
     audits: [],
@@ -99,15 +106,45 @@ function mapToMcp(item: RegistryMcp, registryUrl: string): Mcp {
 }
 
 export async function fetchMcps(): Promise<Mcp[]> {
+  let stellar: Mcp[] = [];
+  if (process.env.STELLAR_REGISTRY_URL) {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (session) {
+      const pool = await getPool();
+      const agent = (
+        await pool.query(
+          "SELECT agent_id FROM agent_ownership WHERE user_id=$1 ORDER BY created_at LIMIT 1",
+          [session.user.id],
+        )
+      ).rows[0];
+      if (agent) {
+        const state = await stellarRequest(
+          session.user.id,
+          agent.agent_id,
+          "state",
+        );
+        stellar = state.contracts.map((row: RegistryMcp) =>
+          mapToMcp(
+            { ...row, url: `/contracts/${row.address}/mcp` },
+            process.env.PUBLIC_STELLAR_REGISTRY_URL ??
+              process.env.STELLAR_REGISTRY_URL!,
+          ),
+        );
+      }
+    }
+  }
   const registryUrl = process.env.REGISTRY_URL;
-  if (!registryUrl) return [];
+  if (!registryUrl) return stellar;
   const publicRegistryUrl = process.env.PUBLIC_REGISTRY_URL ?? registryUrl;
   try {
     const res = await fetch(`${registryUrl}/mcp`, { cache: "no-store" });
-    if (!res.ok) return [];
+    if (!res.ok) return stellar;
     const data: RegistryMcp[] = await res.json();
-    return data.map((item) => mapToMcp(item, publicRegistryUrl));
+    return [
+      ...stellar,
+      ...data.map((item) => mapToMcp(item, publicRegistryUrl)),
+    ];
   } catch {
-    return [];
+    return stellar;
   }
 }

@@ -12,6 +12,7 @@ export type McpServerEntry = {
   serverName: string;
   url: string;
   bearerToken: string;
+  approvedTools?: string[];
 };
 
 export type McpSelectionItem = { mcpName: string; serverName: string };
@@ -22,8 +23,9 @@ const toml = (value: string): string => {
   const escaped = value
     .replace(/\\/g, "\\\\")
     .replace(/"/g, '\\"')
-    .replace(/[\u0000-\u001f\u007f]/g, (c) =>
-      `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`,
+    .replace(
+      /[\u0000-\u001f\u007f]/g,
+      (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`,
     );
   return `"${escaped}"`;
 };
@@ -68,7 +70,8 @@ const stripManagedBundle = (head: string): string => {
   for (const line of head.split("\n")) {
     // Any table header ends the previous table, and `[[mcp.servers]]` counts — otherwise a
     // stale bundle would swallow every line to the end of the head.
-    if (/^\s*\[/.test(line)) dropping = /^\s*\[mcp_bundles\.remote\]\s*$/.test(line);
+    if (/^\s*\[/.test(line))
+      dropping = /^\s*\[mcp_bundles\.remote\]\s*$/.test(line);
     if (!dropping) kept.push(line);
   }
   return kept.join("\n");
@@ -82,7 +85,8 @@ export const writeMcpSelection = async (
   const idx = current.indexOf(MANAGED_MARKER);
   // Append-and-truncate, not parse-and-reserialize: everything a human wrote above the
   // marker keeps its bytes and its order, and there is no TOML dependency.
-  const raw = idx === -1 ? current.replace(/\s*$/, "\n\n") : current.slice(0, idx);
+  const raw =
+    idx === -1 ? current.replace(/\s*$/, "\n\n") : current.slice(0, idx);
   const head = stripManagedBundle(raw);
   await writeAtomic(configPath(dir), `${head}${renderBlock(entries)}`);
 
@@ -90,7 +94,10 @@ export const writeMcpSelection = async (
     mcpName: e.mcpName,
     serverName: e.serverName,
   }));
-  await writeAtomic(sidecarPath(dir), `${JSON.stringify(selection, null, 2)}\n`);
+  await writeAtomic(
+    sidecarPath(dir),
+    `${JSON.stringify(selection, null, 2)}\n`,
+  );
   return selection;
 };
 
@@ -101,17 +108,24 @@ const deriveFromBlock = (config: string): McpSelectionItem[] => {
   if (idx === -1) return [];
   const block = config.slice(idx);
   const items: McpSelectionItem[] = [];
-  const re = /\[\[mcp\.servers\]\][^[]*?name\s*=\s*"([^"]+)"[^[]*?url\s*=\s*"([^"]+)"/g;
+  const re =
+    /\[\[mcp\.servers\]\][^[]*?name\s*=\s*"([^"]+)"[^[]*?url\s*=\s*"([^"]+)"/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(block)) !== null) {
     const [, serverName, url] = m;
-    const mcpName = /\/interface\/([^/]+)\/mcp/.exec(url)?.[1];
-    if (mcpName) items.push({ mcpName: decodeURIComponent(mcpName), serverName });
+    const stellar = /\/contracts\/(C[A-Z2-7]{55})\/mcp/.exec(url)?.[1];
+    const mcpName = stellar
+      ? `stellar_testnet_${stellar}`
+      : /\/interface\/([^/]+)\/mcp/.exec(url)?.[1];
+    if (mcpName)
+      items.push({ mcpName: decodeURIComponent(mcpName), serverName });
   }
   return items;
 };
 
-export const readMcpSelection = async (dir: string): Promise<McpSelectionItem[]> => {
+export const readMcpSelection = async (
+  dir: string,
+): Promise<McpSelectionItem[]> => {
   try {
     const raw = await readFile(sidecarPath(dir), "utf8");
     const parsed: unknown = JSON.parse(raw);
@@ -138,7 +152,10 @@ export const readMcpSelection = async (dir: string): Promise<McpSelectionItem[]>
   }
   const derived = deriveFromBlock(config);
   try {
-    await writeAtomic(sidecarPath(dir), `${JSON.stringify(derived, null, 2)}\n`);
+    await writeAtomic(
+      sidecarPath(dir),
+      `${JSON.stringify(derived, null, 2)}\n`,
+    );
   } catch {
     // A read must not fail because the cache could not be refreshed.
   }

@@ -3,13 +3,15 @@ import {
   TransactionBuilder,
   contract,
   rpc,
+  StrKey,
 } from "@stellar/stellar-sdk";
-import { validator, encode, decode } from "./codec.js";
+import { validator, encode, decode, budget } from "./codec.js";
 import { permitted, type Config } from "./config.js";
 import { envelope, fail, mapped, RegistryError } from "./errors.js";
-import { wasmHash } from "./ingestion.js";
+import { wasmHash, ingest } from "./ingestion.js";
 import { canonical, digest, Store, type Attempt } from "./store.js";
 import type { ContractInterface, FunctionModel } from "./model.js";
+import type pg from "pg";
 import type { Signer } from "./signer.js";
 export function argumentsFor(
   f: FunctionModel,
@@ -17,6 +19,7 @@ export function argumentsFor(
 ): Record<string, unknown> {
   if (!args || typeof args !== "object" || Array.isArray(args))
     fail("INVALID_ARGUMENT");
+  budget(args);
   const obj = args as Record<string, unknown>;
   if (Object.keys(obj).some((k) => !f.params.some((p) => p.name === k)))
     fail("INVALID_ARGUMENT");
@@ -32,7 +35,40 @@ export function argumentsFor(
   }
   return normalized;
 }
-export function requireSimulation(s: rpc.Api.SimulateTransactionResponse) {
+export function requireSimulation(
+  s: rpc.Api.SimulateTransactionResponse,
+  assetId?: string,
+) {
+  if (assetId && rpc.Api.isSimulationError(s)) {
+    const expected = Buffer.from(StrKey.decodeContract(assetId)).toString(
+      "hex",
+    );
+    for (const d of s.events ?? []) {
+      const e = d.event;
+      if (
+        !e.contractId ||
+        Buffer.from(e.contractId.value).toString("hex") !== expected
+      )
+        continue;
+      for (const v of [...e.body.v0.topics, e.body.v0.data]) {
+        if (v.type !== "scvError" || v.error.type !== "sceContract") continue;
+        const codes = {
+          2: "ASSET_OPERATION_UNSUPPORTED",
+          4: "ASSET_NOT_AUTHORIZED",
+          5: "AUTHORIZATION_FAILED",
+          6: "ACCOUNT_NOT_FOUND",
+          8: "INVALID_ARGUMENT",
+          9: "ASSET_ALLOWANCE_ERROR",
+          10: "ASSET_BALANCE_ERROR",
+          11: "ASSET_NOT_AUTHORIZED",
+          13: "ASSET_TRUSTLINE_REQUIRED",
+          14: "ASSET_RESERVE_ERROR",
+        } as const;
+        const code = codes[v.error.contractCode as keyof typeof codes];
+        if (code) fail(code);
+      }
+    }
+  }
   if (rpc.Api.isSimulationRestore(s)) fail("TTL_EXPIRED");
   if (!rpc.Api.isSimulationSuccess(s) || !s.result) fail("SIMULATION_FAILED");
   return s;
@@ -43,8 +79,32 @@ export class Executor {
     public server: rpc.Server,
     public store: Store,
     public signer?: Signer,
+    public intentGuard?: (
+      client: pg.PoolClient,
+      metadata: { hash: string; sequence: string; maxTime: string },
+    ) => Promise<void>,
   ) {}
   async current(i: ContractInterface) {
+    if (i.network !== this.config.network) fail("STALE_INTERFACE");
+    if (i.sourceKind === "stellar_asset") {
+      const current = await ingest(this.server, this.config, i.contractId);
+      if (
+        current.sourceKind !== "stellar_asset" ||
+        current.interfaceHash !== i.interfaceHash
+      )
+        fail("STALE_INTERFACE");
+      return;
+    }
+    if (i.protocolVersion !== undefined) {
+      const net = await mapped("SPEC_PARSE_FAILED", () =>
+        this.server.getNetwork(),
+      );
+      if (
+        Number(net.protocolVersion) !== i.protocolVersion ||
+        net.passphrase !== this.config.networkPassphrase
+      )
+        fail("STALE_INTERFACE");
+    }
     const wasm = await mapped("SPEC_PARSE_FAILED", () =>
       this.server.getContractWasmByContractId(i.contractId),
     );
@@ -57,11 +117,13 @@ export class Executor {
     principal: string,
     key?: string,
   ): Promise<Record<string, unknown>> {
-    const context = {
+    const context: Record<string, unknown> = {
       mode: f.mode,
       network: i.network,
       contract_id: i.contractId,
-      wasm_hash: i.wasmHash,
+      source_kind: i.sourceKind ?? "wasm",
+      interface_hash: i.interfaceHash ?? i.wasmHash,
+      ...(i.wasmHash ? { wasm_hash: i.wasmHash } : {}),
       function_name: f.sorobanName,
     };
     try {
@@ -95,6 +157,7 @@ export class Executor {
         await mapped("SIMULATION_FAILED", () =>
           this.server.simulateTransaction(tx),
         ),
+        i.sourceKind === "stellar_asset" ? i.contractId : undefined,
       );
       if (sim.result!.auth.length) fail("AUTHORIZATION_REQUIRED");
       return {
@@ -105,6 +168,11 @@ export class Executor {
         data: decode(f.returns.node, sim.result!.retval),
       };
     } catch (e) {
+      if (context.transaction_hash)
+        return envelope(new RegistryError("TRANSACTION_PENDING_TIMEOUT"), {
+          ...context,
+          result_status: "TIMEOUT",
+        });
       return envelope(e, context);
     }
   }
@@ -130,17 +198,44 @@ export class Executor {
     const fingerprint = digest(
       canonical({ ...context, arguments: values, source: signer.address }),
     );
+    const {
+      source_kind: _kind,
+      interface_hash: _hash,
+      ...legacyContext
+    } = context;
+    const legacyFingerprint = digest(
+      canonical({
+        ...legacyContext,
+        arguments: values,
+        source: signer.address,
+      }),
+    );
+    const matches = (a: Attempt) =>
+      a.fingerprint === fingerprint ||
+      (!a.request.interface_hash && a.fingerprint === legacyFingerprint);
+    const originalContext = (a: Attempt) => {
+      const { returns: _, ...ctx } = a.request;
+      return ctx;
+    };
     const previous = await this.store.find(principal, c.network, key);
     if (previous) {
-      if (previous.fingerprint !== fingerprint) fail("IDEMPOTENCY_CONFLICT");
+      if (!matches(previous)) fail("IDEMPOTENCY_CONFLICT");
       if (previous.state !== "PREPARING")
-        return this.reconcile(previous, f, context);
+        return this.reconcile(
+          previous,
+          {
+            ...f,
+            returns: (previous.request.returns ??
+              f.returns) as typeof f.returns,
+          },
+          originalContext(previous),
+        );
     }
     let attempt: Attempt | undefined;
     await this.store.lock(c.network, signer.address, async (client) => {
       const prior = await this.store.find(principal, c.network, key);
       if (prior) {
-        if (prior.fingerprint !== fingerprint) fail("IDEMPOTENCY_CONFLICT");
+        if (!matches(prior)) fail("IDEMPOTENCY_CONFLICT");
         attempt = prior;
         return;
       }
@@ -175,7 +270,10 @@ export class Executor {
         await mapped("SIMULATION_FAILED", () =>
           tx.simulate({ restore: false }),
         );
-        requireSimulation(tx.simulation!);
+        requireSimulation(
+          tx.simulation!,
+          i.sourceKind === "stellar_asset" ? i.contractId : undefined,
+        );
         for (const address of tx.needsNonInvokerSigningBy()) {
           if (address !== signer.address) fail("AUTHORIZATION_FAILED");
           await mapped("AUTHORIZATION_FAILED", () =>
@@ -190,6 +288,7 @@ export class Executor {
           await mapped("AUTHORIZATION_FAILED", () =>
             this.server.simulateTransaction(tx.built!, undefined, "enforce"),
           ),
+          i.sourceKind === "stellar_asset" ? i.contractId : undefined,
         );
         const buffered = (BigInt(final.minResourceFee) * 120n + 99n) / 100n;
         final.transactionData.setResourceFee(buffered);
@@ -231,7 +330,36 @@ export class Executor {
         if (Date.now() - started > c.simulationMaxAgeMs)
           fail("SIMULATION_FAILED");
         const hash = Buffer.from(tx.signed.hash()).toString("hex");
-        await this.store.update(attempt!.id, "INTENT", undefined, hash);
+        attempt!.transaction_hash = hash;
+        context.transaction_hash = hash;
+        try {
+          await this.store.intent(
+            client,
+            attempt!.id,
+            hash,
+            tx.signed.sequence,
+            tx.signed.timeBounds?.maxTime ?? "0",
+            this.intentGuard
+              ? (locked) =>
+                  this.intentGuard!(locked, {
+                    hash,
+                    sequence: tx.signed!.sequence,
+                    maxTime: tx.signed!.timeBounds?.maxTime ?? "0",
+                  })
+              : undefined,
+          );
+        } catch (e) {
+          try {
+            const durable = await this.store.find(principal, c.network, key);
+            if (durable && !durable.transaction_hash) {
+              attempt!.transaction_hash = null;
+              delete context.transaction_hash;
+            }
+          } catch {
+            /* Commit outcome remains ambiguous. */
+          }
+          throw e;
+        }
         attempt!.transaction_hash = hash;
         context.transaction_hash = hash;
         attempt!.state = "INTENT";
@@ -254,7 +382,10 @@ export class Executor {
         await this.store.update(attempt!.id, "PENDING");
         attempt!.state = "PENDING";
       } catch (e) {
-        if (attempt!.transaction_hash) throw e;
+        if (attempt!.transaction_hash) {
+          attempt!.state = "INTENT";
+          return;
+        }
         const response = envelope(e, context);
         await this.store.update(attempt!.id, "REJECTED", response);
         attempt!.response = response;
@@ -262,7 +393,14 @@ export class Executor {
       }
     });
     if (!attempt) fail("INTERNAL_ERROR");
-    return this.reconcile(attempt, f, context);
+    return this.reconcile(
+      attempt,
+      {
+        ...f,
+        returns: (attempt.request.returns ?? f.returns) as typeof f.returns,
+      },
+      originalContext(attempt),
+    );
   }
   async reconcile(
     a: Attempt,
@@ -312,7 +450,12 @@ export class Executor {
       if (r?.status === "FAILED") {
         const response = envelope(
           new RegistryError("TRANSACTION_FAILED_ON_CHAIN"),
-          { ...ctx, result_status: "FAILED_ON_CHAIN", ledger: r.ledger },
+          {
+            ...ctx,
+            result_status: "FAILED_ON_CHAIN",
+            ledger: r.ledger,
+            fee_charged: r.resultXdr.feeCharged.toString(),
+          },
         );
         const stored = await this.store
           .update(a.id, "FAILED", response)

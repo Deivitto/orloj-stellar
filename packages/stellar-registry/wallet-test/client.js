@@ -26,7 +26,7 @@ $("connect").onclick = async () => {
     $("connect").disabled = true;
     $("run").disabled = false;
     $("status").textContent =
-      "Wallet connected on Testnet. Ready for one counter test.";
+      "Wallet connected on Testnet. Ready for the test.";
   } catch (e) {
     $("status").textContent = e.message;
   }
@@ -45,6 +45,14 @@ async function poll() {
   try {
     const state = await api("state");
     $("wallet").textContent = "Expected wallet: " + state.wallet;
+    if (state.assetRecipient) {
+      $("intro").textContent = "Stellar Testnet · One XLM transfer through MCP";
+      $("description").textContent =
+        "Send 0.0000001 testnet XLM to " +
+        state.assetRecipient +
+        ". Freighter keeps your private key. The test confirms the transfer and verifies duplicate requests do not submit again. A small testnet fee also applies.";
+      $("run").textContent = "Run testnet XLM transfer";
+    }
     if (state.started) {
       $("results").textContent = JSON.stringify(state.results, null, 2);
       if (state.done)

@@ -1,0 +1,89 @@
+{
+  "testedAt": "2026-10-25T15:05:20.531Z",
+  "network": "testnet",
+  "agentId": "9e71ea0f-19e0-436c-abd1-b8a8f126bc17",
+  "mode": "freighter",
+  "checks": [
+    {
+      "check": "actual_app_token_discovery",
+      "ok": true,
+      "tools": [
+        "balance",
+        "transfer",
+        "orloj_operation_status"
+      ]
+    },
+    {
+      "check": "recipient_before",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "source_kind": "stellar_asset",
+      "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+      "function_name": "balance",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T15:05:21.979Z",
+      "data": "99999853659"
+    },
+    {
+      "check": "queued_write",
+      "ok": true,
+      "operation_id": "811c3d8c-d5cf-4f10-b7cd-4ebff5fc023b",
+      "result_status": "AWAITING_APPROVAL",
+      "mode": "WRITE",
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "function_name": "transfer",
+      "can_cancel": true
+    },
+    {
+      "check": "confirmed_write",
+      "ok": true,
+      "data": null,
+      "mode": "WRITE",
+      "ledger": 5383439,
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "fee_charged": "6943",
+      "source_kind": "stellar_asset",
+      "function_name": "transfer",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+      "transaction_hash": "85b85c1fda9eec4475822a23650c1516adefc7915767735a32858ea5216afad6",
+      "operation_id": "811c3d8c-d5cf-4f10-b7cd-4ebff5fc023b",
+      "can_cancel": false
+    },
+    {
+      "check": "duplicate_reconciled",
+      "ok": true,
+      "data": null,
+      "mode": "WRITE",
+      "ledger": 5383439,
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "fee_charged": "6943",
+      "source_kind": "stellar_asset",
+      "function_name": "transfer",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+      "transaction_hash": "85b85c1fda9eec4475822a23650c1516adefc7915767735a32858ea5216afad6",
+      "operation_id": "811c3d8c-d5cf-4f10-b7cd-4ebff5fc023b",
+      "can_cancel": false
+    },
+    {
+      "check": "recipient_after",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "source_kind": "stellar_asset",
+      "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+      "function_name": "balance",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T15:06:23.136Z",
+      "data": "99999853660"
+    }
+  ],
+  "ok": true
+}

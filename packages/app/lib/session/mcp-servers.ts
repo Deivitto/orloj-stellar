@@ -27,6 +27,7 @@ type ManifestEntry = {
   name: string;
   url: string;
   contractName?: string | null;
+  toolNames?: string[];
 };
 
 // zeroclaw's tool prefix (`<server>__<tool>`) and the bundle's membership key. Raw registry
@@ -45,15 +46,31 @@ export const resolveMcpServers = async (
   bearerToken: string,
 ): Promise<ResolvedMcps> => {
   const registryUrl = process.env.REGISTRY_URL;
-  if (!registryUrl) throw new RegistryUnreachableError(new Error("REGISTRY_URL is unset"));
+  if (!registryUrl && !process.env.STELLAR_REGISTRY_URL)
+    throw new RegistryUnreachableError(new Error("No registry configured"));
 
   if (mcpNames.length === 0) return { entries: [], dropped: [] };
 
   let manifest: ManifestEntry[];
   try {
-    const res = await fetch(`${registryUrl}/mcp`, { cache: "no-store" });
-    if (!res.ok) throw new Error(`registry responded ${res.status}`);
-    manifest = (await res.json()) as ManifestEntry[];
+    const targets = [registryUrl, process.env.STELLAR_REGISTRY_URL].filter(
+      (url): url is string => !!url,
+    );
+    const results = await Promise.all(
+      targets.map(async (base) => {
+        const res = await fetch(`${base}/mcp`, {
+          cache: "no-store",
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        });
+        if (!res.ok) throw new Error("Registry manifest unavailable");
+        const rows = (await res.json()) as ManifestEntry[];
+        return rows.map((row) => ({
+          ...row,
+          url: new URL(row.url, base).toString(),
+        }));
+      }),
+    );
+    manifest = results.flat();
   } catch (err) {
     throw new RegistryUnreachableError(err);
   }
@@ -79,7 +96,11 @@ export const resolveMcpServers = async (
       continue;
     }
 
-    const base = sanitize(item.contractName?.trim() || mcpName) || "Mcp";
+    const label = item.contractName?.trim() || mcpName;
+    const base =
+      mcpName.startsWith("stellar_") && /^C[A-Z2-7]{55}$/.test(label)
+        ? `Stellar_${label.slice(-10)}`
+        : sanitize(label) || "Mcp";
     let serverName = base;
     for (let n = 2; used.has(serverName); n += 1) serverName = `${base}_${n}`;
     used.add(serverName);
@@ -90,7 +111,10 @@ export const resolveMcpServers = async (
     entries.push({
       mcpName,
       serverName,
-      url: new URL(item.url, registryUrl).toString(),
+      url: mcpName.startsWith("stellar_")
+        ? `${item.url}?client=zeroclaw`
+        : item.url,
+      approvedTools: item.toolNames ?? [],
       bearerToken,
     });
   }

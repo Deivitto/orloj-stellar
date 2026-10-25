@@ -1,9 +1,12 @@
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { getOneclawClient } from "@/lib/oneclaw";
+import { getAgentClient } from "@/lib/agent-client";
 import { assertAgentOwner, deregisterAgent } from "@/lib/agent-ownership";
 import { killByAgent } from "@/lib/session/registry";
-import { InvalidAgentIdError, removeConfigDir } from "@/lib/session/zeroclaw-config";
+import {
+  InvalidAgentIdError,
+  removeConfigDir,
+} from "@/lib/session/zeroclaw-config";
 
 export async function GET(
   request: Request,
@@ -18,7 +21,7 @@ export async function GET(
 
   let client;
   try {
-    client = await getOneclawClient();
+    client = await getAgentClient();
   } catch (err) {
     console.error("[agents] 1claw client init failed", err);
     return Response.json(
@@ -63,7 +66,7 @@ export async function DELETE(
 
   let client;
   try {
-    client = await getOneclawClient();
+    client = await getAgentClient();
   } catch (err) {
     console.error("[agents] 1claw client init failed", err);
     return Response.json(
@@ -85,10 +88,7 @@ export async function DELETE(
   try {
     await deregisterAgent(id);
   } catch (deregisterErr) {
-    console.error(
-      "[agents] ownership deregistration failed",
-      deregisterErr,
-    );
+    console.error("[agents] ownership deregistration failed", deregisterErr);
     return Response.json(
       { error: "Failed to deregister agent ownership" },
       { status: 500 },

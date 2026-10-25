@@ -15,7 +15,7 @@ export function parseType(
   entries: xdr.ScSpecEntry[],
   path: string[] = [],
 ): TypeNode {
-  if (path.length > 2) fail("TYPE_DEPTH_EXCEEDED");
+  if (path.length > 8) fail("TYPE_DEPTH_EXCEEDED");
   const leaves: Record<string, TypeNode["kind"]> = {
     scSpecTypeBool: "bool",
     scSpecTypeU32: "u32",
@@ -26,6 +26,7 @@ export function parseType(
     scSpecTypeI128: "i128",
     scSpecTypeSymbol: "Symbol",
     scSpecTypeAddress: "Address",
+    scSpecTypeMuxedAddress: "MuxedAddress",
     scSpecTypeString: "String",
     scSpecTypeBytes: "Bytes",
     scSpecTypeVoid: "void",
@@ -44,19 +45,66 @@ export function parseType(
         kind: "Vec",
         item: parseType(t.vec.elementType, entries, [...path, "Vec"]),
       };
+    case "scSpecTypeMap":
+      return {
+        kind: "Map",
+        key: parseType(t.map.keyType, entries, [...path, "Map"]),
+        value: parseType(t.map.valueType, entries, [...path, "Map"]),
+      };
+    case "scSpecTypeTuple":
+      return {
+        kind: "Tuple",
+        items: t.tuple.valueTypes.map((x) =>
+          parseType(x, entries, [...path, "Tuple"]),
+        ),
+      };
     case "scSpecTypeUdt": {
       const name = t.udt.name.toString();
-      if (path.includes(name)) fail("UNSUPPORTED_SOROBAN_TYPE");
+      if (path.includes("udt:" + name)) fail("UNSUPPORTED_SOROBAN_TYPE");
       const e = entries.find(
         (e) =>
-          e.type === "scSpecEntryUdtStructV0" &&
-          e.udtStructV0.name.toString() === name,
+          (e.type === "scSpecEntryUdtStructV0" &&
+            e.udtStructV0.name.toString() === name) ||
+          (e.type === "scSpecEntryUdtEnumV0" &&
+            e.udtEnumV0.name.toString() === name) ||
+          (e.type === "scSpecEntryUdtUnionV0" &&
+            e.udtUnionV0.name.toString() === name),
       );
-      if (!e || e.type !== "scSpecEntryUdtStructV0")
-        fail("UNSUPPORTED_SOROBAN_TYPE");
+      if (!e) fail("UNSUPPORTED_SOROBAN_TYPE");
+      if (e.type === "scSpecEntryUdtEnumV0")
+        return {
+          kind: "Enum",
+          cases: e.udtEnumV0.cases.map((c) => ({
+            name: c.name.toString(),
+            value: c.value,
+          })),
+        };
+      if (e.type === "scSpecEntryUdtUnionV0")
+        return {
+          kind: "Union",
+          cases: e.udtUnionV0.cases.map((c) =>
+            c.type === "scSpecUdtUnionCaseVoidV0"
+              ? { name: c.voidCase.name.toString(), items: [] }
+              : {
+                  name: c.tupleCase.name.toString(),
+                  items: c.tupleCase.type.map((x) =>
+                    parseType(x, entries, [...path, "udt:" + name]),
+                  ),
+                },
+          ),
+        };
+      if (e.type !== "scSpecEntryUdtStructV0") fail("UNSUPPORTED_SOROBAN_TYPE");
       const fields = e.udtStructV0.fields;
-      if (fields.some((f) => /^\d+$/.test(f.name.toString())))
-        fail("UNSUPPORTED_SOROBAN_TYPE");
+      if (
+        fields.length &&
+        fields.every((f, n) => f.name.toString() === String(n))
+      )
+        return {
+          kind: "Tuple",
+          items: fields.map((f) =>
+            parseType(f.type, entries, [...path, "udt:" + name]),
+          ),
+        };
       if (new Set(fields.map((f) => f.name.toString())).size !== fields.length)
         fail("SPEC_PARSE_FAILED");
       return {
@@ -64,7 +112,7 @@ export function parseType(
         fields: fields.map((f) => ({
           name: f.name.toString(),
           description: f.doc.toString(),
-          type: parseType(f.type, entries, [...path, name]),
+          type: parseType(f.type, entries, [...path, "udt:" + name]),
         })),
       };
     }
@@ -76,6 +124,7 @@ export function inspect(
   wasm: Uint8Array,
   c: Config,
   id?: string,
+  protocolVersion?: number,
 ): ContractInterface {
   if (
     wasm.length > 10 * 1024 * 1024 ||
@@ -88,13 +137,46 @@ export function inspect(
   } catch {
     return fail("SPEC_PARSE_FAILED");
   }
+  return inspectSpec(spec, c, id, {
+    wasmHash: wasmHash(wasm),
+    sourceKind: "wasm",
+    protocolVersion,
+    interfaceHash: wasmHash(
+      Buffer.concat([
+        Buffer.from(`orloj-encoding-v2:${protocolVersion ?? "unbound"}:`),
+        Buffer.from(wasm),
+      ]),
+    ),
+  });
+}
+export function inspectSpec(
+  spec: contract.Spec,
+  c: Config,
+  id: string | undefined,
+  identity: Partial<ContractInterface>,
+): ContractInterface {
   if (!spec.entries.length) fail("SPEC_PARSE_FAILED");
+  function withProtocol(node: TypeNode): TypeNode {
+    if (node.kind === "MuxedAddress") node.protocol = identity.protocolVersion;
+    if ("item" in node) withProtocol(node.item);
+    if (node.kind === "Map") {
+      withProtocol(node.key);
+      withProtocol(node.value);
+    }
+    if (node.kind === "Tuple") node.items.forEach(withProtocol);
+    if (node.kind === "Struct")
+      node.fields.forEach((f) => withProtocol(f.type));
+    if (node.kind === "Union")
+      node.cases.forEach((c) => c.items.forEach(withProtocol));
+    return node;
+  }
   const names = new Set<string>(),
     tools = new Set<string>();
   const result: ContractInterface = {
     network: c.network,
     contractId: id ?? "",
-    wasmHash: wasmHash(wasm),
+    ...identity,
+    inventory: [],
     functions: [],
     excluded: [],
     generatedAt: new Date().toISOString(),
@@ -110,7 +192,7 @@ export function inspect(
     try {
       if (f.outputs.length > 1) fail("UNSUPPORTED_SOROBAN_TYPE");
       const params = f.inputs.map((p) => {
-        const type = model(parseType(p.type, spec.entries));
+        const type = model(withProtocol(parseType(p.type, spec.entries)));
         return {
           name: p.name.toString(),
           sorobanType: type.sorobanType,
@@ -125,18 +207,35 @@ export function inspect(
         fail("SPEC_PARSE_FAILED");
       const returns = model(
         f.outputs.length
-          ? parseType(f.outputs[0], spec.entries)
+          ? withProtocol(parseType(f.outputs[0], spec.entries))
           : { kind: "void" },
       );
       const policy = c.policies.find(
         (p) => p.contractId === id && p.function === name,
       );
+      result.inventory!.push({
+        name,
+        eligible: true,
+        policyStatus: policy ? "enabled" : "disabled",
+        signature: {
+          sorobanName: name,
+          mcpToolName: tool,
+          description: f.doc.toString(),
+          params,
+          returns,
+        },
+      });
       if (id && !policy) continue;
       if (
         policy?.mode === "WRITE" &&
         params.some((p) => p.name === "idempotency_key")
       ) {
         result.excluded.push({ name, error_code: "TOOL_NAME_COLLISION" });
+        Object.assign(result.inventory!.at(-1)!, {
+          eligible: false,
+          policyStatus: "disabled",
+          error_code: "TOOL_NAME_COLLISION",
+        });
         continue;
       }
       result.functions.push({
@@ -157,15 +256,28 @@ export function inspect(
       if (
         e instanceof RegistryError &&
         ["UNSUPPORTED_SOROBAN_TYPE", "TYPE_DEPTH_EXCEEDED"].includes(e.code)
-      )
+      ) {
         result.excluded.push({ name, error_code: e.code });
-      else throw e;
+        result.inventory!.push({
+          name,
+          eligible: false,
+          policyStatus: "disabled",
+          error_code: e.code,
+        });
+      } else throw e;
     }
   }
   return result;
 }
 export interface WasmRpc {
   getContractWasmByContractId(id: string): Promise<Uint8Array>;
+  getContractInstance?: (
+    id: string,
+  ) => Promise<{ executable: { type: string } }>;
+  getNetwork?: () => Promise<{
+    passphrase: string;
+    protocolVersion: string | number;
+  }>;
 }
 export async function ingest(
   rpc: WasmRpc,
@@ -174,12 +286,34 @@ export async function ingest(
   uploaded?: Uint8Array,
 ) {
   contractId(id);
+  if (rpc.getContractInstance) {
+    const instance = await mapped("SPEC_PARSE_FAILED", () =>
+      rpc.getContractInstance!(id),
+    );
+    if (instance.executable.type === "contractExecutableStellarAsset") {
+      if (uploaded) fail("INVALID_ARGUMENT");
+      const net = await mapped("UNSUPPORTED_PROTOCOL", () => rpc.getNetwork!());
+      if (net.passphrase !== c.networkPassphrase) fail("INVALID_ARGUMENT");
+      const { assetInterface } = await import("./assets.js");
+      return assetInterface(c, id, Number(net.protocolVersion));
+    }
+    if (
+      !["contractExecutableWasm", "contractExecutableExternalRef"].includes(
+        instance.executable.type,
+      )
+    )
+      fail("SPEC_PARSE_FAILED");
+  }
   const wasm = await mapped("SPEC_PARSE_FAILED", () =>
     rpc.getContractWasmByContractId(id),
   );
   if (uploaded && wasmHash(uploaded) !== wasmHash(wasm))
     fail("STALE_INTERFACE");
-  return inspect(wasm, c, id);
+  const net = rpc.getNetwork
+    ? await mapped("SPEC_PARSE_FAILED", () => rpc.getNetwork!())
+    : undefined;
+  if (net && net.passphrase !== c.networkPassphrase) fail("INVALID_ARGUMENT");
+  return inspect(wasm, c, id, net ? Number(net.protocolVersion) : undefined);
 }
 
 export function inspectUpload(wasm: Uint8Array, c: Config) {

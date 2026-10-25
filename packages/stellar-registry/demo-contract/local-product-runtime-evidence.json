@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "checks": [
+    "real_runtime_patch",
+    "acp_initialize",
+    "nonroot_readonly_capabilities",
+    "per_agent_volume",
+    "no_application_secrets",
+    "disconnect_patch_restart"
+  ],
+  "runtime": "0.8.6"
+}

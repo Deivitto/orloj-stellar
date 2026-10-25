@@ -1,9 +1,10 @@
+import { StellarProduct } from "@/components/stellar-product";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { assertAgentOwner } from "@/lib/agent-ownership";
 import { getAgentBranding } from "@/lib/agent-branding";
-import { getOneclawClient } from "@/lib/oneclaw";
+import { getAgentClient } from "@/lib/agent-client";
 import { AgentAppBar, AgentAppSignIn } from "@/components/agent-app";
 import { SessionView } from "@/components/session/session-view";
 
@@ -24,7 +25,7 @@ export default async function SessionPage({
   // The name is cosmetic; a failing upstream must not block the chat.
   let agentName = agentId;
   try {
-    const client = await getOneclawClient();
+    const client = await getAgentClient();
     const { data } = await client.agents.get(agentId);
     if (data?.name) agentName = data.name;
   } catch {
@@ -49,6 +50,9 @@ export default async function SessionPage({
         hasCustomIcon={Boolean(branding.iconPng)}
         lang={lang}
       />
+      {process.env.ORLOJ_PRODUCT === "stellar" && (
+        <StellarProduct agentId={agentId} />
+      )}
       <SessionView
         agentId={agentId}
         agentName={agentName}
