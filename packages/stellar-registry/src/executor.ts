@@ -133,7 +133,8 @@ export class Executor {
     const previous = await this.store.find(principal, c.network, key);
     if (previous) {
       if (previous.fingerprint !== fingerprint) fail("IDEMPOTENCY_CONFLICT");
-      return this.reconcile(previous, f, context);
+      if (previous.state !== "PREPARING")
+        return this.reconcile(previous, f, context);
     }
     let attempt: Attempt | undefined;
     await this.store.lock(c.network, signer.address, async (client) => {

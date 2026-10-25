@@ -36,6 +36,7 @@ export function canonical(v: unknown): string {
 }
 export class Store {
   pool: pg.Pool;
+  private lockPool: pg.Pool;
   constructor(url: string) {
     this.pool = new pg.Pool({
       connectionString: url,
@@ -44,6 +45,14 @@ export class Store {
       query_timeout: 10000,
     });
     this.pool.on("error", () => {});
+    // Waiting for an account lock must not exhaust connections used to persist its owner.
+    this.lockPool = new pg.Pool({
+      connectionString: url,
+      max: 2,
+      connectionTimeoutMillis: 5000,
+      query_timeout: 120000,
+    });
+    this.lockPool.on("error", () => {});
   }
   async migrate() {
     const client = await this.pool.connect();
@@ -140,10 +149,10 @@ export class Store {
     account: string,
     fn: (client: pg.PoolClient) => Promise<T>,
   ): Promise<T> {
-    const c = await this.pool.connect();
+    const c = await this.lockPool.connect();
     const key = network + ":" + account;
     try {
-      await c.query("SET statement_timeout='10s'");
+      await c.query("SET statement_timeout='120s'");
       await c.query("SELECT pg_advisory_lock(hashtextextended($1,0))", [key]);
       return await fn(c);
     } finally {
@@ -226,6 +235,6 @@ export class Store {
     ).rows[0]?.response as Record<string, unknown> | null;
   }
   async close() {
-    await this.pool.end();
+    await Promise.all([this.pool.end(), this.lockPool.end()]);
   }
 }

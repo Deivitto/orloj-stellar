@@ -372,3 +372,34 @@ it.skipIf(!database)(
     expect(x.send).toHaveBeenCalledTimes(1);
   },
 );
+it.skipIf(!database)(
+  "joins an already preparing duplicate without a second submission",
+  async () => {
+    const x = setup(true);
+    await x.store.migrate();
+    let release!: () => void;
+    let notify!: () => void;
+    const ready = new Promise<void>((r) => {
+      notify = r;
+    });
+    const barrier = new Promise<void>((r) => {
+      release = r;
+    });
+    vi.mocked(x.server.simulateTransaction).mockImplementationOnce(async () => {
+      notify();
+      await barrier;
+      return x.sim();
+    });
+    const first = x.executor.call(x.i, x.f, {}, x.principal, "key");
+    await ready;
+    const second = x.executor.call(x.i, x.f, {}, x.principal, "key");
+    setTimeout(release, 25);
+    const results = await Promise.all([first, second]);
+    for (const result of results)
+      expect(result).toMatchObject({
+        ok: true,
+        result_status: "SUBMITTED_AND_CONFIRMED",
+      });
+    expect(x.send).toHaveBeenCalledTimes(1);
+  },
+);
