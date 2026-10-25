@@ -63,3 +63,7 @@ Before installing any new dependency:
 1. **Ask the user to confirm** the addition — do not silently add deps to `package.json`.
 2. **Look up the latest published version** (e.g. `pnpm view <pkg> version`) rather than using a version from training data, which is likely stale.
 3. **Install it pinned to that exact latest version**. `.npmrc` already sets `save-exact=true`, so `pnpm add <pkg>` will write the exact resolved version — but always verify the version that landed in `package.json` matches the latest you looked up. Do not write `^` / `~` ranges by hand.
+
+## Orloj Stellar build target
+
+This private mirror is the base for Orloj Stellar. Read `ORLOJ_STELLAR_MASTER.md` (version 1.1) and `ORLOJ_STELLAR_BUILD_PROMPT.md` before implementation. The master specification and its approved clarifications govern Stellar work; the existing EVM implementation is reference code. Decisions are recorded in `ORLOJ_STELLAR_OPEN_QUESTIONS.md`. If a requested change conflicts with the master, ask for clarification.
