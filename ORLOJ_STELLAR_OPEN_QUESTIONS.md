@@ -14,4 +14,4 @@ These decisions are implemented in `packages/stellar-registry`. Live testnet rea
 
 The approved complete-interface plan is incorporated in master version 1.2: bounded composite types, verified built-in SAC ingestion, interface identity migration, complete inventory and policy-gated administrative methods. Protocol 29 is the initial verified SAC adapter.
 
-The user approved audit remediation in master version 1.4: bounded execution-resource headroom, top-level declared Result returns, detailed exclusions, encoding-v3 refresh, and a separately gated classic-operation adapter.
+The user approved audit remediation in master version 1.4: bounded execution-resource headroom, top-level declared Result returns, detailed exclusions, encoding-v4 refresh, and a separately gated classic-operation adapter.

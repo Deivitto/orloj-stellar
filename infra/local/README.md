@@ -6,7 +6,7 @@ enable mainnet writes. Existing EVM configuration is separate.
 
 ## Start
 
-Prerequisites: Docker with Compose, Node 24.15.0, and the repository-pinned pnpm.
+Prerequisites: a running Docker engine, either the Docker Compose plugin or standalone docker-compose, Node 24.15.0, and the repository-pinned pnpm. The local-stack launcher detects both Compose forms and reports an unavailable engine before attempting startup.
 Hardware virtualization is recommended. Software-emulated Colima works on this
 development machine but builds are substantially slower.
 
@@ -14,8 +14,8 @@ From the repository root:
 
 ```sh
 node scripts/setup-local-product.mjs
-docker compose --env-file .local/product.env -f infra/local/compose.yaml build runtime-image broker registry signer app
-docker compose --env-file .local/product.env -f infra/local/compose.yaml up -d
+node scripts/local-stack.mjs build runtime-image broker registry signer app
+node scripts/local-stack.mjs up -d
 ```
 
 For a parallel smoke stack, set `APP_PORT`, `REGISTRY_PORT` and `MAIL_PORT` to
@@ -75,8 +75,8 @@ The worker retains the hash and spending reservation and reconciles the result.
 Use the owner screen, or run the operator command in the registry container:
 
 ```sh
-docker compose --env-file .local/product.env -f infra/local/compose.yaml exec registry node dist/src/cli.js recover-operation OPERATION_UUID
-docker compose --env-file .local/product.env -f infra/local/compose.yaml exec registry node dist/src/cli.js recover-operation OPERATION_UUID --prove-expired
+node scripts/local-stack.mjs exec registry node dist/src/cli.js recover-operation OPERATION_UUID
+node scripts/local-stack.mjs exec registry node dist/src/cli.js recover-operation OPERATION_UUID --prove-expired
 ```
 
 The second command releases an unresolved reservation only with authoritative
@@ -93,8 +93,8 @@ The master key is required to recover managed wallets; a database backup alone
 cannot recover them. Do not replace an inaccessible master key with a new one.
 
 ```sh
-docker compose --env-file .local/product.env -f infra/local/compose.yaml stop app registry signer
-docker compose --env-file .local/product.env -f infra/local/compose.yaml exec -T postgres pg_dump -U orloj -d orloj -Fc > .local/database.dump
+node scripts/local-stack.mjs stop app registry signer
+node scripts/local-stack.mjs exec -T postgres pg_dump -U orloj -d orloj -Fc > .local/database.dump
 ```
 
 Restore to a stopped stack using `pg_restore`, restore the matching agent volume
@@ -144,3 +144,11 @@ Live evidence is in `packages/stellar-registry/demo-contract/local-product-*-evi
 It records real app-token MCP discovery, policy denials, confirmed Freighter and
 managed transfers, recipient balance changes and duplicate reconciliation without
 additional submission. It contains no bearer tokens or signing payloads.
+
+## No hosted CI/CD
+
+GitHub Actions is disabled for this private repository. The former workflow is archived at `infra/local/stellar-ci.disabled.yml`, outside `.github/workflows`, so pushes, pull requests and manual dispatch cannot start it. Validation commands in this runbook run locally and consume no GitHub Actions minutes. Re-enabling hosted workflows is an explicit owner action, not part of startup.
+
+## Manual local validation
+
+Run `node --test scripts/local-stack.test.mjs` for launcher detection checks. Run `TEST_DATABASE_URL=postgres://... node --test packages/app/test/*.test.mts packages/app/test/*.test.mjs` for all app credential/selection/readiness checks. Registry checks use `TEST_DATABASE_URL=postgres://... pnpm --filter @orloj/stellar-registry test`. These are operator-invoked local commands, not hosted workflows.

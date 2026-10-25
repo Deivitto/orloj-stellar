@@ -423,3 +423,5 @@ Full-width u256/i256 leaves use canonical decimal strings and exact BigInt conve
 Classic read envelopes use `READ_ONLY`, never `SIMULATED`. Classic writes use the shared testnet-only durable intent, account locking, owner approval, single RPC submission and getTransaction confirmation; they have no Soroban resource data. `CLASSIC_QUERY_FAILED` is a stable sanitized Horizon read error.
 
 A zero-element Tuple denotes Soroban unit: JSON `[]`, wire ScVal Void. Reject Option of this unit type because None and Some(unit) share the same wire value. Nonempty tuples keep their vector encoding.
+
+The user subsequently requested complete CI/CD disablement: GitHub Actions is disabled at repository level and the archived workflow lives outside `.github/workflows`. Local manual checks remain available and consume no hosted CI credits.
