@@ -444,3 +444,11 @@ Exact-call quotas count each wallet/contract/method across policy revisions with
 Direct declared contract-error enums use case-name strings and encode as typed contract ScVal Errors, preserving their declared numeric codes.
 
 This section supersedes section 15's SAC-transfer-only managed scope and section 16's Val exclusion. WASM encoding identity is now v5; re-registration is required, preserving historical attempts. SAC encoding remains v2 because its verified type grammar and wire encoding are unchanged.
+
+## 18. Browser-chat runtime acceptance clarification
+
+The user requested live browser-chat testing after merging the local product. A native app may use the isolated pinned Docker runtime through a loopback broker, mounting exactly one canonical, instance-bound agent directory at the same short absolute path. Keep the nonroot user, read-only root, dropped capabilities and blocked built-ins. Never mount app credentials, signer material, the checkout or the root of every agent. Native directories must fit the runtime IPC socket length bound. Container-stack named-volume mode remains the default.
+
+Allow a separate Stellar runtime registry URL when the app's control URL cannot be reached from the container; do not redirect the EVM registry. Provider-native tool calling and assistant-reasoning replay are explicit optional protocol settings. They do not grant tools or signing authority. Free-provider quota errors remain visible; bounded model-provider HTTP retries never imply resubmission of a Stellar transaction.
+
+At registry startup, regenerate only already-registered classic adapter interfaces whose computed schema identity changed. Preserve owner permissions, selections and all transaction history; do not register additional markets or submit anything. Historical writes continue reconciling with their original metadata.

@@ -176,3 +176,5 @@ TEST_DATABASE_URL=postgres://localhost/orloj_stellar node packages/stellar-regis
 ```
 
 This creates an isolated schema and managed administrator/holder/delegate wallets, then exercises real MCP asset methods and confirms each submitted hash. The isolated signer master key is ephemeral: these test wallets are disposable, cannot be recovered after the script exits, and are separate from product wallets. History is retained in the test schema for inspection. It neither configures existing user grants nor claims browser-chat acceptance. The mainnet `test-tagged-mainnet.mjs` probe requires a private read-only mainnet env file and performs no submissions.
+
+Already-registered classic adapter interfaces are regenerated at registry startup if their computed schema identity changes after a codec upgrade. This updates only cached interface metadata: it does not register additional markets, grant permissions or delete write history. Historical attempts retain their original metadata. `STALE_INTERFACE` now describes either a contract mismatch or a stale built-in adapter.

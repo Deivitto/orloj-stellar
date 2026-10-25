@@ -9,6 +9,7 @@ import {
 } from "@stellar/stellar-sdk";
 import { randomUUID } from "node:crypto";
 import {
+  refreshClassicInterfaces,
   classicAsset,
   classicInterface,
   classicOperation,
@@ -459,4 +460,28 @@ it("rejects trustline reductions and underfunded pool deposits before signing", 
     ),
   ).rejects.toThrow("balance");
   expect(sign).not.toHaveBeenCalled();
+});
+
+it("refreshes stale registered adapter schemas without registering markets or changing policy", async () => {
+  const current = classicInterface(c(), id),
+    cache = new Map<string, ReturnType<typeof classicInterface>>([
+      [id, { ...current, interfaceHash: "0".repeat(64) }],
+    ]),
+    saved: ReturnType<typeof classicInterface>[] = [];
+  const store = {
+    get: async (_network: string, key: string) => cache.get(key),
+    save: async (i: ReturnType<typeof classicInterface>) => {
+      cache.set(i.contractId, i);
+      saved.push(i);
+    },
+  };
+  await refreshClassicInterfaces(store, c());
+  expect(saved).toHaveLength(1);
+  expect(saved[0].interfaceHash).toBe(current.interfaceHash);
+  expect(saved[0].inventory?.map((m) => m.name)).toEqual(
+    current.inventory?.map((m) => m.name),
+  );
+  expect(cache.has("classic:stellar-amm")).toBe(false);
+  await refreshClassicInterfaces(store, c());
+  expect(saved).toHaveLength(1);
 });

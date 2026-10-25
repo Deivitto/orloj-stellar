@@ -66,7 +66,12 @@ export const resolveMcpServers = async (
         const rows = (await res.json()) as ManifestEntry[];
         return rows.map((row) => ({
           ...row,
-          url: new URL(row.url, base).toString(),
+          url: new URL(
+            row.url,
+            base === process.env.STELLAR_REGISTRY_URL
+              ? (process.env.STELLAR_RUNTIME_REGISTRY_URL ?? base)
+              : base,
+          ).toString(),
         }));
       }),
     );

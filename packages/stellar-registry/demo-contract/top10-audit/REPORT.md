@@ -1,5 +1,10 @@
 # Top-ten Stellar Orloj audit — 25 October 2026
 
+## Latest browser-chat acceptance
+
+Live read chat now works through the configured Groq model and an isolated Docker agent runtime. Soroban XLM balance and classic DEX account_balances agree with Horizon at 99999993056 base units (9999.9993056 Testnet XLM). The native runtime and provider compatibility fixes, screenshots and quota findings are recorded in `../browser-chat-evidence.json` and `infra/local/VERIFICATION.md`. No transaction was submitted. Full Compose startup, chat-triggered write acceptance and fresh independent review remain separate gates; the historical browser-chat blocker below has been resolved for these reads.
+
+
 
 ## Generic compatibility and unattended calls — latest update
 

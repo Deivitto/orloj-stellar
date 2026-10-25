@@ -1,0 +1,107 @@
+{
+  "verifiedAt": "2026-10-25T20:21:08.925Z",
+  "finalCombinedReadPassed": true,
+  "baseUnits": "99999993056",
+  "xlm": "9999.9993056",
+  "visibleTableMatches": true,
+  "network": "testnet",
+  "agentId": "9e71ea0f-19e0-436c-abd1-b8a8f126bc17",
+  "address": "GCLEKFNVDD75POJDCTVNWN7OBZZ2C6MQT5RANBFSEX6HCE6NQ26CUX3S",
+  "provider": "Groq",
+  "model": "openai/gpt-oss-20b",
+  "runtime": "ZeroClaw 0.8.6 in isolated Docker",
+  "transport": "Real authenticated browser chat → ACP → live model → app-authenticated MCP",
+  "diagnosticRelayUsedForAcceptance": false,
+  "checks": [
+    {
+      "tool": "XLM__balance",
+      "sourceKind": "stellar_asset",
+      "resultStatus": "SIMULATED",
+      "baseUnits": "99999993056",
+      "xlm": "9999.9993056",
+      "ok": true
+    },
+    {
+      "tool": "Stellar_DEX__classic___account_balances",
+      "sourceKind": "classic_dex",
+      "resultStatus": "READ_ONLY",
+      "baseUnits": "99999993056",
+      "xlm": "9999.9993056",
+      "ok": true
+    }
+  ],
+  "horizon": {
+    "nativeBalance": "9999.9993056",
+    "lastModifiedLedger": 5383545,
+    "matches": true
+  },
+  "isolation": {
+    "user": "501:20",
+    "readOnlyRoot": true,
+    "capDrop": [
+      "ALL"
+    ],
+    "securityOptions": [
+      "no-new-privileges"
+    ],
+    "onlyAgentDirectory": true,
+    "bindMountCount": 1,
+    "environmentVariableNames": [
+      "PATH"
+    ]
+  },
+  "secretScan": {
+    "files": 17,
+    "providerKeyHits": 0,
+    "walletSigningKeyPatternHits": 0,
+    "scope": "Workspace, runtime data/transcripts and broker/diagnostic logs; private provider config intentionally excluded"
+  },
+  "operations": {
+    "before": {
+      "SUCCESS": 4,
+      "REJECTED": 1
+    },
+    "after": {
+      "SUCCESS": 4,
+      "REJECTED": 1
+    },
+    "createdByThisTest": 0,
+    "unattendedGrantsEnabled": false
+  },
+  "fixed": [
+    "Native app/runtime mount mismatch",
+    "Runtime IPC path length",
+    "Custom provider native tool schemas disabled",
+    "Groq rejects replayed reasoning_content",
+    "Stale classic generated-schema cache"
+  ],
+  "providerQuota": {
+    "observedLimitTokensPerMinute": 8000,
+    "rateLimitSurfaced": true,
+    "currentTestAgentBackoffMs": 10000,
+    "currentTestAgentRetries": 4,
+    "quotasStillApply": true
+  },
+  "manualChecks": {
+    "registryTests": 152,
+    "appRuntimeLauncherTests": 12,
+    "appBuild": "passed",
+    "registryBuild": "passed",
+    "typecheck": "passed",
+    "lint": {
+      "errors": 0,
+      "existingWarnings": 9
+    },
+    "composeConfiguration": "validated"
+  },
+  "screenshots": [
+    "browser-chat-read-evidence.jpg",
+    "browser-chat-classic-evidence.jpg",
+    "browser-chat-final-evidence.jpg"
+  ],
+  "remaining": [
+    "Chat-triggered write acceptance not retested",
+    "Full combined Compose startup unverified",
+    "Independent re-review pending workspace credits"
+  ]
+}

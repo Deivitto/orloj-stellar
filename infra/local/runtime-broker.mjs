@@ -1,3 +1,4 @@
+import { runtimeMount } from "./runtime-mount.mjs";
 import { createServer } from "node:http";
 import { spawn, execFileSync, execFile } from "node:child_process";
 import { promisify } from "node:util";
@@ -111,6 +112,7 @@ const server = createServer(async (req, res) => {
       .split(/\s+/)
       .filter(Boolean);
     if (stale.length) await execute("docker", ["rm", "-f", ...stale]);
+    const mount = runtimeMount(id, instance);
     const args = [
       "create",
       "--name",
@@ -128,21 +130,21 @@ const server = createServer(async (req, res) => {
       "--pids-limit=128",
       "--memory=1g",
       "--cpus=1",
-      "--user=1000:1000",
+      `--user=${mount.user}`,
       "--tmpfs=/tmp:rw,noexec,nosuid,size=64m",
-      "--tmpfs=/home/agent:rw,nosuid,size=16m,uid=1000,gid=1000",
+      `--tmpfs=/home/agent:rw,nosuid,size=16m,uid=${mount.user.split(":")[0]},gid=${mount.user.split(":")[1]}`,
       `--network=${action === "acp" ? (process.env.AGENT_NETWORK ?? "orloj-agents") : "none"}`,
       "--mount",
-      `type=volume,src=${project},dst=/agents/${id},volume-subpath=${id}`,
+      mount.mount,
       "--workdir",
-      `/agents/${id}`,
+      mount.directory,
       image,
       ...(action === "patch"
-        ? ["config", "patch", "--config-dir", `/agents/${id}`, "-"]
+        ? ["config", "patch", "--config-dir", mount.directory, "-"]
         : [
             "acp",
             "--config-dir",
-            `/agents/${id}`,
+            mount.directory,
             "--max-sessions",
             "1",
             "--session-timeout",
@@ -166,9 +168,29 @@ const server = createServer(async (req, res) => {
     req.pipe(child.stdin);
     child.stdout.pipe(res, { end: false });
     child.stdin.on("error", () => {});
-    child.stderr.on("data", () => {});
+    let diagnostic = "";
+    child.stderr.on("data", (c) => {
+      diagnostic = (diagnostic + c.toString()).slice(-8192);
+    });
     child.once("error", () => void cleanup());
-    child.once("exit", (code) => void cleanup(code ?? 1));
+    child.once("exit", (code) => {
+      if (code)
+        console.error(
+          JSON.stringify({
+            event: "runtime_exit",
+            action,
+            code,
+            reason: /json|patch/i.test(diagnostic)
+              ? "INVALID_PATCH"
+              : /permission denied/i.test(diagnostic)
+                ? "PERMISSION_DENIED"
+                : /config/i.test(diagnostic)
+                  ? "CONFIG_ERROR"
+                  : "RUNTIME_FAILED",
+          }),
+        );
+      void cleanup(code ?? 1);
+    });
     deadline = setTimeout(() => job.cancel(), 3600000);
     deadline.unref();
   } catch {
@@ -177,4 +199,4 @@ const server = createServer(async (req, res) => {
 });
 server.requestTimeout = 0;
 server.headersTimeout = 10000;
-server.listen(3010, "0.0.0.0");
+server.listen(3010, process.env.HOST ?? "0.0.0.0");
