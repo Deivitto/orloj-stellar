@@ -57,6 +57,8 @@ type Op = {
   arguments: unknown;
   wallet_id: string;
   max_fee: string;
+  fee_charged?: string;
+  fee_charged_xlm?: string;
   transaction_hash?: string;
   human_message?: string;
 };
@@ -504,6 +506,7 @@ export function StellarProduct({ agentId: fixedId }: { agentId?: string }) {
                   {JSON.stringify(o.arguments, null, 2)}
                 </pre>
                 <p>Maximum fee: {o.max_fee} stroops · Testnet</p>
+                {o.fee_charged && <p>Actual fee: {o.fee_charged} stroops{o.fee_charged_xlm ? ` = ${o.fee_charged_xlm} XLM` : ""}</p>}
                 {o.human_message && <p>{o.human_message}</p>}
                 {o.transaction_hash && <p>Transaction: {o.transaction_hash}</p>}
                 {o.result_status === "AWAITING_APPROVAL" && (

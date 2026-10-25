@@ -22,6 +22,7 @@ const discovery = JSON.parse(
   ),
 );
 const cases = {
+  "Defa By InvoiceMate": [["get_active_tvl", {}], ["get_tvl", {}], ["read_version", {}]],
   "Blend Pools V2": [
     ["reward_zone", {}],
     ["backstop_token", {}],
@@ -184,6 +185,7 @@ try {
         "\n",
     );
   }
+  if (process.env.AUDIT_EPHEMERAL !== "true") {
   // Persist the read-only operator gateway and private client configuration. No app wallet grants change.
   const env = {
     DATABASE_URL: config.databaseUrl,
@@ -237,6 +239,7 @@ try {
       privateMcpConfig: ".local/top10-mainnet.mcp.json",
     }),
   );
+  }
 } finally {
   await new Promise((resolve) => http.close(resolve));
   await store.close();

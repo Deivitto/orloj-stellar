@@ -5,6 +5,9 @@ import {
   createUIMessageStreamResponse,
   type UIMessage,
 } from "ai";
+import { stellarRequest } from "@/lib/stellar";
+import { providerFailure, chatFailureMessage } from "@/lib/session/chat-errors";
+import { changedOperations, operationReceipt } from "@/lib/session/operation-receipts";
 import { auth } from "@/lib/auth";
 import { getSession, touch, currentSessionOwner } from "@/lib/session/registry";
 
@@ -57,6 +60,11 @@ export async function POST(
     return Response.json({ error: "Session busy" }, { status: 409 });
 
   entry.busy = true;
+  const readOperations = async (): Promise<Record<string, unknown>[]> => {
+    if (process.env.ORLOJ_PRODUCT !== "stellar" || !(await currentSessionOwner(entry))) return [];
+    const state = await stellarRequest(entry.userId, entry.agentId, "state");
+    return Array.isArray(state.operations) ? state.operations : [];
+  };
   touch(entry);
 
   // A stop button or a closed tab must free the session: without the cancel it stays busy
@@ -67,20 +75,32 @@ export async function POST(
   request.signal.addEventListener("abort", onAbort, { once: true });
 
   const stream = createUIMessageStream({
-    onError: (err) => (err instanceof Error ? err.message : "Agent error"),
+    onError: () => chatFailureMessage("provider"),
     execute: async ({ writer }) => {
       const textId = randomUUID();
       writer.write({ type: "text-start", id: textId });
+      const startedAt = Date.now();
+      let before: Record<string, unknown>[] | null = null;
+      try { before = await readOperations(); } catch { /* operation panel remains available */ }
+      const receipt = async () => {
+        if (!before) return;
+        try {
+          const text = operationReceipt(changedOperations(before, await readOperations()));
+          if (text) writer.write({ type: "text-delta", id: textId, delta: text });
+        } catch { /* never guess transaction state */ }
+      };
       try {
         await entry.session.prompt(text, (delta) => {
           writer.write({ type: "text-delta", id: textId, delta });
         });
+        await receipt();
         writer.write({ type: "text-end", id: textId });
-      } catch (err) {
+      } catch {
+        await receipt();
         writer.write({ type: "text-end", id: textId });
         writer.write({
           type: "error",
-          errorText: err instanceof Error ? err.message : "Agent error",
+          errorText: chatFailureMessage(await providerFailure(entry.session.providerConfigDir(), startedAt)),
         });
         // A dead child cannot serve another turn; drop it so the next POST 410s and the UI
         // offers a restart instead of hanging.

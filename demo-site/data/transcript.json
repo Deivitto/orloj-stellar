@@ -1,0 +1,44 @@
+[
+  {
+    "startSeconds": 0,
+    "title": "From contract interface to agent action.",
+    "text": "A verified interface becomes an MCP tool. The owner sets policy. Orloj validates, simulates and confirms.",
+    "note": "Edited walkthrough from actual captured screens. The working app runs locally."
+  },
+  {
+    "startSeconds": 10,
+    "title": "Register the interface.",
+    "text": "Start with a Soroban address, XLM or an issued asset. Registration inspects the interface; it never deploys a contract or grants writes.",
+    "note": "Read-only capture of the existing registration screen."
+  },
+  {
+    "startSeconds": 20,
+    "title": "Permission is explicit.",
+    "text": "Enable balance reads and selected writes. Unsupported or asset-specific operations remain visibly excluded. Unattended spending grants are currently disabled.",
+    "note": "An enabled method is not an unattended signing grant."
+  },
+  {
+    "startSeconds": 30,
+    "title": "Read, without submitting.",
+    "text": "The same Testnet balance was read through Soroban and the classic DEX adapter. Both results matched independently checked ledger data.",
+    "note": "Recorded balance snapshot, not a current balance feed."
+  },
+  {
+    "startSeconds": 40,
+    "title": "One stroop. Confirmed.",
+    "text": "A real chat request sent 0.0000001 Testnet XLM. Orloj retained the hash and confirmed success before reporting completion.",
+    "note": "Historical confirmed transfer. No transaction is sent by this showcase."
+  },
+  {
+    "startSeconds": 50,
+    "title": "Recover the result. Never repeat the payment.",
+    "text": "A provider interruption did not erase the operation. Read-only status recovery returned the original confirmed hash and an exact fee string.",
+    "note": "Earlier provider and arithmetic failures were documented and corrected."
+  },
+  {
+    "startSeconds": 60,
+    "title": "Evidence over promises.",
+    "text": "39 confirmed Testnet transactions, including funding and setup. 168 checks passed. Eleven ranked entries audited; five have Testnet write coverage.",
+    "note": "Provider quotas, unsupported signatures and privileged roles still apply. No hosted backend or mainnet writes."
+  }
+]

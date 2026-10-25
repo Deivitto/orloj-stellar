@@ -1,0 +1,15 @@
+{
+  "project": "Defa By InvoiceMate",
+  "rank": 11,
+  "rankingFile": "ranking-expanded.json",
+  "adapterUrl": "https://raw.githubusercontent.com/DefiLlama/DefiLlama-Adapters/8697ae5c8a1ada8b0f9b76da2a0ca9ff9a5ee1c7/projects/defa/index.js",
+  "adapterRevision": "8697ae5c8a1ada8b0f9b76da2a0ca9ff9a5ee1c7",
+  "adapterSha256": "bb064fe107e5dfa366bbd4d396e12cbfc5740d8c75a63e29ff3f2040c2dd512c",
+  "contractId": "CDVVH3KWXWLVUO5OLLBBZSCZICV46PDKYA2G2HYBTWH4A6EJWTBRIXRK",
+  "network": "mainnet",
+  "scope": "TVL logger; no demonstrated lending pool interface",
+  "provenance": "Referenced by DeFiLlama TVL adapter; project-published deployment ownership independently unverified",
+  "officialProjectWebsite": "https://imdefa.com/",
+  "testnetWriteStatus": "No verified public official Testnet deployment found; no writes attempted",
+  "mainnetSubmissionAttempts": 0
+}

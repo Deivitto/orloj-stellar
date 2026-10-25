@@ -1,0 +1,53 @@
+{
+  "verifiedAt": "2026-10-25T13:43:01.27552-07:00",
+  "agentId": "9e71ea0f-19e0-436c-abd1-b8a8f126bc17",
+  "operationId": "5af6f9ce-19ef-4bdb-8e1f-32db81b29c44",
+  "state": "SUCCESS",
+  "result": {
+    "ok": true,
+    "data": null,
+    "mode": "WRITE",
+    "ledger": 5387446,
+    "network": "testnet",
+    "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "fee_charged": "7228",
+    "source_kind": "stellar_asset",
+    "function_name": "transfer",
+    "result_status": "SUBMITTED_AND_CONFIRMED",
+    "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+    "transaction_hash": "6594046f583cea6e7f2ecbb686bec325a0d86018ba3547a8a32a1296ad9eed18"
+  },
+  "idempotencyKey": "chat-depth-20261025-1",
+  "unattendedGrantsRemaining": 0,
+  "horizonEffects": [
+    {
+      "account": "GCLEKFNVDD75POJDCTVNWN7OBZZ2C6MQT5RANBFSEX6HCE6NQ26CUX3S",
+      "type": "account_debited",
+      "asset_type": "native",
+      "amount": "0.0000001"
+    },
+    {
+      "account": "GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK",
+      "type": "account_credited",
+      "asset_type": "native",
+      "amount": "0.0000001"
+    }
+  ],
+  "recipientCreditVerified": true,
+  "chatResult": {
+    "transferRequestedInBrowser": true,
+    "terminalOperationVisible": true,
+    "initialFinalAnswerPassed": false,
+    "providerFailure": "Free Groq request grew to 8165 tokens, exceeding its 8000-token TPM request limit",
+    "newTransferRequestsAfterFailure": 0,
+    "recoveryPending": false,
+    "statusRecoveryPassed": true,
+    "recoveryUsedReadOnlyOperationStatus": true,
+    "recoveredHashMatches": true,
+    "initialFeeConversionCorrect": false,
+    "correctFeeXlm": "0.0007228",
+    "feeConversionCorrectedAfterExplicitFeedback": true,
+    "interruptedResetFailedVisibly": true,
+    "endAndRestartPreservedMcpSelection": true
+  }
+}

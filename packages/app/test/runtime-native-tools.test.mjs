@@ -10,6 +10,7 @@ test("native tool wire mode preserves the exact permission boundary and rejects 
     file = join(dir, "patch.json"),
     keys = [
       "ZEROCLAW_BIN",
+      "ZEROCLAW_CONTEXT_TOKENS",
       "ORLOJ_PRODUCT",
       "ZEROCLAW_NATIVE_TOOLS",
       "ZEROCLAW_REPLAY_REASONING",
@@ -30,6 +31,7 @@ test("native tool wire mode preserves the exact permission boundary and rejects 
       ZEROCLAW_NATIVE_TOOLS: "true",
       ZEROCLAW_REPLAY_REASONING: "false",
     });
+    delete process.env.ZEROCLAW_CONTEXT_TOKENS;
     delete process.env.ZEROCLAW_MODEL_API_KEY;
     delete process.env.ZEROCLAW_MODEL_URL;
     delete process.env.ZEROCLAW_MODEL;
@@ -37,6 +39,14 @@ test("native tool wire mode preserves the exact permission boundary and rejects 
     const ops = JSON.parse(await readFile(file, "utf8")),
       at = (path) => ops.find((o) => o.path === path)?.value;
     assert.equal(at("/providers/models/custom/default/native_tools"), true);
+    assert.equal(at("/providers/models/custom/default/max_tokens"), 2048);
+    assert.equal(at("/agents/default/runtime_profile"), "orloj_stellar");
+    assert.equal(at("/runtime_profiles/orloj_stellar/max_context_tokens"), 4000);
+    assert.equal(at("/runtime_profiles/orloj_stellar/compact_context"), true);
+    assert.equal(at("/runtime_profiles/orloj_stellar/single_tool_rounds"), false);
+    process.env.ZEROCLAW_CONTEXT_TOKENS = "0";
+    await assert.rejects(applyManagedConfig(dir, []), /ZEROCLAW_CONTEXT_TOKENS/);
+    delete process.env.ZEROCLAW_CONTEXT_TOKENS;
     assert.equal(
       at("/providers/models/custom/default/replay_assistant_reasoning"),
       false,

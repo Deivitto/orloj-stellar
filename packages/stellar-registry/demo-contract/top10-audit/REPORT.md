@@ -1,5 +1,45 @@
 # Top-ten Stellar Orloj audit — 25 October 2026
 
+## Chat issues remediated — latest update
+
+The bounded runtime profile, safe provider-error messages, dead-runtime reset fallback, transcript-preserving fresh-context recovery, exact fee metadata and deterministic changed-operation receipts are implemented. A real browser fault injection stopped the isolated agent; the UI displayed the interruption warning and Restart chat context action. Restart retained history and both MCP selections, did not replay the request, and a subsequent live read recovered the original confirmed hash with fee_charged_xlm=0.0007228 without a correction prompt. The owner operation panel independently renders the same exact fee. Historical incorrect model output below is retained as evidence, not rewritten.
+
+153 registry tests, nine app tests and six mount/launcher tests passed. Production builds, typechecks and Compose validation passed; lint has zero errors and nine existing warnings. The actual pinned runtime accepted the bounded profile patch. No new payment was sent and no unattended grant was enabled during these fixes. `chat-recovery-fix-evidence.json` records scope and limits. Free-provider quota and oversized active requests remain external limits; recovery is explicit, never a silent replay. Full combined Compose startup and fresh independent review remain separate gates.
+
+
+## Deeper transaction acceptance and rank eleven — latest run
+
+Fresh live testing used a separate audit database and new disposable Testnet wallets. The existing user's wallet was used only for the explicitly approved one-stroop browser-chat transfer; its temporary unattended grant was removed afterward (zero grants remain).
+
+- Blend: deposit and withdrawal confirmed, positions checked, duplicate requests reused their hashes with no additional envelope signing or submission. A different-source-account probe failed before signing/submission.
+- DeFindex: deposit and withdrawal confirmed, shares increased/decreased; excessive withdrawal failed with CONTRACT_EXECUTION_FAILED before signing/submission. Duplicates did not sign/send again.
+- Aquarius: output trustline and swap confirmed, output-token balance increased; impossible minimum-output simulation failed before signing/submission. Duplicates did not sign/send again.
+- Each of those three also rejected unexpected JSON properties before execution. All twelve explicit safety assertions passed; exactly six transaction envelopes were signed and six submissions made in the final protocol run (`deep-testnet-results.json`).
+- Classic DEX/AMM: fresh trustline, offer creation/cancellation, pool trust, deposit and withdrawal confirmed, with offer absence and changed pool reserves/shares checked. Duplicate offer request reconciled (`deep-classic-results.json`). Fixture asset issuance is recorded separately.
+- Managed fixture roles: fifteen MCP writes confirmed across trust, authorization, minting, approval, delegated transfer, transfer, burn, delegated burn, clawback and administrator rotation. Unauthorized holder transfer and former-administrator mint were rejected without hashes. Final balances and allowance passed (`deep-managed-results.json`). These roles belong to our fixture, not another project's assets.
+
+A first negative test incorrectly assumed Blend must reject a withdrawal larger than the position. It instead capped the withdrawal and succeeded. The failed test assumption, all three successful protocol transactions from that run, and subsequent verification are preserved in `deep-blend-capped-withdrawal-probe.json`; this is not counted as a passing negative assertion.
+
+The read-only independent RPC re-query in `deep-transaction-verification.json` confirms **39 unique transactions SUCCESS**, including all recorded setup/funding, the capped-withdrawal probe and browser transfer. This is 39 transactions, not 39 integrations or business operations. Fresh fees totaled 1411992 stroops (0.1411992 test XLM); historical cold-state fees can be much larger, so the fee policy is still required. No Mainnet writes occurred.
+
+### Browser chat transaction and recovery
+
+A real Groq/ZeroClaw browser prompt sent exactly one base unit (0.0000001 XLM) from the existing managed wallet to the owner's Freighter address. Operation `5af6f9ce-19ef-4bdb-8e1f-32db81b29c44` is SUCCESS; transaction `6594046f583cea6e7f2ecbb686bec325a0d86018ba3547a8a32a1296ad9eed18` is independently SUCCESS. Horizon effects verify the recipient's exact one-stroop credit; fee was 7228 stroops (0.0007228 XLM).
+
+The initial chat turn's final answer failed after submission: the accumulated model request reached 8165 tokens against Groq's free 8000-token limit. Orloj retained the confirmed operation visibly and did not automatically resubmit. Resetting the already-failed runtime returned a visible reset failure; ending/restarting the session restored the preserved MCP selection. A status-only prompt after ending/restarting succeeded and returned the same confirmed hash without another transfer. The model initially misconverted the integer fee as 0.00007228 XLM; after explicit correction it displayed the correct 0.0007228 XLM. The correct integer fee never changed. Both the original failure and correction are retained in screenshots and chat-transfer-evidence.json. This is not claimed as an uninterrupted chat pass. No paid provider changes or extra keys were used.
+
+### Rank eleven: DeFa by InvoiceMate
+
+The refreshed DeFiLlama Stellar TVL ranking (`ranking-expanded.json`) still places DeFa by InvoiceMate eleventh at approximately $4.013 million. The pinned DeFiLlama adapter identifies `CDVVH3KWXWLVUO5OLLBBZSCZICV46PDKYA2G2HYBTWH4A6EJWTBRIXRK` as a **TVL logger**. Its deployed WASM specification was ingested; all 16 declared signatures are eligible, with only three explicitly permitted reads exposed as MCP tools. Real authenticated HTTP MCP calls to get_active_tvl, get_tvl and read_version passed; get_active_tvl returned 40149598600000 base units, or 4,014,959.86 USD at the adapter's seven decimals. Values may differ from the cached ranking snapshot.
+
+This proves logger interoperability, not lending/investment integration. Project-published ownership attribution and a public official Stellar Testnet deployment were not established. No privileged logger writes or Mainnet transactions were attempted. Adapter revision/checksum, code hash, full inventory and responses are in `rank11-provenance.json`, `rank11-discovery.json` and `rank11-mcp-results.json`.
+
+The rank-eleven read-only gateway is running on loopback port 3013. Its private client configuration is `.local/rank11-mainnet.mcp.json`; do not commit or share its token. Restart with `node --env-file=.local/rank11-mainnet.env packages/stellar-registry/dist/src/cli.js serve`. `rank11-endpoint-evidence.json` confirms its three-tool inventory and successful live read.
+
+Remaining chat findings: free-provider request/quota limits, generic provider-error wording after a committed write, reset failure on an already-destroyed runtime, and model-side decimal arithmetic. Durable status recovery and the owner operation list prevent these from being mistaken for a failed ledger transfer, but the conversation is not yet issue-free.
+
+These are manual live acceptance runs. Hosted CI remains disabled. The remaining top-ten write/provenance gaps and independent-review/full-stack gaps listed below remain open.
+
 ## Latest browser-chat acceptance
 
 Live read chat now works through the configured Groq model and an isolated Docker agent runtime. Soroban XLM balance and classic DEX account_balances agree with Horizon at 99999993056 base units (9999.9993056 Testnet XLM). The native runtime and provider compatibility fixes, screenshots and quota findings are recorded in `../browser-chat-evidence.json` and `infra/local/VERIFICATION.md`. No transaction was submitted. Full Compose startup, chat-triggered write acceptance and fresh independent review remain separate gates; the historical browser-chat blocker below has been resolved for these reads.

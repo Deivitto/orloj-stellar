@@ -1,0 +1,252 @@
+{
+  "testedAt": "2026-10-25T20:36:28.646Z",
+  "network": "testnet",
+  "maximumFeeStroops": "3000000000",
+  "instructionLeeway": 1000000,
+  "wallet": "GDG4Y5HO577XMIA4BHPWN5ZESMXN2HNVRZ3YPKAF4IFVOQZDNBM7YTBR",
+  "funding": [
+    {
+      "source": "Stellar Friendbot",
+      "hash": "0788d47775988ee4090739a7c196b1537d79e6df19ecde96ca64217e09604c98",
+      "address": "GDG4Y5HO577XMIA4BHPWN5ZESMXN2HNVRZ3YPKAF4IFVOQZDNBM7YTBR",
+      "rpcStatus": "SUCCESS"
+    }
+  ],
+  "projects": [
+    {
+      "project": "Blend Pools V2",
+      "contractId": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+      "source": "https://github.com/blend-capital/blend-utils/blob/main/testnet.contracts.json",
+      "checks": [
+        {
+          "name": "get_reserve_list",
+          "args": {},
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "source_kind": "wasm",
+          "interface_hash": "ceed15d432ca2bfc5bd9341e201524f0e2d32ea25409d3432d14dadcbd858529",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "function_name": "get_reserve_list",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T20:36:36.782Z",
+          "data": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+            "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+            "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+          ]
+        },
+        {
+          "name": "get_positions",
+          "args": {
+            "address": "GDG4Y5HO577XMIA4BHPWN5ZESMXN2HNVRZ3YPKAF4IFVOQZDNBM7YTBR"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "source_kind": "wasm",
+          "interface_hash": "ceed15d432ca2bfc5bd9341e201524f0e2d32ea25409d3432d14dadcbd858529",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "function_name": "get_positions",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T20:36:37.521Z",
+          "data": {
+            "collateral": [],
+            "liabilities": [],
+            "supply": []
+          }
+        },
+        {
+          "name": "submit",
+          "args": {
+            "from": "GDG4Y5HO577XMIA4BHPWN5ZESMXN2HNVRZ3YPKAF4IFVOQZDNBM7YTBR",
+            "spender": "GDG4Y5HO577XMIA4BHPWN5ZESMXN2HNVRZ3YPKAF4IFVOQZDNBM7YTBR",
+            "to": "GDG4Y5HO577XMIA4BHPWN5ZESMXN2HNVRZ3YPKAF4IFVOQZDNBM7YTBR",
+            "requests": [
+              {
+                "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                "amount": "10000000",
+                "request_type": 0
+              }
+            ]
+          },
+          "ok": true,
+          "data": {
+            "supply": [
+              [
+                0,
+                "4044793"
+              ]
+            ],
+            "collateral": [],
+            "liabilities": []
+          },
+          "mode": "WRITE",
+          "ledger": 5387403,
+          "network": "testnet",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "fee_charged": "454528",
+          "source_kind": "wasm",
+          "function_name": "submit",
+          "result_status": "SUBMITTED_AND_CONFIRMED",
+          "interface_hash": "ceed15d432ca2bfc5bd9341e201524f0e2d32ea25409d3432d14dadcbd858529",
+          "transaction_hash": "dfa5a7cc21ccdfc23f8d25209d3f33df3b901486530fac159f88aa0b36612214"
+        },
+        {
+          "name": "get_positions",
+          "args": {
+            "address": "GDG4Y5HO577XMIA4BHPWN5ZESMXN2HNVRZ3YPKAF4IFVOQZDNBM7YTBR"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "source_kind": "wasm",
+          "interface_hash": "ceed15d432ca2bfc5bd9341e201524f0e2d32ea25409d3432d14dadcbd858529",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "function_name": "get_positions",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T20:36:43.240Z",
+          "data": {
+            "collateral": [],
+            "liabilities": [],
+            "supply": [
+              [
+                0,
+                "4044793"
+              ]
+            ]
+          }
+        },
+        {
+          "name": "submit",
+          "args": {
+            "from": "GDG4Y5HO577XMIA4BHPWN5ZESMXN2HNVRZ3YPKAF4IFVOQZDNBM7YTBR",
+            "spender": "GDG4Y5HO577XMIA4BHPWN5ZESMXN2HNVRZ3YPKAF4IFVOQZDNBM7YTBR",
+            "to": "GDG4Y5HO577XMIA4BHPWN5ZESMXN2HNVRZ3YPKAF4IFVOQZDNBM7YTBR",
+            "requests": [
+              {
+                "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                "amount": "5000000",
+                "request_type": 1
+              }
+            ]
+          },
+          "ok": true,
+          "data": {
+            "supply": [
+              [
+                0,
+                "2022396"
+              ]
+            ],
+            "collateral": [],
+            "liabilities": []
+          },
+          "mode": "WRITE",
+          "ledger": 5387404,
+          "network": "testnet",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "fee_charged": "12882",
+          "source_kind": "wasm",
+          "function_name": "submit",
+          "result_status": "SUBMITTED_AND_CONFIRMED",
+          "interface_hash": "ceed15d432ca2bfc5bd9341e201524f0e2d32ea25409d3432d14dadcbd858529",
+          "transaction_hash": "f46810f417a8c164f8293ab3babfbdd18e0c764ddf16a43b0d105ed6d887455b"
+        },
+        {
+          "name": "get_positions",
+          "args": {
+            "address": "GDG4Y5HO577XMIA4BHPWN5ZESMXN2HNVRZ3YPKAF4IFVOQZDNBM7YTBR"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "source_kind": "wasm",
+          "interface_hash": "ceed15d432ca2bfc5bd9341e201524f0e2d32ea25409d3432d14dadcbd858529",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "function_name": "get_positions",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T20:36:48.926Z",
+          "data": {
+            "collateral": [],
+            "liabilities": [],
+            "supply": [
+              [
+                0,
+                "2022396"
+              ]
+            ]
+          }
+        }
+      ],
+      "tools": [
+        "get_reserve_list",
+        "get_positions",
+        "submit"
+      ],
+      "depositPositionIncreased": true
+    }
+  ],
+  "transactions": [
+    {
+      "project": "Blend Pools V2",
+      "function": "submit",
+      "hash": "dfa5a7cc21ccdfc23f8d25209d3f33df3b901486530fac159f88aa0b36612214",
+      "executorStatus": "SUBMITTED_AND_CONFIRMED",
+      "rpcStatus": "SUCCESS",
+      "ledger": 5387403
+    },
+    {
+      "project": "Blend Pools V2",
+      "function": "submit",
+      "hash": "f46810f417a8c164f8293ab3babfbdd18e0c764ddf16a43b0d105ed6d887455b",
+      "executorStatus": "SUBMITTED_AND_CONFIRMED",
+      "rpcStatus": "SUCCESS",
+      "ledger": 5387404
+    }
+  ],
+  "safetyChecks": [
+    {
+      "project": "Blend Pools V2",
+      "check": "rejected_before_signing_and_submission",
+      "name": "get_reserve_list",
+      "error_code": "INVALID_ARGUMENT",
+      "expected": [
+        "INVALID_ARGUMENT"
+      ],
+      "ok": true
+    },
+    {
+      "project": "Blend Pools V2",
+      "check": "duplicate_reconciles_without_signing_or_sending",
+      "name": "submit",
+      "ok": true,
+      "hash": "dfa5a7cc21ccdfc23f8d25209d3f33df3b901486530fac159f88aa0b36612214"
+    },
+    {
+      "project": "Blend Pools V2",
+      "check": "duplicate_reconciles_without_signing_or_sending",
+      "name": "submit",
+      "ok": true,
+      "hash": "f46810f417a8c164f8293ab3babfbdd18e0c764ddf16a43b0d105ed6d887455b"
+    },
+    {
+      "project": "Blend Pools V2",
+      "check": "rejected_before_signing_and_submission",
+      "name": "submit",
+      "ok": false
+    }
+  ],
+  "interpretation": "The probe incorrectly expected an oversized Blend withdrawal to fail. The protocol capped withdrawal at the available position and returned success. This is an invalid negative-test assumption, not an Orloj failure. The subsequent deep run uses a different source account to test rejection.",
+  "unexpectedProbeTransaction": {
+    "hash": "8a8b1e671919469944bfeb02fbdfd4d843340928645faea826b784204f8e722c",
+    "executorStatus": "SUBMITTED_AND_CONFIRMED"
+  }
+}

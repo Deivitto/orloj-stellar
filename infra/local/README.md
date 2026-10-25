@@ -40,8 +40,10 @@ tools. Registry readiness is <http://localhost:3002/readyz>.
 The optional in-app chat needs a compatible model endpoint and private provider
 key in `ZEROCLAW_MODEL_API_KEY`, with `ZEROCLAW_MODEL_URL` and `ZEROCLAW_MODEL`.
 The default provider remains 0G. Restart the app after changing configuration.
-Live natural-language chat acceptance is deferred at the user's request; MCP
-execution does not need a model key. There is no mocked chat acceptance.
+Live Groq/ZeroClaw browser reads, a one-stroop chat-requested transfer and
+read-only recovery have been verified; see the latest [verification notes](VERIFICATION.md).
+MCP execution itself does not need a model key. Free-provider quotas still apply;
+there is no mocked chat acceptance.
 
 ## Wallets and amounts
 
@@ -179,3 +181,7 @@ AGENT_BIND_ROOT="$HOME/.orloj/agents" AGENT_NETWORK=bridge \
 ```
 
 The free Groq account used in live acceptance has an 8,000 token/minute limit. Longer tool conversations can reach HTTP 429 even when a request is smaller than the model's context window. The current private test-agent configuration uses `[reliability] provider_backoff_ms = 10000` and `provider_retries = 4` to give bounded provider retries time to wait. Keep operator settings above the app-managed marker; the app preserves them. These settings concern model HTTP calls, never Stellar submission retries. Free-provider quotas can still delay or reject chat; the UI reports that explicitly. No additional keys, account rotation or paid upgrade is required by this configuration.
+
+Stellar chat now selects a dedicated bounded runtime profile instead of the inherited unbounded template. It retains eight complete history turns, uses compact bootstrap, limits output to 2048 tokens, and starts pruning at an estimated 4000 context tokens (`ZEROCLAW_CONTEXT_TOKENS`, range 1000..128000). Tool/result groups for the active turn are not replayed by the app. Large MCP schemas or provider quotas can still exceed external limits; select fewer MCPs or restart chat context. Restart context preserves the visible transcript and MCP selection with a context-reset divider and never repeats a prompt. Reset clears the conversation after confirmation and can recreate a dead runtime through normal owner/credential checks.
+
+Provider errors distinguish request size from temporary quota when fresh runtime diagnostics are available; only a bounded tail is inspected and no raw body is returned. New or changed durable operations append registry-sourced receipts even when the model final answer fails. The owner panel and MCP operation status show exact `fee_charged` stroops plus `fee_charged_xlm`; 7228 stroops is 0.0007228 XLM. These values do not depend on model arithmetic. Do not infer transaction failure from a chat error: inspect operation status before requesting another write.

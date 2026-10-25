@@ -405,7 +405,7 @@ try {
   if (signer) await new Promise((r) => signer.close(r));
   evidence.schema = schema; // retained locally for recovery/history; no private signing material is exported.
   await writeFile(
-    new URL(
+    process.env.AUDIT_OUTPUT_FILE ?? new URL(
       "../demo-contract/" +
         (wasmMode ? "managed-wasm-evidence" : "managed-calls-evidence") +
         ".json",
