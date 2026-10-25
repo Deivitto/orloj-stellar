@@ -1,9 +1,5 @@
 name: Stellar registry
 on:
-  push:
-    paths: ['packages/stellar-registry/**', 'packages/app/**', 'infra/local/**', 'scripts/**', 'pnpm-lock.yaml', '.github/workflows/stellar.yml']
-  pull_request:
-    paths: ['packages/stellar-registry/**', 'packages/app/**', 'infra/local/**', 'scripts/**', 'pnpm-lock.yaml', '.github/workflows/stellar.yml']
   workflow_dispatch:
 permissions:
   contents: read
