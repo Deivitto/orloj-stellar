@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import ReactMarkdown, { type Components } from "react-markdown";
@@ -76,7 +76,7 @@ export function ChatBox({
     [sessionId],
   );
 
-  const { messages, sendMessage, status, stop, error, setMessages } = useChat<UIMessage>({
+  const { messages, sendMessage, status, stop, error, setMessages, clearError } = useChat<UIMessage>({
     id: sessionId,
     messages: initialMessages,
     transport,
@@ -94,7 +94,7 @@ export function ChatBox({
   // One write per settled turn, not per delta.
   const lastPersisted = useRef<number>(-1);
   useEffect(() => {
-    if (status !== "ready") return;
+    if (status !== "ready" && status !== "error") return;
     if (messages.length === lastPersisted.current) return;
     lastPersisted.current = messages.length;
     onMessages(messages);
@@ -108,6 +108,7 @@ export function ChatBox({
     clearRef.current = () => {
       setMessages([]);
       setExpired(false);
+      clearError();
       // The caller has already written the empty transcript, so the persist effect has
       // nothing left to do; without this it would fire once more on the way down to zero.
       lastPersisted.current = 0;
@@ -115,7 +116,7 @@ export function ChatBox({
     return () => {
       clearRef.current = null;
     };
-  }, [clearRef, setMessages]);
+  }, [clearRef, setMessages, clearError]);
 
   // Best-effort teardown so a closed tab does not leave a zeroclaw process alive until the
   // sweeper notices. Two paths, because neither covers the other:
@@ -152,6 +153,22 @@ export function ChatBox({
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages, busy]);
 
+  const contextDivider = (
+    <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              fontSize: 11.5,
+              color: "var(--ink-soft)",
+            }}
+          >
+            <span style={{ flex: 1, borderTop: "1px dashed var(--line)" }} />
+            <span className="smallcaps">{t("session.dividerContextReset")}</span>
+            <span style={{ flex: 1, borderTop: "1px dashed var(--line)" }} />
+          </div>
+  );
+
   const submit = () => {
     const text = input.trim();
     if (!text || busy) return;
@@ -176,29 +193,15 @@ export function ChatBox({
           gap: 12,
         }}
       >
-        {divider && messages.length > 0 ? (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              fontSize: 11.5,
-              color: "var(--ink-soft)",
-            }}
-          >
-            <span style={{ flex: 1, borderTop: "1px dashed var(--line)" }} />
-            <span className="smallcaps">{t("session.dividerContextReset")}</span>
-            <span style={{ flex: 1, borderTop: "1px dashed var(--line)" }} />
-          </div>
-        ) : null}
 
-        {messages.map((m) => {
+        {messages.map((m, index) => {
           const mine = m.role === "user";
           const body = textOf(m);
           if (!body) return null;
           return (
+            <Fragment key={m.id}>
+            {divider && index === initialMessages.length ? contextDivider : null}
             <div
-              key={m.id}
               className={mine ? undefined : "chat-md"}
               style={{
                 alignSelf: mine ? "flex-end" : "flex-start",
@@ -227,8 +230,10 @@ export function ChatBox({
                 </ReactMarkdown>
               )}
             </div>
+            </Fragment>
           );
         })}
+        {divider && messages.length === initialMessages.length ? contextDivider : null}
 
         {busy ? (
           <div style={{ fontSize: 12.5, color: "var(--ink-soft)" }}>
@@ -256,7 +261,11 @@ export function ChatBox({
             </Btn>
           </div>
         ) : error && !expired ? (
-          <div style={{ fontSize: 12.5, color: "var(--wine)" }}>{error.message}</div>
+          <div role="alert" style={{ fontSize: 12.5, color: "var(--wine)" }}>
+            <p>{error.message}</p>
+            <Btn size="sm" kind="ghost" onClick={onExpired}>Restart chat context</Btn>
+            <p>Your visible transcript and MCP selection are retained. This does not repeat the failed request.</p>
+          </div>
         ) : null}
       </div>
 

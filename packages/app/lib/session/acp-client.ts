@@ -38,6 +38,10 @@ export class ZeroClawAcpSession {
     this.workspaceDir = opts.workspaceDir;
   }
 
+  providerConfigDir(): string {
+    return this.configDir;
+  }
+
   stderrTail(): string {
     return this.stderrBuf;
   }

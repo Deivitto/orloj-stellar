@@ -268,7 +268,31 @@ export const applyManagedConfig = async (
     { op: "add", path: "/agents/default/skill_bundles", value: [SKILL_BUNDLE] },
   ];
   if (process.env.ORLOJ_PRODUCT === "stellar") {
+    const contextTokens = Number(process.env.ZEROCLAW_CONTEXT_TOKENS ?? "4000");
+    if (!Number.isInteger(contextTokens) || contextTokens < 1000 || contextTokens > 128000)
+      throw new Error("ZEROCLAW_CONTEXT_TOKENS must be an integer from 1000 to 128000");
+    const runtimeSettings = {
+      agentic: true,
+      max_tool_iterations: 12,
+      max_actions_per_hour: 120,
+      compact_context: true,
+      max_history_messages: 8,
+      max_context_tokens: contextTokens,
+      single_tool_rounds: false,
+      max_system_prompt_chars: 6000,
+      keep_tool_context_turns: 2,
+      "history_pruning/enabled": true,
+      "history_pruning/max_tokens": contextTokens,
+      "history_pruning/keep_recent": 2,
+      "history_pruning/collapse_tool_results": true,
+      "context_compression/enabled": false,
+    };
+    ops.push(...Object.entries(runtimeSettings).map(([field, value]) => ({
+      op: "add", path: `/runtime_profiles/orloj_stellar/${field}`, value,
+    })));
     ops.push(
+      { op: "add", path: "/agents/default/runtime_profile", value: "orloj_stellar" },
+      { op: "add", path: "/providers/models/custom/default/max_tokens", value: 2048 },
       { op: "add", path: "/risk_profiles/yolo/level", value: "supervised" },
       {
         op: "add",

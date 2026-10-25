@@ -15,13 +15,15 @@ export async function POST(
   if (entry.busy) return Response.json({ error: "Session busy" }, { status: 409 });
 
   try {
-    // session/close then session/new on the SAME process: the client's sessionId does not
-    // change, so the chat transport keeps working and only the stored messages are dropped.
-    const acpSessionId = await resetSession(id, session.user.id);
-    if (!acpSessionId) return Response.json({ error: "Session expired" }, { status: 410 });
-    return Response.json({ acpSessionId });
-  } catch (err) {
-    console.error("[session] reset failed", err);
+    // Prefer a warm context reset; a dead child is recreated with a new session ID.
+    // Neither path replays prompts or changes durable Stellar operations.
+    const result = await resetSession(id, session.user.id);
+    if (!result) return Response.json({ error: "Session expired" }, { status: 410 });
+    return Response.json(result);
+  } catch (error) {
+    if (error instanceof Error && error.message === "SESSION_BUSY")
+      return Response.json({ error: "Session busy" }, { status: 409 });
+    console.error("[session] reset failed");
     return Response.json({ error: "Failed to reset session" }, { status: 500 });
   }
 }

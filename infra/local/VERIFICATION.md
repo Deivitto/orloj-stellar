@@ -1,5 +1,18 @@
 # Local product verification — 2026-10-25
 
+## Chat recovery fixes — 25 October 2026
+
+Stellar chat now replaces the inherited 128000-token unbounded runtime profile with a dedicated compact profile: estimated context budget 4000, eight complete history turns, output cap 2048. The pinned 0.8.6 runtime accepted the actual leaf-level patch. `ZEROCLAW_CONTEXT_TOKENS` is operator-configurable; provider quotas and very large active prompts/tool schemas still impose external limits.
+
+Provider errors are categorized from a bounded fresh diagnostic tail without returning raw bodies. The UI warns that transactions may already be pending/confirmed and offers **Restart chat context**. Restart preserves the visible transcript and MCP selections, displays a reset divider, and never replays a request. Reset also supports a dead child through normal ownership/credential checks; unit coverage checks warm reset, respawn and revoked-owner failure.
+
+Exact registry operation fees now include `fee_charged_xlm` without modifying stored history. The owner panel renders 7228 stroops as 0.0007228 XLM. Changed operations append deterministic, labeled registry receipts to chat, including on provider failure; rendering permits only fixed validated fields. Error-ending messages are persisted, and reset clears the old UI error.
+
+Manual browser fault injection stopped the real isolated runtime, produced the safe interruption warning and recovery button, and retained the previously confirmed operation. No write grant was enabled and no additional payment was requested. Final recovery evidence is recorded in `packages/stellar-registry/demo-contract/top10-audit/chat-recovery-fix-evidence.json`.
+
+153 registry tests passed. Nine app checks and six mount/launcher checks passed, along with app/registry production builds, typechecks and Compose validation. Lint has zero errors and nine existing warnings; the existing unrelated branding build trace warning remains. Hosted CI remains disabled.
+
+
 ## Latest: browser read chat verified
 
 A real authenticated browser conversation used the configured Groq gpt-oss-20b provider, the pinned isolated Docker agent runtime, and the app-authenticated MCP endpoints. Soroban XLM balance and classic DEX account_balances both returned 99999993056 base units = 9999.9993056 XLM, matching a separate Horizon account lookup. No write operation was created; existing history remained four successes and one rejection, and unattended grants stayed disabled. Screenshots and the detailed JSON evidence live in `packages/stellar-registry/demo-contract/browser-chat-*`.

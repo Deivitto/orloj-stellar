@@ -1,0 +1,53 @@
+{
+  "verifiedAt": "2026-10-25T21:05:22.588400+00:00",
+  "scope": "Real browser fault injection and live read-only Groq/MCP recovery; no new transfer",
+  "agentId": "9e71ea0f-19e0-436c-abd1-b8a8f126bc17",
+  "operationId": "5af6f9ce-19ef-4bdb-8e1f-32db81b29c44",
+  "transactionHash": "6594046f583cea6e7f2ecbb686bec325a0d86018ba3547a8a32a1296ad9eed18",
+  "feeStroops": "7228",
+  "feeXlm": "0.0007228",
+  "runtimeProfile": {
+    "name": "orloj_stellar",
+    "maxContextTokens": 4000,
+    "maxHistoryTurns": 8,
+    "compactContext": true,
+    "maxOutputTokens": 2048,
+    "pinnedCliPatchAccepted": true,
+    "singleToolRounds": false
+  },
+  "browser": {
+    "deliberateRuntimeStop": true,
+    "safeInterruptionWarningVisible": true,
+    "restartContextButtonVisible": true,
+    "visibleTranscriptPreserved": true,
+    "mcpSelectionsPreserved": true,
+    "contextResetNoticeVisible": true,
+    "noAutomaticReplay": true,
+    "liveStatusRecoveryPassed": true,
+    "exactFeeReturnedWithoutCorrection": true,
+    "finalBuildStatusQueryPassed": true,
+    "latestResponseHasSingleToolFallbackNotice": false,
+    "finalExactFeeTablePassed": true
+  },
+  "validation": {
+    "registryTestsPassed": 153,
+    "appTestsPassed": 9,
+    "mountLauncherTestsPassed": 6,
+    "appBuildPassed": true,
+    "registryBuildPassed": true,
+    "lintErrors": 0,
+    "existingLintWarnings": 9,
+    "composeConfigPassed": true
+  },
+  "limits": [
+    "Free-provider rate limits and large active prompts/tool schemas remain external constraints.",
+    "Dead-runtime Reset fallback is covered by unit tests; browser fault injection exercised the non-destructive Restart context path.",
+    "No new live transfer was sent during these fixes; changed-operation receipt rendering is covered by unit tests."
+  ],
+  "newSubmissionCount": 0,
+  "unattendedGrantsRemaining": 0,
+  "screenshots": [
+    "chat-recovery-interruption.jpg",
+    "chat-recovery-fixed.jpg"
+  ]
+}

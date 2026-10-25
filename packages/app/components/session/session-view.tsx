@@ -170,7 +170,7 @@ export function SessionView({
   }, []);
 
   const start = useCallback(
-    async (mcpNames: string[] | undefined) => {
+    async (mcpNames: string[] | undefined, freshContext = false) => {
       // localStorage is read here, in a callback — never during render, which would be a
       // hydration mismatch under Next 16's server render of this component.
       const stored = readTranscript(userId, agentId);
@@ -184,7 +184,7 @@ export function SessionView({
           body: JSON.stringify({
             agentId,
             ...(mcpNames ? { mcpNames } : {}),
-            ...(stored.acpSessionId ? { acpSessionId: stored.acpSessionId } : {}),
+            ...(!freshContext && stored.acpSessionId ? { acpSessionId: stored.acpSessionId } : {}),
           }),
         });
         const payload = (await res.json()) as StartResponse;
@@ -331,13 +331,13 @@ export function SessionView({
         );
         return;
       }
-      const { acpSessionId } = (await res.json()) as { acpSessionId: string };
+      const { acpSessionId, sessionId: nextSessionId } = (await res.json()) as { acpSessionId: string; sessionId: string };
       writeTranscript(userId, agentId, { acpSessionId, messages: [] });
       setRestored([]);
       setDivider(false);
-      // In place, not by remounting: the process — and so the client's sessionId — is
-      // unchanged, which is the point of Reset.
+      // Clear in place for a healthy child; switch transport if recovery respawned it.
       clearChat.current?.();
+      if (nextSessionId !== sessionId) setSessionId(nextSessionId);
     } catch {
       setResetError(t("session.resetFailed"));
     } finally {
@@ -437,7 +437,7 @@ export function SessionView({
           initialMessages={restored}
           divider={divider}
           onMessages={persist}
-          onExpired={() => void start(undefined)}
+          onExpired={() => void start(undefined, true)}
           onBusyChange={setTurnBusy}
           clearRef={clearChat}
           header={

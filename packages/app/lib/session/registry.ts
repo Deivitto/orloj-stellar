@@ -1,3 +1,4 @@
+import { resetConversation } from "./reset-conversation";
 import {assertRuntimeReady} from "./runtime-readiness";
 import { getPool } from "@/lib/db";
 import { randomUUID } from "node:crypto";
@@ -263,17 +264,29 @@ export const createSession = async (opts: {
   return promise;
 };
 
-// Keeps the process and its warm MCP connections; swaps in a new conversation.
+// Keeps a healthy child warm; recreates a failed child without replaying prompts.
 export const resetSession = async (
   sessionId: string,
   userId: string,
-): Promise<string | null> => {
+): Promise<{ sessionId: string; acpSessionId: string } | null> => {
   const entry = getSession(sessionId, userId);
-  if (!entry || !(await currentSessionOwner(entry))) return null;
-  const next = await entry.session.resetSession();
-  entry.acpSessionId = next;
-  touch(entry);
-  return next;
+  if (!entry) return null;
+  if (entry.busy) throw new Error("SESSION_BUSY");
+  entry.busy = true;
+  try {
+    if (!(await currentSessionOwner(entry))) return null;
+    const next = await resetConversation(sessionId,
+      () => entry.session.resetSession(),
+      () => createSession({ agentId: entry.agentId, userId, mcpNames: entry.mcps.map(m => m.mcpName) }),
+    );
+    if (next.sessionId === sessionId) {
+      entry.acpSessionId = next.acpSessionId;
+      touch(entry);
+    }
+    return next;
+  } finally {
+    entry.busy = false;
+  }
 };
 
 export const currentSessionOwner = async (

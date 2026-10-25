@@ -19,7 +19,7 @@ import { Executor, argumentsFor } from "./executor.js";
 import { BrowserSigner } from "./browser-signer.js";
 import { managedSigner } from "./managed-signer.js";
 import { ingest } from "./ingestion.js";
-import { ingestAsset } from "./assets.js";
+import { formatAmount, ingestAsset } from "./assets.js";
 import { fail, envelope, RegistryError } from "./errors.js";
 import type { Config } from "./config.js";
 import type { ContractInterface, FunctionModel } from "./model.js";
@@ -660,6 +660,8 @@ export class Product {
     return o.result
       ? {
           ...o.result,
+          ...(typeof o.result.fee_charged === "string" && /^\d+$/.test(o.result.fee_charged)
+            ? { fee_charged_xlm: formatAmount(o.result.fee_charged, 7) } : {}),
           result_status: o.result.result_status ?? o.state,
           operation_id: o.id,
           can_cancel: false,

@@ -1,5 +1,12 @@
 # Top-ten Stellar Orloj audit — 25 October 2026
 
+## Chat issues remediated — latest update
+
+The bounded runtime profile, safe provider-error messages, dead-runtime reset fallback, transcript-preserving fresh-context recovery, exact fee metadata and deterministic changed-operation receipts are implemented. A real browser fault injection stopped the isolated agent; the UI displayed the interruption warning and Restart chat context action. Restart retained history and both MCP selections, did not replay the request, and a subsequent live read recovered the original confirmed hash with fee_charged_xlm=0.0007228 without a correction prompt. The owner operation panel independently renders the same exact fee. Historical incorrect model output below is retained as evidence, not rewritten.
+
+153 registry tests, nine app tests and six mount/launcher tests passed. Production builds, typechecks and Compose validation passed; lint has zero errors and nine existing warnings. The actual pinned runtime accepted the bounded profile patch. No new payment was sent and no unattended grant was enabled during these fixes. `chat-recovery-fix-evidence.json` records scope and limits. Free-provider quota and oversized active requests remain external limits; recovery is explicit, never a silent replay. Full combined Compose startup and fresh independent review remain separate gates.
+
+
 ## Deeper transaction acceptance and rank eleven — latest run
 
 Fresh live testing used a separate audit database and new disposable Testnet wallets. The existing user's wallet was used only for the explicitly approved one-stroop browser-chat transfer; its temporary unattended grant was removed afterward (zero grants remain).
