@@ -17,6 +17,7 @@ const schema = z
     simulationSource: z.string(),
     writeMode: z.boolean().default(false),
     signerSecret: z.string().optional(),
+    externalSignerAddress: z.string().optional(),
     maxFee: z
       .string()
       .regex(/^[1-9][0-9]*$/)
@@ -54,12 +55,19 @@ export function parseConfig(input: unknown): Config {
   }
   if (c.writeMode) {
     if (c.network !== "testnet") fail("WRITE_NOT_PERMITTED");
-    if (!c.signerSecret) fail("SIGNER_NOT_CONFIGURED");
-    try {
-      Keypair.fromSecret(c.signerSecret);
-    } catch {
+    if (!!c.signerSecret === !!c.externalSignerAddress)
       fail("SIGNER_NOT_CONFIGURED");
-    }
+    if (
+      c.externalSignerAddress &&
+      !StrKey.isValidEd25519PublicKey(c.externalSignerAddress)
+    )
+      fail("SIGNER_NOT_CONFIGURED");
+    if (c.signerSecret)
+      try {
+        Keypair.fromSecret(c.signerSecret);
+      } catch {
+        fail("SIGNER_NOT_CONFIGURED");
+      }
     if (!c.maxFee) fail("FEE_POLICY_REJECTED");
   }
   return {

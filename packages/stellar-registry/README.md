@@ -81,3 +81,24 @@ Unit tests run offline. PostgreSQL tests require `TEST_DATABASE_URL` and otherwi
 ## Additional stable service errors
 
 Alongside the master specification's codes, service infrastructure uses `STALE_INTERFACE`, `UNAUTHORIZED`, `RATE_LIMITED`, and `INTERNAL_ERROR`. All responses carry sanitized public messages. Authentication errors return HTTP 401, principal-hidden interfaces return 404, origin violations return 403, and rate limits return 429. Contract execution errors use the MCP `isError` result and structured error envelope.
+
+## Test with your Freighter wallet
+
+Use the installed browser wallet without exporting its private key or recovery phrase:
+
+```sh
+cd packages/stellar-registry
+pnpm build
+pnpm wallet:read YOUR_PUBLIC_G_ADDRESS
+pnpm wallet:test YOUR_PUBLIC_G_ADDRESS
+```
+
+The read command verifies the public account balance, MCP discovery, address conversion, and the authorization guard. The interactive command opens a local operator harness at `http://127.0.0.1:3003`. Open it in Brave/Chrome with Freighter installed, connect the expected wallet on Testnet, and click **Run counter test**. Approve the signing request within 45 seconds. This makes exactly one counter increment through an authenticated MCP client, verifies the confirmed transaction's source account, and repeats the idempotency key to verify reconciliation without another signature. It does not transfer USDC or XLM; the counter write consumes a testnet transaction fee.
+
+These commands use `DATABASE_URL` from the environment, falling back to the existing `.env.demo` database configuration, and the deployed fixture in `demo-contract/deployment.json`. Run the earlier demo setup/deployment commands first for a fresh installation. The private signing key stays inside Freighter. The public address may belong to a different account from the server-side demo key.
+
+The browser SDK is pinned and served locally from the installed package. Signing requests and responses stay in a separate operator-only channel, outside MCP tool arguments/results. The harness enforces loopback binding, exact Host/Origin checks, a same-site HttpOnly session cookie, a custom request header, CSP, and a single test run per process. The signer verifies that the wallet returned the exact requested transaction and a valid signature from the configured address. It rejects changed payloads, wrong signers/networks, declined requests, and expired jobs. SDK-generated authorization preimages use the same internal callback channel.
+
+Keep this operator harness on loopback. It injects `BrowserSigner` into the existing executor; the normal service CLI retains its environment-signer setup. Each explicit process restart can start a new test, subject to the durable account reservation rules. Use Ctrl+C to close the local harness and revoke its temporary MCP credential.
+
+Evidence is written to `demo-contract/wallet-read-evidence.json` and `demo-contract/freighter-evidence.json`, containing public account/transaction data only. Built-in USDC contract support remains a separate adapter task; this wallet test uses the WASM counter contract.

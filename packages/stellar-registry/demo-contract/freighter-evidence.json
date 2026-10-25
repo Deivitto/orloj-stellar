@@ -1,0 +1,103 @@
+{
+  "network": "testnet",
+  "wallet": "GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK",
+  "contractId": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+  "testedAt": "2026-10-25T13:02:54.185Z",
+  "checks": [
+    {
+      "check": "mcp_discovery",
+      "ok": true,
+      "tools": [
+        "count",
+        "increment",
+        "authorized",
+        "echo_address"
+      ]
+    },
+    {
+      "check": "read_before",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "count",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T13:02:54.185Z",
+      "data": 2
+    },
+    {
+      "check": "wallet_address",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "echo_address",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T13:02:54.741Z",
+      "data": "GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK"
+    },
+    {
+      "check": "authorization_guard",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "authorized",
+      "ok": false,
+      "error_code": "AUTHORIZATION_REQUIRED",
+      "retryable": false,
+      "human_message": "This function requires authorization that is not configured."
+    },
+    {
+      "check": "confirmed_write",
+      "ok": true,
+      "data": 3,
+      "mode": "WRITE",
+      "ledger": 5381960,
+      "network": "testnet",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "fee_charged": "2921",
+      "function_name": "increment",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "transaction_hash": "22e703517be5032f4cf17bed55dc1d27f76f8293b1a9c7cd11966108bb691f1d"
+    },
+    {
+      "check": "wallet_signature_proof",
+      "ok": true,
+      "source_account": "GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK",
+      "transaction_hash": "22e703517be5032f4cf17bed55dc1d27f76f8293b1a9c7cd11966108bb691f1d",
+      "freighter_signatures": 1
+    },
+    {
+      "check": "duplicate_reconciled",
+      "ok": true,
+      "data": 3,
+      "mode": "WRITE",
+      "ledger": 5381960,
+      "network": "testnet",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "fee_charged": "2921",
+      "function_name": "increment",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "transaction_hash": "22e703517be5032f4cf17bed55dc1d27f76f8293b1a9c7cd11966108bb691f1d"
+    },
+    {
+      "check": "read_after",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "count",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T13:03:09.544Z",
+      "data": 3
+    }
+  ],
+  "harnessStartedAt": "2026-10-25T12:35:07.175Z",
+  "completedAt": "2026-10-25T13:03:09.544Z"
+}

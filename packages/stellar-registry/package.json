@@ -12,18 +12,21 @@
     "contract:build": "stellar contract build --manifest-path demo-contract/Cargo.toml --out-dir demo-contract/artifacts --locked --optimize=false",
     "demo:setup": "node scripts/setup-testnet.mjs",
     "demo:deploy": "node scripts/deploy-testnet.mjs",
-    "demo": "node scripts/demo-testnet.mjs"
+    "demo": "node scripts/demo-testnet.mjs",
+    "wallet:test": "node scripts/test-freighter.mjs",
+    "wallet:read": "node scripts/test-wallet-read.mjs"
   },
   "dependencies": {
-    "@stellar/stellar-sdk": "17.3.0",
     "@modelcontextprotocol/sdk": "1.32.2",
-    "zod": "4.6.7",
-    "pg": "8.23.1"
+    "@stellar/freighter-api": "6.0.1",
+    "@stellar/stellar-sdk": "17.3.0",
+    "pg": "8.23.1",
+    "zod": "4.6.7"
   },
   "devDependencies": {
-    "vitest": "5.0.5",
-    "typescript": "7.0.2",
     "@types/node": "26.6.5",
-    "@types/pg": "8.23.1"
+    "@types/pg": "8.23.1",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5"
   }
 }

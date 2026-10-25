@@ -1,0 +1,75 @@
+{
+  "testedAt": "2026-10-25T12:26:34.176Z",
+  "network": "testnet",
+  "wallet": "GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK",
+  "contractId": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+  "checks": [
+    {
+      "check": "wallet_assets",
+      "ok": true,
+      "balances": [
+        {
+          "asset": "USDC",
+          "issuer": "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+          "balance": "20.0000000"
+        },
+        {
+          "asset": "XLM",
+          "balance": "9999.9999900"
+        }
+      ]
+    },
+    {
+      "check": "mcp_discovery",
+      "ok": true,
+      "tools": [
+        "count",
+        "authorized",
+        "echo_address"
+      ],
+      "simulation_source": "GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK"
+    },
+    {
+      "check": "contract_read",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "count",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T12:26:36.120Z",
+      "data": 2
+    },
+    {
+      "check": "wallet_address_round_trip",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "echo_address",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T12:26:36.650Z",
+      "data": "GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK"
+    },
+    {
+      "check": "authorization_guard",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "authorized",
+      "ok": false,
+      "error_code": "AUTHORIZATION_REQUIRED",
+      "retryable": false,
+      "human_message": "This function requires authorization that is not configured."
+    },
+    {
+      "check": "signing_boundary",
+      "ok": true,
+      "signer_configured": false,
+      "transactions_submitted": 0
+    }
+  ]
+}

@@ -150,7 +150,7 @@ export function inspect(
         writeAllowed: !!(
           policy?.mode === "WRITE" &&
           c.writeMode &&
-          c.signerSecret
+          (c.signerSecret || c.externalSignerAddress)
         ),
       });
     } catch (e) {

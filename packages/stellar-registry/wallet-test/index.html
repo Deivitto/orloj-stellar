@@ -1,0 +1,7 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Orloj · Freighter Testnet Test</title>
+<style>body{background:#11121a;color:#edf0ff;font:16px system-ui;max-width:850px;margin:60px auto;padding:24px}h1{font-size:30px}button{background:#8973ff;color:white;border:0;border-radius:8px;padding:14px 22px;margin:8px 12px 12px 0;font-size:16px;cursor:pointer}button:disabled{opacity:.4;cursor:default}p{line-height:1.6}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#1d2030;padding:20px;border-radius:8px;font-size:13px}.muted{color:#aeb5cd}</style>
+<h1>Orloj × Freighter</h1><p>Stellar Testnet · One counter transaction through the MCP registry</p><p id="wallet" class="muted">Loading the expected wallet…</p>
+<p>Your private key stays in Freighter. This test reads the counter, asks you to sign one increment, waits for chain confirmation, and verifies that repeating its idempotency key does not submit again. It does not transfer XLM or USDC; only a small testnet transaction fee is charged.</p>
+<button id="connect">Connect Freighter</button><button id="run" disabled>Run counter test</button>
+<p id="status">Ready to connect.</p><pre id="results">No test run yet.</pre>
+<script src="/vendor/freighter.js"></script><script src="/client.js"></script></html>
