@@ -1,6 +1,18 @@
 # Top-ten Stellar Orloj audit — 25 October 2026
 
 
+## Generic compatibility and unattended calls — latest update
+
+Master v1.5 adds interface-bound managed exact-call grants and explicitly tagged ScVal JSON for declared Val. Aquarius router eligibility is now **75/75**; its formerly excluded `get_info` succeeded through authenticated Mainnet MCP HTTP with zero submissions. See `tagged-mainnet-results.json`. Earlier exclusion counts below are historical.
+
+A separate real Testnet MCP run confirmed **15 managed asset calls**, plus three operator fixture-setup transactions. Separate encrypted managed administrator, holder and delegate wallets exercised trust, authorization, minting, approval, transfer, delegated transfer, burn, delegated burn, clawback and administrator rotation. Ledger balance and allowance assertions passed. Unauthorized holder transfer and former-administrator mint were rejected without hashes. `../managed-calls-evidence.json` records the calls and confirmed hashes. These are project-controlled roles, not privileges on Circle or another project.
+
+A WASM fixture run confirmed counter increment and a call requiring the managed wallet's own authorization; a call requiring another wallet was rejected before submission. Counter state and duplicate operation IDs were checked (`../managed-wasm-evidence.json`). Mainnet remains read-only. Existing product wallet grants remain disabled.
+
+Manual local checks: 151 registry tests, seven app/launcher tests, TypeScript checks and the app production build passed; lint had zero errors and nine existing warnings. Migration 008 was applied with a private local database backup, preserving write history. WASM caches were refreshed to encoding v5. GitHub Actions remains disabled at repository level; the archived workflow is outside `.github/workflows`.
+
+The independent reviewer has **not** reviewed these latest changes: workspace credits prevented the followup. An authenticated local browser login also verified the updated inventory and the unchecked exact-call permission control (`../managed-permission-ui.jpg`); no grant was saved on the existing wallet. Integrated browser chat and full Compose startup remain unverified. Prior project provenance/testnet gaps still apply. Supporting a schema does not grant required roles or guarantee that arbitrary arguments satisfy contract state. Ambiguous options, recursive definitions and nested/input Results remain explicit exclusions.
+
 ## Remediation implemented — 25 October 2026
 
 The historical audit below is retained. Master v1.4 now covers bounded CPU headroom, declared Result returns, exact 256-bit integers and separate classic DEX/AMM adapters. Newly eligible methods still require explicit policy.

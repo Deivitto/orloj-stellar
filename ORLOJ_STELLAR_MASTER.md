@@ -1,6 +1,6 @@
 # ORLOJ STELLAR — MASTER ARCHITECTURE & BUILD SPECIFICATION
 
-Version: 1.4 — Read + Write MCP Registry for Stellar/Soroban
+Version: 1.5 — Read + Write MCP Registry for Stellar/Soroban
 Status: Source of truth for AI coding agents
 Source: David's specification supplied by the user (24 October, 22:43). Typography normalized from the pasted message.
 
@@ -425,3 +425,22 @@ Classic read envelopes use `READ_ONLY`, never `SIMULATED`. Classic writes use th
 A zero-element Tuple denotes Soroban unit: JSON `[]`, wire ScVal Void. Reject Option of this unit type because None and Some(unit) share the same wire value. Nonempty tuples keep their vector encoding.
 
 The user subsequently requested complete CI/CD disablement: GitHub Actions is disabled at repository level and the archived workflow lives outside `.github/workflows`. Local manual checks remain available and consume no hosted CI credits.
+
+
+## 17. Approved generic compatibility and unattended testnet calls
+
+On 25 October 2026 the user delegated the four followup decisions. Keep mainnet read-only. Broader managed writes use separate faucet-funded agent wallets and explicit owner grants bound to network, contract ID, interface/code hash, method and exact normalized arguments. Registration never grants writes. A grant authorizes repetition without a Freighter prompt; bounded call counts, per-transaction fees and rolling 24-hour fee budgets apply. Defaults for the isolated test harness are 300 test XLM maximum per transaction, 1,000 test XLM rolling fees and one call per exact grant per day. Unresolved reservations count regardless of age; duplicates reserve once. Existing SAC amount/recipient budgets remain supported and are never silently converted to broad grants. Exact-call grants authorize the complete invocation; do not infer asset-spending limits from arbitrary parameter names or claim generic balance accounting. Expose this distinction to the owner. Keys remain isolated and encrypted; all live owner/credential/policy/expiry checks still apply at intent. Contract upgrades invalidate exact-call grants.
+
+Authorize project-controlled testnet fixtures and separate administrator/user agents, allowing positive tests with genuine test roles. This does not grant privileges on third-party deployments. Reject unavailable authorizers; do not bypass contract authorization.
+
+For declared Val, use an explicit tagged JSON ScVal format, with strict schemas, exact integer strings, SDK address validation, duplicate-map-key rejection and the existing node/payload/collection limits. Tags are part of the documented encoding; never guess types or business semantics from plain strings. Add SDK-supported Timepoint/Duration and explicitly typed Error leaves. Normal declared types retain existing JSON representations. Unknown protocol/internal-only ScVal variants remain excluded. Optional schema overrides must be verified and code-hash bound before they can replace this representation. A typed specification is enough for automatic generation; source verification alone cannot supply missing business semantics.
+
+Version WASM and asset codec identities when encoding capabilities change; retain historical attempt metadata and write history. Local validation replaces hosted CI/CD. Do not claim every possible call succeeds: contract state, ownership, authentication, supported network protocol and documented resource limits still govern execution.
+
+Each declared Val permits eight nested value containers, independently from the declared type depth; JSON transport nesting permits at most48 levels to accommodate explicit tags/map pairs. Aggregate nodes1,000 and payload1MiB still apply. Option<Val> remains excluded because its payload includes Void, so it cannot distinguish None from Some(Void).
+
+Exact-call quotas count each wallet/contract/method across policy revisions within the rolling window; editing another policy or changing argument literals does not reset consumed call counts. Pending reservations are counted regardless of age.
+
+Direct declared contract-error enums use case-name strings and encode as typed contract ScVal Errors, preserving their declared numeric codes.
+
+This section supersedes section 15's SAC-transfer-only managed scope and section 16's Val exclusion. WASM encoding identity is now v5; re-registration is required, preserving historical attempts. SAC encoding remains v2 because its verified type grammar and wire encoding are unchanged.

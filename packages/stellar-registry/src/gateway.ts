@@ -34,7 +34,7 @@ export function inputSchema(f: FunctionModel) {
       .min(1)
       .max(128)
       .regex(/^[A-Za-z0-9_-]+$/);
-  return z.toJSONSchema(z.strictObject(props));
+  return z.toJSONSchema(z.strictObject(props), { reused: "ref" });
 }
 export function mcp(
   executor: Executor,
@@ -207,7 +207,7 @@ export function httpServer(executor: Executor, product?: Product) {
         if (
           !(
             await executor.store.pool.query(
-              "SELECT version FROM stellar_migrations WHERE version=7",
+              "SELECT version FROM stellar_migrations WHERE version=8",
             )
           ).rowCount
         )

@@ -139,7 +139,7 @@ it("discovers declared Result methods but leaves new tools disabled and preserve
         }),
       ),
     ),
-    f("untyped", xdr.ScSpecTypeDef.scSpecTypeVal()),
+    f("untyped", xdr.ScSpecTypeDef.scSpecTypeUdt(new xdr.ScSpecTypeUdt({name:"Missing"}))),
     f(
       "muxed",
       xdr.ScSpecTypeDef.scSpecTypeResult(
@@ -187,7 +187,7 @@ it("discovers declared Result methods but leaves new tools disabled and preserve
     name: "untyped",
     eligible: false,
     declaredSignature: { name: "untyped" },
-    exclusion: { location: "outputs[0]", type: "val" },
+    exclusion: { location: "outputs[0]", type: "scSpecTypeUdt" },
   });
 });
 it("validates bounded configurable instruction leeway", () => {

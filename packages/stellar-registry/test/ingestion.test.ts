@@ -24,9 +24,9 @@ it("extracts the real demo WASM spec including its newly supported nested vector
   expect(i.functions.some((f) => f.sorobanName === "unsupported")).toBe(true);
   expect(i.contractId).toBe("");
 });
-it("rejects malformed WASM and untyped Val", () => {
+it("rejects malformed WASM and unknown referenced types", () => {
   expect(() => inspect(new Uint8Array([1, 2, 3]), c)).toThrow("specification");
-  const types = [xdr.ScSpecTypeDef.scSpecTypeVal()];
+  const types = [xdr.ScSpecTypeDef.scSpecTypeUdt(new xdr.ScSpecTypeUdt({name:"Missing"}))];
   for (const t of types) expect(() => parseType(t, [])).toThrow("unsupported");
 });
 it("rejects duplicate exported functions and sanitized name collisions", async () => {

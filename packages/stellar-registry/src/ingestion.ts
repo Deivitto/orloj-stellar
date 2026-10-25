@@ -18,6 +18,10 @@ export function parseType(
   if (path.length - (path[0] === "Result" ? 1 : 0) > 8)
     fail("TYPE_DEPTH_EXCEEDED");
   const leaves: Record<string, TypeNode["kind"]> = {
+    scSpecTypeVal: "Val",
+    scSpecTypeTimepoint: "Timepoint",
+    scSpecTypeDuration: "Duration",
+    scSpecTypeError: "Error",
     scSpecTypeBool: "bool",
     scSpecTypeU32: "u32",
     scSpecTypeI32: "i32",
@@ -94,12 +98,22 @@ export function parseType(
         (e) =>
           (e.type === "scSpecEntryUdtStructV0" &&
             e.udtStructV0.name.toString() === name) ||
+          (e.type === "scSpecEntryUdtErrorEnumV0" &&
+            e.udtErrorEnumV0.name.toString() === name) ||
           (e.type === "scSpecEntryUdtEnumV0" &&
             e.udtEnumV0.name.toString() === name) ||
           (e.type === "scSpecEntryUdtUnionV0" &&
             e.udtUnionV0.name.toString() === name),
       );
       if (!e) fail("UNSUPPORTED_SOROBAN_TYPE");
+      if (e.type === "scSpecEntryUdtErrorEnumV0")
+        return {
+          kind: "ErrorEnum",
+          cases: e.udtErrorEnumV0.cases.map((c) => ({
+            name: c.name.toString(),
+            value: c.value,
+          })),
+        };
       if (e.type === "scSpecEntryUdtEnumV0")
         return {
           kind: "Enum",
@@ -230,11 +244,11 @@ export function inspect(
   return inspectSpec(spec, c, id, {
     wasmHash: wasmHash(wasm),
     sourceKind: "wasm",
-    encodingVersion: 4,
+    encodingVersion: 5,
     protocolVersion,
     interfaceHash: wasmHash(
       Buffer.concat([
-        Buffer.from(`orloj-encoding-v4:${protocolVersion ?? "unbound"}:`),
+        Buffer.from(`orloj-encoding-v5:${protocolVersion ?? "unbound"}:`),
         Buffer.from(wasm),
       ]),
     ),
@@ -248,7 +262,8 @@ export function inspectSpec(
 ): ContractInterface {
   if (!spec.entries.length) fail("SPEC_PARSE_FAILED");
   function withProtocol(node: TypeNode): TypeNode {
-    if (node.kind === "MuxedAddress") node.protocol = identity.protocolVersion;
+    if (node.kind === "MuxedAddress" || node.kind === "Val")
+      node.protocol = identity.protocolVersion;
     if ("item" in node) withProtocol(node.item);
     if (node.kind === "Result") withProtocol(node.ok);
     if (node.kind === "Map") {

@@ -1,0 +1,108 @@
+{
+  "testedAt": "2026-10-25T18:47:05.080Z",
+  "network": "testnet",
+  "scope": "Isolated project-controlled fixture; real MCP HTTP, managed signer and ledger transactions. No browser chat claim.",
+  "checks": [
+    {
+      "check": "fixture_funding",
+      "ok": true,
+      "address": "GBYIKWU32DAEGD4B5DKTHWI6D6SW77DVQ562GO6EJQERC27MFHYDMNPX"
+    },
+    {
+      "check": "fixture_funding",
+      "ok": true,
+      "address": "GAB2ZGFCBSRSTQYGMAP7NOZEZ4WBAEBN62V2G2KDMF3MGEAHCIY6KWJM"
+    },
+    {
+      "check": "holder:count",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "source_kind": "wasm",
+      "interface_hash": "e7db9d9d175b661797512ef1088d70167e885223284322f16ffa01b2fadf58a7",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "count",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T18:47:19.761Z",
+      "data": 3
+    },
+    {
+      "check": "holder:increment",
+      "ok": true,
+      "data": 4,
+      "mode": "WRITE",
+      "ledger": 5386092,
+      "network": "testnet",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "fee_charged": "3206",
+      "source_kind": "wasm",
+      "function_name": "increment",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "interface_hash": "e7db9d9d175b661797512ef1088d70167e885223284322f16ffa01b2fadf58a7",
+      "transaction_hash": "90de459b9b445baa7a03dd4edbd49783410947bb9facbc93c664e36416360ea7",
+      "operation_id": "0d902927-43fe-4022-8e07-e17b3ed360ff",
+      "can_cancel": false
+    },
+    {
+      "check": "holder:count",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "source_kind": "wasm",
+      "interface_hash": "e7db9d9d175b661797512ef1088d70167e885223284322f16ffa01b2fadf58a7",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "count",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T18:47:30.123Z",
+      "data": 4
+    },
+    {
+      "check": "holder:authorized",
+      "ok": true,
+      "data": true,
+      "mode": "WRITE",
+      "ledger": 5386094,
+      "network": "testnet",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "fee_charged": "2244",
+      "source_kind": "wasm",
+      "function_name": "authorized",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "interface_hash": "e7db9d9d175b661797512ef1088d70167e885223284322f16ffa01b2fadf58a7",
+      "transaction_hash": "bf78d84f1f05d414c8fd914bfe660f1d1734b5742970ee9e097b3b6c08aa36da",
+      "operation_id": "2b8b5497-913d-4e4d-b0bd-ffee69231cf7",
+      "can_cancel": false
+    },
+    {
+      "check": "holder:authorized",
+      "ok": false,
+      "mode": "WRITE",
+      "network": "testnet",
+      "retryable": false,
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "error_code": "AUTHORIZATION_FAILED",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "source_kind": "wasm",
+      "function_name": "authorized",
+      "human_message": "Contract authorization could not be satisfied.",
+      "interface_hash": "e7db9d9d175b661797512ef1088d70167e885223284322f16ffa01b2fadf58a7",
+      "result_status": "REJECTED",
+      "operation_id": "e5d00c85-86c1-442e-aa1f-853224695837",
+      "can_cancel": false
+    }
+  ],
+  "roles": {
+    "holder": "GAB2ZGFCBSRSTQYGMAP7NOZEZ4WBAEBN62V2G2KDMF3MGEAHCIY6KWJM"
+  },
+  "asset": {
+    "code": "ORLOJTEST",
+    "issuer": "GBYIKWU32DAEGD4B5DKTHWI6D6SW77DVQ562GO6EJQERC27MFHYDMNPX",
+    "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB"
+  },
+  "ok": true,
+  "schema": "managed_live_0df55dfe1c724b0ba09c3f7b2ff1b90c"
+}

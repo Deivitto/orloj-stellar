@@ -1,3 +1,9 @@
+import {
+  exactGrantSchema,
+  checkedGrant,
+  checkExactGrant,
+  MAX_DAILY_FEE,
+} from "./exact-grant.js";
 import { randomUUID, randomBytes } from "node:crypto";
 import type pg from "pg";
 import {
@@ -210,6 +216,7 @@ export class Product {
         inventory: i.inventory,
         excluded: i.excluded,
         sourceKind: i.sourceKind,
+        interfaceHash: i.interfaceHash,
       }),
     );
   }
@@ -223,6 +230,7 @@ export class Product {
               name: z.string(),
               mode: z.enum(["READ", "WRITE"]),
               limits: limitsSchema.nullable().optional(),
+              exactGrant: exactGrantSchema.nullable().optional(),
             }),
           )
           .max(100),
@@ -248,6 +256,23 @@ export class Product {
         )
       )
         fail("UNSUPPORTED_SOROBAN_TYPE");
+      if (f.exactGrant) {
+        if (f.limits || f.mode !== "WRITE" || isClassic(i))
+          fail("WRITE_NOT_PERMITTED");
+        const signature = i.inventory!.find(
+          (m) => m.name === f.name,
+        )!.signature!;
+        const fn = {
+          ...signature,
+          mode: "WRITE" as const,
+          simulationSafe: false,
+          writeAllowed: true,
+        };
+        const normalized = argumentsFor(fn, f.exactGrant.arguments);
+        const grant = checkedGrant({ ...f.exactGrant, arguments: normalized });
+        checkExactGrant(i, fn, normalized, grant);
+        f.exactGrant = grant;
+      }
       if (
         f.limits &&
         (f.mode !== "WRITE" ||
@@ -276,7 +301,7 @@ export class Product {
       );
       for (const f of functions)
         await client.query(
-          "INSERT INTO stellar_tool_policies(agent_id,instance_id,owner_id,network,contract_id,function_name,mode,revision,limits) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+          "INSERT INTO stellar_tool_policies(agent_id,instance_id,owner_id,network,contract_id,function_name,mode,revision,limits,exact_grant) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
           [
             a.agentId,
             a.instanceId,
@@ -287,6 +312,7 @@ export class Product {
             f.mode,
             revision,
             f.limits ?? null,
+            f.exactGrant ?? null,
           ],
         );
       await client.query("COMMIT");
@@ -345,7 +371,7 @@ export class Product {
         )
       ).rows[0].stellar_policy_revision;
       await client.query(
-        "UPDATE stellar_tool_policies SET limits=NULL,revision=$3 WHERE agent_id=$1 AND instance_id=$2 AND mode='WRITE'",
+        "UPDATE stellar_tool_policies SET limits=NULL,exact_grant=NULL,revision=$3 WHERE agent_id=$1 AND instance_id=$2 AND mode='WRITE'",
         [a.agentId, a.instanceId, revision],
       );
       await client.query("COMMIT");
@@ -474,6 +500,13 @@ export class Product {
           (this.config.writeMode &&
             !!wallet &&
             (wallet.mode === "freighter" ||
+              (!isClassic(i) &&
+                !!i.interfaceHash &&
+                policies.find(
+                  (p) =>
+                    p.contract_id === i.contractId &&
+                    p.function_name === f.sorobanName,
+                )?.exact_grant?.interfaceHash === i.interfaceHash) ||
               (i.sourceKind === "stellar_asset" &&
                 f.sorobanName === "transfer" &&
                 !!policies.find(
@@ -536,7 +569,14 @@ export class Product {
     const wallet = (await this.wallets(a)).find((w) => w.active);
     if (!policy || !wallet) fail("WRITE_NOT_PERMITTED");
     if (wallet.mode === "managed")
-      this.checkManaged(i, f, values, wallet, policy.limits);
+      this.checkManaged(
+        i,
+        f,
+        values,
+        wallet,
+        policy.limits,
+        policy.exact_grant,
+      );
     const fingerprint = digest(
       canonical({
         interfaceHash: i.interfaceHash,
@@ -550,7 +590,7 @@ export class Product {
     );
     const id = randomUUID();
     const r = await this.store.pool.query(
-      "INSERT INTO stellar_operations(id,agent_id,instance_id,owner_id,credential_id,network,contract_id,function_name,interface_hash,function_model,arguments,request_fingerprint,idempotency_key,wallet_id,wallet_revision,policy_revision,state) VALUES($1,$2,$3,$4,$5,'testnet',$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) ON CONFLICT(agent_id,instance_id,network,idempotency_key) DO NOTHING RETURNING id",
+      "INSERT INTO stellar_operations(id,agent_id,instance_id,owner_id,credential_id,network,contract_id,function_name,interface_hash,function_model,arguments,request_fingerprint,idempotency_key,wallet_id,wallet_revision,policy_revision,state,fee_limit) VALUES($1,$2,$3,$4,$5,'testnet',$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) ON CONFLICT(agent_id,instance_id,network,idempotency_key) DO NOTHING RETURNING id",
       [
         id,
         a.agentId,
@@ -568,6 +608,9 @@ export class Product {
         wallet.revision,
         policy.revision,
         wallet.mode === "freighter" ? "AWAITING_APPROVAL" : "READY",
+        wallet.mode === "managed"
+          ? (policy.exact_grant?.maxFee ?? this.config.maxFee ?? "2000000")
+          : (this.config.maxFee ?? "2000000"),
       ],
     );
     const op = await this.operation(a, r.rows[0]?.id ?? "", key);
@@ -580,7 +623,12 @@ export class Product {
     args: Record<string, unknown>,
     wallet: Wallet,
     limits: Limits | null,
+    grant?: import("./exact-grant.js").ExactGrant | null,
   ) {
+    if (grant) {
+      checkExactGrant(i, f, args, checkedGrant(grant));
+      return;
+    }
     if (
       i.sourceKind !== "stellar_asset" ||
       f.sorobanName !== "transfer" ||
@@ -645,7 +693,7 @@ export class Product {
       ...this.publicOperation(o),
       arguments: o.arguments,
       wallet_id: o.wallet_id,
-      max_fee: this.config.maxFee ?? "2000000",
+      max_fee: o.fee_limit ?? this.config.maxFee ?? "2000000",
       signing_ready: !!this.pending.get(o.id)?.peek(),
     }));
   }
@@ -759,7 +807,14 @@ export class Product {
         )
       ).rows[0]?.interface as ContractInterface | undefined;
       if (!i || i.interfaceHash !== o.interface_hash) fail("STALE_INTERFACE");
-      this.checkManaged(i, o.function_model, o.arguments, w, p.limits);
+      this.checkManaged(
+        i,
+        o.function_model,
+        o.arguments,
+        w,
+        p.limits,
+        p.exact_grant,
+      );
       await client.query(
         "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
         ["spending:" + w.id],
@@ -776,25 +831,39 @@ export class Product {
             [w.id, o.contract_id],
           )
         ).rows[0];
-        const fee = this.config.maxFee ?? "2000000";
+        const grant = p.exact_grant ? checkedGrant(p.exact_grant) : undefined;
+        const fee =
+          o.fee_limit ?? grant?.maxFee ?? this.config.maxFee ?? "2000000";
+        if (grant && fee !== grant.maxFee) fail("WRITE_NOT_PERMITTED");
+        const amount = grant ? "0" : (o.arguments.amount as string);
+        if (grant) {
+          const count = await client.query(
+            "SELECT count(*)::integer AS n FROM stellar_call_reservations r JOIN stellar_spending s USING(operation_id) WHERE r.wallet_id=$1 AND r.contract_id=$2 AND r.function_name=$3 AND (s.state='RESERVED' OR (s.state='SETTLED' AND s.settled_at>now()-interval '24 hours'))",
+            [w.id, o.contract_id, o.function_name],
+          );
+          if (
+            Number(count.rows[0].n) >= grant.maxCalls ||
+            BigInt(sums.fee) + BigInt(fee) > BigInt(grant.rollingFee) ||
+            BigInt(sums.fee) + BigInt(fee) > MAX_DAILY_FEE
+          )
+            fail("WRITE_NOT_PERMITTED");
+        }
         if (
-          BigInt(sums.amount) + BigInt(o.arguments.amount as string) >
+          !grant &&
+          (BigInt(sums.amount) + BigInt(o.arguments.amount as string) >
             BigInt(p.limits!.rollingAmount) ||
-          BigInt(sums.fee) + BigInt(fee) > BigInt(p.limits!.rollingFee)
+            BigInt(sums.fee) + BigInt(fee) > BigInt(p.limits!.rollingFee))
         )
           fail("WRITE_NOT_PERMITTED");
         await client.query(
           "INSERT INTO stellar_spending VALUES($1,$2,$3,$4,$5,$6,$7,'RESERVED',NULL)",
-          [
-            o.id,
-            o.agent_id,
-            o.instance_id,
-            w.id,
-            o.contract_id,
-            o.arguments.amount,
-            fee,
-          ],
+          [o.id, o.agent_id, o.instance_id, w.id, o.contract_id, amount, fee],
         );
+        if (grant)
+          await client.query(
+            "INSERT INTO stellar_call_reservations(operation_id,wallet_id,contract_id,function_name,policy_revision) VALUES($1,$2,$3,$4,$5)",
+            [o.id, w.id, o.contract_id, o.function_name, p.revision],
+          );
       }
     }
   }
@@ -940,10 +1009,30 @@ export class Product {
               this.options.signerToken,
             );
       if (signer instanceof BrowserSigner) this.pending.set(o.id, signer);
+      const policy = (
+        await this.policies({
+          agentId: o.agent_id,
+          instanceId: o.instance_id,
+          ownerId: o.owner_id,
+          credentialId: o.credential_id,
+        })
+      ).find(
+        (p) =>
+          p.contract_id === o.contract_id &&
+          p.function_name === o.function_name &&
+          p.revision === o.policy_revision,
+      );
+      if (!policy) fail("WRITE_NOT_PERMITTED");
       const config = {
         ...this.config,
         writeMode: this.config.writeMode,
-        maxFee: this.config.maxFee ?? "2000000",
+        maxFee:
+          o.fee_limit ??
+          (wallet.mode === "managed"
+            ? policy.exact_grant?.maxFee
+            : undefined) ??
+          this.config.maxFee ??
+          "2000000",
         policies: [
           {
             contractId: o.contract_id,

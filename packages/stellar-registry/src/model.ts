@@ -16,7 +16,11 @@ export type Leaf =
   | "Bytes"
   | "BytesN"
   | "String"
-  | "void";
+  | "void"
+  | "Val"
+  | "Timepoint"
+  | "Duration"
+  | "Error";
 export type TypeNode =
   | { kind: Leaf; size?: number; protocol?: number }
   | { kind: "Option" | "Vec"; item: TypeNode }
@@ -28,6 +32,7 @@ export type TypeNode =
     }
   | { kind: "Map"; key: TypeNode; value: TypeNode }
   | { kind: "Tuple"; items: TypeNode[] }
+  | { kind: "ErrorEnum"; cases: { name: string; value: number }[] }
   | { kind: "Enum"; cases: { name: string; value: number }[] }
   | { kind: "Union"; cases: { name: string; items: TypeNode[] }[] }
   | {

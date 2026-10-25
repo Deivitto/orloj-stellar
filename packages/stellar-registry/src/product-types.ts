@@ -31,6 +31,7 @@ export type Policy = {
   mode: "READ" | "WRITE";
   revision: number;
   limits: Limits | null;
+  exact_grant?: import("./exact-grant.js").ExactGrant | null;
 };
 export type ProductOperation = {
   id: string;
@@ -49,6 +50,7 @@ export type ProductOperation = {
   wallet_id: string;
   wallet_revision: number;
   policy_revision: number;
+  fee_limit?: string | null;
   state: string;
   result: Record<string, unknown> | null;
   lease_owner: string | null;

@@ -1,6 +1,6 @@
 # Orloj Stellar registry
 
-A separate TypeScript service for Soroban WASM and built-in Stellar asset contracts. It exposes strict MCP tools, simulates reads, and supports explicitly allowed testnet writes. The existing EVM registry remains separate. The app has a Stellar-first local product mode. See the repository's master specification v1.4 and the [full local product runbook](../../infra/local/README.md) for app login, wallets, managed limits, runtime isolation, backup and recovery.
+A separate TypeScript service for Soroban WASM and built-in Stellar asset contracts. It exposes strict MCP tools, simulates reads, and supports explicitly allowed testnet writes. The existing EVM registry remains separate. The app has a Stellar-first local product mode. See the repository's master specification v1.5 and the [full local product runbook](../../infra/local/README.md) for app login, wallets, managed limits, runtime isolation, backup and recovery.
 
 ## Local setup
 
@@ -122,7 +122,7 @@ SAC parameter names follow the pinned host interface: `balance` takes `addr`, `t
 
 Amounts are i128 decimal strings in **base units**. Verified SAC decimals are 7, so 1 USDC is `"10000000"`. `parseAmount`/`formatAmount` in `src/assets.ts` and the `amount` CLI convert exactly without rounding. Resolve asset identity by network and contract/issuer, not symbol alone. The AI client translates plain text into these discovered tools; Orloj does not add an AI chat model.
 
-The expanded grammar supports bounded vectors, typed maps as pair arrays, fixed tuples, enums as case-name strings, unions as strict `{tag,values}` objects and nested nonrecursive structs. Options use null for None; nested options and Option<void> remain excluded. u64/i64/u128/i128 retain decimal strings. Limits: type depth 8, 100 items per collection, 1,000 aggregate value nodes and 1 MiB arguments/results. A function with any unsupported type is excluded in full. Recursive definitions, untyped Val, Result, u256/i256 and other unimplemented leaves remain excluded. Map keys are encoded and canonically sorted by the SDK; duplicate encoded keys are rejected.
+The expanded grammar supports bounded vectors, typed maps as pair arrays, fixed tuples, enums as case-name strings, unions as strict `{tag,values}` objects and nested nonrecursive structs. Options use null for None; nested options and Option<void> remain excluded. u64/i64/u128/i128 retain decimal strings. Limits: type depth 8, 100 items per collection, 1,000 aggregate value nodes and 1 MiB arguments/results. A function with any unsupported type is excluded in full. Recursive definitions, ambiguous options and nested/input Result annotations remain excluded. Declared Val uses explicit tagged JSON; Result returns and u256/i256 are supported as described below. Map keys are encoded and canonically sorted by the SDK; duplicate encoded keys are rejected.
 
 ### Reproducible asset checks
 
@@ -140,9 +140,9 @@ Public evidence is saved in `demo-contract/assets-read-evidence.json`, `assets-w
 
 ## Audit remediation and classic Stellar
 
-WASM schema identity now uses encoding v4. Re-register existing WASM contracts before invoking them with this build; old write attempts remain reconcilable with their original schemas and hashes. New eligible functions do not acquire policies automatically.
+WASM schema identity now uses encoding v5. Re-register existing WASM contracts before invoking them with this build; old write attempts remain reconcilable with their original schemas and hashes. New eligible functions do not acquire policies automatically.
 
-Top-level declared `Result<T,E>` returns produce `{ "tag": "Ok", "values": [value] }` on successful execution. Declared contract failures use `CONTRACT_EXECUTION_FAILED` and sanitized numeric/name metadata. Result inputs/nested Results, ambiguous options and untyped Val remain excluded. u256/i256 use exact canonical decimal strings. Inventory exclusions now retain the declared signature and failing type location.
+Top-level declared `Result<T,E>` returns produce `{ "tag": "Ok", "values": [value] }` on successful execution. Declared contract failures use `CONTRACT_EXECUTION_FAILED` and sanitized numeric/name metadata. Result inputs/nested Results and ambiguous options remain excluded. u256/i256 use exact canonical decimal strings. Inventory exclusions now retain the declared signature and failing type location.
 
 `CPU_INSTRUCTION_LEEWAY` defaults to 1,000,000 instructions and accepts integers from 0 through 10,000,000. It is passed to the final enforced SDK simulation. It changes resource declarations and their fee estimate; `MAX_FEE` remains the hard cap. The separate 20% resource-fee buffer does not add CPU instructions. A rejected fee estimate never authorizes increasing a wallet grant.
 
@@ -159,3 +159,20 @@ DATABASE_URL=postgres://... node packages/stellar-registry/scripts/test-classic-
 ```
 
 The last command creates disposable Friendbot-funded wallets and a project fixture asset; it does not use a Freighter key. Public audit evidence is in `demo-contract/top10-audit/`. User-wallet signing payloads remain confined to the owner signing channel. Browser owner acceptance is separately recorded in `classic-app-results.json`.
+
+### Managed exact-call grants and declared Val
+
+The owner can enable a managed Testnet wallet for an exact invocation from the wallet/tool screen. The grant binds `interfaceHash` and normalized `arguments`, with `maxCalls` (1–100 calls per rolling day), `maxFee` (at most 3,000,000,000 stroops = 300 test XLM), and `rollingFee` (at most 10,000,000,000 stroops = 1,000 test XLM). Defaults allow one call. Writes remain disabled until explicitly configured. Classic adapters still require Freighter.
+
+An exact grant authorizes the complete invocation, including its asset effects. It does not infer spending amounts from arbitrary arguments. Existing SAC transfer grants continue to enforce recipients and exact amount budgets. Call quotas span policy revisions for each wallet/contract/method, unresolved reservations count regardless of age, and all managed calls share the rolling fee exposure. Credential, owner, wallet, code identity and policy checks still apply before durable intent. No automatic resubmission is added. Upgrades require re-registration and an owner-issued grant for the new interface hash.
+
+Declared `Val` uses `{ "type": "i128", "value": "123" }`, `{ "type": "address", "value": "G..." }`, `{ "type": "vec", "value": [...] }` or `{ "type": "map", "value": [[key,value],...] }`. Other tags mirror supported ScVal leaves: bool, u32, i32, u64, i64, u128, u256, i256, string, symbol, bytes, void, timepoint, duration and error. Void carries null. Error carries `{kind:"sceContract",code:7}` or an SDK error category and code. Values retain exact existing integer/address encodings; nothing guesses a type from its contents. Eight value containers, 100 items/collection, 1,000 aggregate nodes and 1 MiB payload limits apply. Option<Val> is excluded because Void makes its encoding ambiguous. Internal ledger-key/contract-instance values are excluded. Direct declared error enums encode their real contract error codes and expose declared case names.
+
+Manual live acceptance (requires an existing local PostgreSQL test database; consumes free Testnet assets only):
+
+```sh
+pnpm --filter @orloj/stellar-registry build
+TEST_DATABASE_URL=postgres://localhost/orloj_stellar node packages/stellar-registry/scripts/test-managed-calls.mjs
+```
+
+This creates an isolated schema and managed administrator/holder/delegate wallets, then exercises real MCP asset methods and confirms each submitted hash. The isolated signer master key is ephemeral: these test wallets are disposable, cannot be recovered after the script exits, and are separate from product wallets. History is retained in the test schema for inspection. It neither configures existing user grants nor claims browser-chat acceptance. The mainnet `test-tagged-mainnet.mjs` probe requires a private read-only mainnet env file and performs no submissions.

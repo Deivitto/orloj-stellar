@@ -1,0 +1,53 @@
+{
+  "verifiedAt": "2026-10-25T18:49:32.165Z",
+  "project": "Aquarius",
+  "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+  "encodingVersion": 5,
+  "interface_hash": "ae86d1086a1f6ff03ac053356df2adab1058ff55c6b4296685dc4444efdfaddf",
+  "eligible": 75,
+  "total": 75,
+  "submissionCount": 0,
+  "transport": "Authenticated MCP HTTP",
+  "result": {
+    "mode": "READ",
+    "network": "mainnet",
+    "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+    "source_kind": "wasm",
+    "interface_hash": "ae86d1086a1f6ff03ac053356df2adab1058ff55c6b4296685dc4444efdfaddf",
+    "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+    "function_name": "get_info",
+    "ok": true,
+    "result_status": "SIMULATED",
+    "simulated_at": "2026-10-25T18:49:32.145Z",
+    "data": [
+      [
+        "a",
+        {
+          "type": "u128",
+          "value": "1500"
+        }
+      ],
+      [
+        "fee",
+        {
+          "type": "u32",
+          "value": 10
+        }
+      ],
+      [
+        "n_tokens",
+        {
+          "type": "u32",
+          "value": 2
+        }
+      ],
+      [
+        "pool_type",
+        {
+          "type": "symbol",
+          "value": "stable"
+        }
+      ]
+    ]
+  }
+}

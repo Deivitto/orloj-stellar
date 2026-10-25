@@ -50,3 +50,13 @@ Integrated browser chat remains blocked: no isolated runtime broker is running o
 
 
 CI/CD followup: GitHub Actions permissions were set to `enabled=false` for Deivitto/orloj-stellar and verified through the GitHub API; active and queued run counts were both zero. The workflow is archived outside `.github/workflows`. All four app tests (including credential rotation) passed locally; three launcher tests cover plugin detection, standalone Compose fallback and missing Compose. Docker engine recovery is still required on this host before container/chat acceptance.
+
+## Generic calls followup (master v1.5, migration 008)
+
+151 registry tests and seven app/launcher tests pass locally. The app production build and TypeScript checks pass; lint has no errors and nine existing warnings. An authenticated browser login through the local mail sink loaded the updated contract inventory and the exact-call permission explanation, with unattended permission unchecked. `demo-contract/managed-permission-ui.jpg` records that screen. No new permission was saved on the existing user wallet.
+
+Real authenticated MCP HTTP tests confirmed 15 managed asset calls with administrator/user/delegate roles, and two WASM calls (counter state change and source-wallet authorization). Three additional asset setup transactions are clearly labeled operator setup. Unauthorized transfers and wrong-authorizer calls failed without a transaction hash. Balance/allowance and duplicate operation assertions passed. Mainnet Aquarius get_info returned typed Val JSON successfully; its router has 75/75 supported schemas. See the latest section of the audit REPORT and the evidence files.
+
+Native services use migration 008 and refreshed v5 WASM interfaces. A private pre-migration database backup was taken; previous write history remains intact. The signer accepted the original persisted master key and the existing managed wallet remained active with unattended grants disabled.
+
+The Colima engine was restored and accepts builds. A full Compose image build was attempted again on software-emulated QEMU; complete combined startup and integrated browser chat remain unverified. Independent re-review of this followup is still unavailable because workspace credits were exhausted. Hosted Actions remains disabled.

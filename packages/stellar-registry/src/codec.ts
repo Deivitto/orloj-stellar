@@ -1,4 +1,12 @@
 import {
+  taggedSchema,
+  encodeTagged,
+  decodeTagged,
+  errorSchema,
+  encodeError,
+  decodeError,
+} from "./tagged-value.js";
+import {
   Address,
   StrKey,
   xdr,
@@ -34,6 +42,13 @@ function decimalUpTo(max: bigint): string {
 }
 export function validator(t: TypeNode): z.ZodType {
   switch (t.kind) {
+    case "Val":
+      return taggedSchema(t.protocol);
+    case "Error":
+      return errorSchema;
+    case "Timepoint":
+    case "Duration":
+      return validator({ kind: "u64" });
     case "bool":
       return z.boolean();
     case "void":
@@ -106,6 +121,7 @@ export function validator(t: TypeNode): z.ZodType {
       return z.array(z.tuple([validator(t.key), validator(t.value)])).max(100);
     case "Tuple":
       return z.tuple(t.items.map(validator) as [z.ZodType, ...z.ZodType[]]);
+    case "ErrorEnum":
     case "Enum":
       return z.enum(t.cases.map((c) => c.name) as [string, ...string[]]);
     case "Union":
@@ -145,7 +161,7 @@ export function supported(t: TypeNode, depth = 0, resultAllowed = true): void {
     fail("UNSUPPORTED_SOROBAN_TYPE");
   if (
     t.kind === "Option" &&
-    (["Option", "void"].includes(t.item.kind) ||
+    (["Option", "void", "Val"].includes(t.item.kind) ||
       (t.item.kind === "Tuple" && t.item.items.length === 0))
   )
     fail("UNSUPPORTED_SOROBAN_TYPE");
@@ -163,7 +179,7 @@ export function supported(t: TypeNode, depth = 0, resultAllowed = true): void {
               : t.kind === "Union"
                 ? t.cases.flatMap((c) => c.items)
                 : [];
-  if (t.kind === "Enum" || t.kind === "Union") {
+  if (t.kind === "Enum" || t.kind === "ErrorEnum" || t.kind === "Union") {
     if (
       !t.cases.length ||
       new Set(t.cases.map((c) => c.name)).size !== t.cases.length
@@ -175,7 +191,7 @@ export function supported(t: TypeNode, depth = 0, resultAllowed = true): void {
     )
       fail("SPEC_PARSE_FAILED");
     if (
-      t.kind === "Enum" &&
+      (t.kind === "Enum" || t.kind === "ErrorEnum") &&
       new Set(t.cases.map((c) => c.value)).size !== t.cases.length
     )
       fail("SPEC_PARSE_FAILED");
@@ -190,7 +206,7 @@ export function budget(
 ) {
   let count = 0;
   function visit(v: unknown, depth: number) {
-    if (++count > 1000 || depth > 24) fail(code);
+    if (++count > 1000 || depth > 48) fail(code);
     if (v && typeof v === "object")
       for (const x of Object.values(v)) visit(x, depth + 1);
   }
@@ -220,7 +236,10 @@ export function model(node: TypeNode): TypeModel {
     sorobanType: node.kind,
     converterId: JSON.stringify(node),
     isCollection: ["Vec", "Map", "Tuple"].includes(node.kind),
-    jsonSchema: z.toJSONSchema(validator(node)) as Record<string, unknown>,
+    jsonSchema: z.toJSONSchema(validator(node), { reused: "ref" }) as Record<
+      string,
+      unknown
+    >,
     ...("item" in node ? { itemType: model(node.item) } : {}),
     ...(node.kind === "Struct"
       ? {
@@ -240,6 +259,12 @@ export function encode(t: TypeNode, value: unknown, nested = false): xdr.ScVal {
   }
   if (!validator(t).safeParse(value).success) fail("INVALID_ARGUMENT");
   try {
+    if (t.kind === "Val") return encodeTagged(value, t.protocol);
+    if (t.kind === "Error") return encodeError(value);
+    if (t.kind === "Timepoint")
+      return xdr.ScVal.scvTimepoint(BigInt(value as string));
+    if (t.kind === "Duration")
+      return xdr.ScVal.scvDuration(BigInt(value as string));
     if (t.kind === "Result") fail("UNSUPPORTED_SOROBAN_TYPE");
     if (t.kind === "Option")
       return value === null ? xdr.ScVal.scvVoid() : encode(t.item, value, true);
@@ -251,6 +276,10 @@ export function encode(t: TypeNode, value: unknown, nested = false): xdr.ScVal {
     if (t.kind === "Tuple")
       return xdr.ScVal.scvVec(
         t.items.map((type, n) => encode(type, (value as unknown[])[n], true)),
+      );
+    if (t.kind === "ErrorEnum")
+      return xdr.ScVal.scvError(
+        xdr.ScError.sceContract(t.cases.find((c) => c.name === value)!.value),
       );
     if (t.kind === "Enum")
       return xdr.ScVal.scvU32(t.cases.find((c) => c.name === value)!.value);
@@ -334,7 +363,15 @@ export function decode(t: TypeNode, v: xdr.ScVal, nested = false): unknown {
   }
   try {
     let out: unknown;
-    if (t.kind === "Result") {
+    if (t.kind === "Val") out = decodeTagged(v, t.protocol);
+    else if (t.kind === "Error") out = decodeError(v);
+    else if (t.kind === "Timepoint" || t.kind === "Duration") {
+      if (t.kind === "Timepoint" && v.type === "scvTimepoint")
+        out = v.timepoint.toString();
+      else if (t.kind === "Duration" && v.type === "scvDuration")
+        out = v.duration.toString();
+      else fail("RESULT_DECODE_FAILED");
+    } else if (t.kind === "Result") {
       if (v.type === "scvError") {
         if (v.error.type !== "sceContract") fail("RESULT_DECODE_FAILED");
         const code = v.error.contractCode,
@@ -380,6 +417,13 @@ export function decode(t: TypeNode, v: xdr.ScVal, nested = false): unknown {
           values: c.items.map((type, n) => decode(type, v.vec![n + 1], true)),
         };
       }
+    } else if (t.kind === "ErrorEnum") {
+      if (v.type !== "scvError" || v.error.type !== "sceContract")
+        fail("RESULT_DECODE_FAILED");
+      const code = v.error.contractCode,
+        c = t.cases.find((c) => c.value === code);
+      if (!c) fail("RESULT_DECODE_FAILED");
+      out = c.name;
     } else if (t.kind === "Enum") {
       if (v.type !== "scvU32") fail("RESULT_DECODE_FAILED");
       const c = t.cases.find((c) => c.value === v.u32);

@@ -1,3 +1,4 @@
+import { checkedGrant, checkExactGrant, MAX_EXACT_FEE } from "./exact-grant.js";
 import {
   createCipheriv,
   createDecipheriv,
@@ -278,23 +279,46 @@ export async function signerService(store: Store, key: Buffer, token: string) {
       if (req.url === "/sign" && req.method === "POST") {
         await epoch();
         const r = await store.pool.query(
-          "SELECT w.*,o.arguments,o.contract_id,o.function_name,o.function_model FROM stellar_wallets w JOIN stellar_operations o ON o.wallet_id=w.id JOIN agent_ownership a ON a.agent_id=w.agent_id AND a.instance_id=w.instance_id AND a.user_id=w.owner_id WHERE w.id=$1 AND o.id=$2 AND o.owner_id=w.owner_id AND o.wallet_revision=w.revision AND w.active AND w.mode='managed' AND o.state='PREPARING' AND o.lease_until>now()",
+          "SELECT w.*,o.arguments,o.contract_id,o.function_name,o.function_model,o.interface_hash,p.exact_grant,p.limits,s.fee AS reserved_fee FROM stellar_wallets w JOIN stellar_operations o ON o.wallet_id=w.id AND o.agent_id=w.agent_id AND o.instance_id=w.instance_id JOIN agent_ownership a ON a.agent_id=w.agent_id AND a.instance_id=w.instance_id AND a.user_id=w.owner_id JOIN mcp_api_key k ON k.id=o.credential_id AND k.agent_id=w.agent_id AND k.owner_id=w.owner_id AND k.instance_id=w.instance_id AND k.revoked_at IS NULL JOIN stellar_tool_policies p ON p.agent_id=o.agent_id AND p.instance_id=o.instance_id AND p.owner_id=o.owner_id AND p.contract_id=o.contract_id AND p.function_name=o.function_name AND p.revision=o.policy_revision AND p.mode='WRITE' JOIN stellar_spending s ON s.operation_id=o.id AND s.state='RESERVED' WHERE w.id=$1 AND o.id=$2 AND o.owner_id=w.owner_id AND o.wallet_revision=w.revision AND w.active AND w.mode='managed' AND o.state='PREPARING' AND o.lease_until>now()",
           [b.walletId, b.operationId],
         );
         const w = r.rows[0];
         if (
           !w ||
-          w.function_name !== "transfer" ||
           b.opts?.networkPassphrase !== Networks.TESTNET ||
+          (b.opts?.address !== undefined && b.opts.address !== w.address) ||
           b.opts?.submit
         )
           fail("SIGNING_FAILED");
+        const i = await store.get("testnet", w.contract_id);
+        if (!i || i.interfaceHash !== w.interface_hash) fail("STALE_INTERFACE");
+        const grant = w.exact_grant ? checkedGrant(w.exact_grant) : undefined;
+        if (grant) checkExactGrant(i, w.function_model, w.arguments, grant);
+        else if (
+          i.sourceKind !== "stellar_asset" ||
+          w.function_name !== "transfer" ||
+          !w.limits ||
+          w.arguments.from !== w.address ||
+          !w.limits.recipients.includes(w.arguments.to_mux) ||
+          BigInt(w.arguments.amount) > BigInt(w.limits.perTransfer)
+        )
+          fail("SIGNING_FAILED");
+        const maxFee = grant
+          ? BigInt(grant.maxFee)
+          : BigInt(process.env.MAX_FEE ?? "2000000");
+        if (grant && maxFee > MAX_EXACT_FEE) fail("SIGNING_FAILED");
         const tx = TransactionBuilder.fromXdr(b.payload, Networks.TESTNET);
         if (
           !("source" in tx) ||
           tx.source !== w.address ||
           tx.operations.length !== 1 ||
-          BigInt(tx.fee) > BigInt(process.env.MAX_FEE ?? "2000000")
+          !tx.timeBounds ||
+          BigInt(tx.timeBounds.maxTime) * 1000n <= BigInt(Date.now()) ||
+          BigInt(tx.timeBounds.maxTime) * 1000n > BigInt(Date.now() + 90000) ||
+          (tx.operations[0].source !== undefined &&
+            tx.operations[0].source !== w.address) ||
+          BigInt(tx.fee) > maxFee ||
+          BigInt(tx.fee) > BigInt(w.reserved_fee)
         )
           fail("SIGNING_FAILED");
         const op = tx.operations[0];
@@ -307,7 +331,7 @@ export async function signerService(store: Store, key: Buffer, token: string) {
         if (
           Address.fromScAddress(invoke.contractAddress).toString() !==
             w.contract_id ||
-          invoke.functionName.toString() !== "transfer"
+          invoke.functionName.toString() !== w.function_name
         )
           fail("SIGNING_FAILED");
         const expected = w.function_model.params.map(

@@ -217,7 +217,7 @@ export async function main(argv = process.argv.slice(2)) {
         if (
           !(
             await store.pool.query(
-              "SELECT version FROM stellar_migrations WHERE version=7",
+              "SELECT version FROM stellar_migrations WHERE version=8",
             )
           ).rowCount
         )

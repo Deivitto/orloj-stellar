@@ -53,8 +53,9 @@ owner screen before approving. Only that screen receives signing payloads.
 A managed wallet is a different Ed25519 account per agent instance. The signer
 creates and encrypts it; the app and runtime receive only the public address.
 The Fund button uses Testnet Friendbot. Managed unattended writes default to
-disabled and support only verified SAC `transfer`: configure exact contracts,
-recipients, per-transfer amounts, rolling 24-hour amounts and fee budgets.
+disabled. Verified SAC `transfer` supports recipient, per-transfer, rolling amount
+and fee budgets. Other Soroban calls require an owner grant for the exact
+contract, interface hash, method and arguments, with call quotas and fee budgets.
 Switching wallets suspends those limits until the owner authorizes them again.
 
 Amounts are decimal strings in base units: XLM and USDC have seven decimals, so
@@ -152,3 +153,5 @@ GitHub Actions is disabled for this private repository. The former workflow is a
 ## Manual local validation
 
 Run `node --test scripts/local-stack.test.mjs` for launcher detection checks. Run `TEST_DATABASE_URL=postgres://... node --test packages/app/test/*.test.mts packages/app/test/*.test.mjs` for all app credential/selection/readiness checks. Registry checks use `TEST_DATABASE_URL=postgres://... pnpm --filter @orloj/stellar-registry test`. These are operator-invoked local commands, not hosted workflows.
+
+Managed exact-call permissions extend the original SAC transfer budgets. They bind an invocation to its interface hash and exact normalized arguments, with call quotas and fee reservations. See [the registry guide](../../packages/stellar-registry/README.md#managed-exact-call-grants-and-declared-val). Mainnet stays read-only and Classic writes still require Freighter. Re-register WASM contracts when upgrading to encoding v5. Run migration 008 before starting the updated app/registry/signer; keep the database and original signer master key backed up together.

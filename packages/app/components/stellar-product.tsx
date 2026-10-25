@@ -24,6 +24,7 @@ type Contract = {
   address: string;
   contractName: string;
   sourceKind?: string;
+  interfaceHash?: string;
   inventory: Method[];
   excluded: unknown[];
 };
@@ -31,7 +32,20 @@ type Policy = {
   contract_id: string;
   function_name: string;
   mode: "READ" | "WRITE";
-  limits: unknown;
+  revision: number;
+  limits: {
+    recipients: string[];
+    perTransfer: string;
+    rollingAmount: string;
+    rollingFee: string;
+  } | null;
+  exact_grant?: {
+    interfaceHash: string;
+    arguments: Record<string, unknown>;
+    maxCalls: number;
+    maxFee: string;
+    rollingFee: string;
+  } | null;
 };
 type Op = {
   signing_ready?: boolean;
@@ -447,7 +461,10 @@ export function StellarProduct({ agentId: fixedId }: { agentId?: string }) {
           {!fixedId &&
             state.contracts.map((c) => (
               <ContractPolicy
-                key={`${agentId}:${c.name}`}
+                key={`${agentId}:${c.name}:${c.interfaceHash}:${state.policies
+                  .filter((p) => p.contract_id === c.address)
+                  .map((p) => p.revision)
+                  .join(",")}`}
                 contract={c}
                 policies={state.policies}
                 busy={busy}
@@ -566,10 +583,53 @@ function ContractPolicy({
         .map((p) => [p.function_name, p.mode]),
     ),
   );
-  const [recipients, setRecipients] = useState(""),
-    [perTransfer, setPerTransfer] = useState(""),
-    [rollingAmount, setRollingAmount] = useState(""),
-    [rollingFee, setRollingFee] = useState("");
+  type GrantForm = {
+    enabled: boolean;
+    args: string;
+    maxCalls: string;
+    maxFee: string;
+    rollingFee: string;
+  };
+  const [grants, setGrants] = useState<Record<string, GrantForm>>(() =>
+    Object.fromEntries(
+      policies
+        .filter((p) => p.contract_id === contract.address && p.exact_grant)
+        .map((p) => [
+          p.function_name,
+          {
+            enabled: p.exact_grant!.interfaceHash === contract.interfaceHash,
+            args: JSON.stringify(p.exact_grant!.arguments, null, 2),
+            maxCalls: String(p.exact_grant!.maxCalls),
+            maxFee: p.exact_grant!.maxFee,
+            rollingFee: p.exact_grant!.rollingFee,
+          },
+        ]),
+    ),
+  );
+  const [grantError, setGrantError] = useState("");
+  const defaultGrant = (): GrantForm => ({
+    enabled: false,
+    args: "{}",
+    maxCalls: "1",
+    maxFee: "3000000000",
+    rollingFee: "10000000000",
+  });
+  const patchGrant = (name: string, patch: Partial<GrantForm>) =>
+    setGrants((old) => ({
+      ...old,
+      [name]: { ...(old[name] ?? defaultGrant()), ...patch },
+    }));
+  const savedLimits = policies.find(
+    (p) => p.contract_id === contract.address && p.function_name === "transfer",
+  )?.limits;
+  const [recipients, setRecipients] = useState(
+      savedLimits?.recipients.join(", ") ?? "",
+    ),
+    [perTransfer, setPerTransfer] = useState(savedLimits?.perTransfer ?? ""),
+    [rollingAmount, setRollingAmount] = useState(
+      savedLimits?.rollingAmount ?? "",
+    ),
+    [rollingFee, setRollingFee] = useState(savedLimits?.rollingFee ?? "");
   return (
     <section style={card}>
       <h2>{contract.contractName}</h2>
@@ -607,13 +667,82 @@ function ContractPolicy({
                 : ""}
             </span>
           )}
+          {m.eligible &&
+            modes[m.name] === "WRITE" &&
+            !contract.sourceKind?.startsWith("classic_") && (
+              <details>
+                <summary>Unattended permission for this exact call</summary>
+                <p>
+                  This authorizes the complete call from a separate Testnet
+                  wallet. Only these exact arguments are allowed. It does not
+                  infer asset-spending limits from argument names.
+                </p>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={grants[m.name]?.enabled ?? false}
+                    onChange={(e) =>
+                      patchGrant(m.name, { enabled: e.target.checked })
+                    }
+                  />
+                  Allow without a wallet prompt
+                </label>
+                {grants[m.name]?.enabled && (
+                  <>
+                    <label>
+                      Exact arguments (JSON, base units)
+                      <textarea
+                        style={{ ...input, width: "100%" }}
+                        rows={6}
+                        value={grants[m.name].args}
+                        onChange={(e) =>
+                          patchGrant(m.name, { args: e.target.value })
+                        }
+                      />
+                    </label>
+                    <label>
+                      Calls per rolling 24 hours
+                      <input
+                        style={input}
+                        value={grants[m.name].maxCalls}
+                        onChange={(e) =>
+                          patchGrant(m.name, { maxCalls: e.target.value })
+                        }
+                      />
+                    </label>
+                    <label>
+                      Maximum fee per transaction (stroops)
+                      <input
+                        style={input}
+                        value={grants[m.name].maxFee}
+                        onChange={(e) =>
+                          patchGrant(m.name, { maxFee: e.target.value })
+                        }
+                      />
+                    </label>
+                    <label>
+                      Rolling fee budget (stroops)
+                      <input
+                        style={input}
+                        value={grants[m.name].rollingFee}
+                        onChange={(e) =>
+                          patchGrant(m.name, { rollingFee: e.target.value })
+                        }
+                      />
+                    </label>
+                  </>
+                )}
+              </details>
+            )}
         </div>
       ))}
+      {grantError && <p role="alert">{grantError}</p>}
       <details>
         <summary>Unattended transfer limits (exact base units)</summary>
         <p>
-          Managed wallets require all four fields. Other writes require
-          Freighter. 1 XLM or USDC = 10000000 base units.
+          Variable transfer amounts require all four fields. For other calls,
+          configure an exact-call permission above or approve with Freighter. 1
+          XLM or USDC = 10000000 base units.
         </p>
         <input
           style={input}
@@ -647,34 +776,53 @@ function ContractPolicy({
       <button
         style={button}
         disabled={busy}
-        onClick={() =>
-          void save(
-            Object.entries(modes)
-              .filter(([, mode]) => mode)
-              .map(([name, mode]) => ({
-                name,
-                mode,
-                ...(name === "transfer" &&
-                mode === "WRITE" &&
-                recipients &&
-                perTransfer &&
-                rollingAmount &&
-                rollingFee
-                  ? {
-                      limits: {
-                        recipients: recipients
-                          .split(",")
-                          .map((s) => s.trim())
-                          .filter(Boolean),
-                        perTransfer,
-                        rollingAmount,
-                        rollingFee,
-                      },
-                    }
-                  : {}),
-              })),
-          )
-        }
+        onClick={() => {
+          setGrantError("");
+          try {
+            void save(
+              Object.entries(modes)
+                .filter(([, mode]) => mode)
+                .map(([name, mode]) => ({
+                  name,
+                  mode,
+                  ...(mode === "WRITE" && grants[name]?.enabled
+                    ? {
+                        exactGrant: {
+                          interfaceHash: contract.interfaceHash,
+                          arguments: JSON.parse(grants[name].args),
+                          maxCalls: Number(grants[name].maxCalls),
+                          maxFee: grants[name].maxFee,
+                          rollingFee: grants[name].rollingFee,
+                        },
+                      }
+                    : {}),
+                  ...(!grants[name]?.enabled &&
+                  name === "transfer" &&
+                  mode === "WRITE" &&
+                  recipients &&
+                  perTransfer &&
+                  rollingAmount &&
+                  rollingFee
+                    ? {
+                        limits: {
+                          recipients: recipients
+                            .split(",")
+                            .map((s) => s.trim())
+                            .filter(Boolean),
+                          perTransfer,
+                          rollingAmount,
+                          rollingFee,
+                        },
+                      }
+                    : {}),
+                })),
+            );
+          } catch {
+            setGrantError(
+              "Exact arguments must be valid JSON. Check the call and fee limits before saving.",
+            );
+          }
+        }}
       >
         Save tool permissions
       </button>
