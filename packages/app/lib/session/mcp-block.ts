@@ -113,9 +113,12 @@ const deriveFromBlock = (config: string): McpSelectionItem[] => {
   let m: RegExpExecArray | null;
   while ((m = re.exec(block)) !== null) {
     const [, serverName, url] = m;
-    const stellar = /\/contracts\/(C[A-Z2-7]{55})\/mcp/.exec(url)?.[1];
+    const stellar =
+      /\/contracts\/(C[A-Z2-7]{55}|classic:stellar-dex|classic:stellar-amm)\/mcp(?:[?]|$)/.exec(
+        url,
+      )?.[1];
     const mcpName = stellar
-      ? `stellar_testnet_${stellar}`
+      ? `stellar_testnet_${stellar.replace(":", "_")}`
       : /\/interface\/([^/]+)\/mcp/.exec(url)?.[1];
     if (mcpName)
       items.push({ mcpName: decodeURIComponent(mcpName), serverName });

@@ -207,7 +207,7 @@ export function httpServer(executor: Executor, product?: Product) {
         if (
           !(
             await executor.store.pool.query(
-              "SELECT version FROM stellar_migrations WHERE version=6",
+              "SELECT version FROM stellar_migrations WHERE version=7",
             )
           ).rowCount
         )
@@ -243,12 +243,17 @@ export function httpServer(executor: Executor, product?: Product) {
         json(res, 401, envelope(new RegistryError("UNAUTHORIZED")));
         return;
       }
-      const match = /^\/contracts\/(C[A-Z2-7]+)\/mcp$/.exec(url.pathname);
+      const match =
+        /^\/contracts\/(C[A-Z2-7]+|classic:stellar-dex|classic:stellar-amm)\/mcp$/.exec(
+          url.pathname,
+        );
       if (!match) {
         json(res, 404, { ok: false });
         return;
       }
-      const id = contractId(match[1]);
+      const id = match[1].startsWith("classic:")
+        ? match[1]
+        : contractId(match[1]);
       const i = await executor.store.get(executor.config.network, id);
       if (
         !i ||

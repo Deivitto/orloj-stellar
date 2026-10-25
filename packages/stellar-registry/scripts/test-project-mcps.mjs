@@ -5,6 +5,7 @@ import { rpc } from "@stellar/stellar-sdk";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { parseConfig } from "../dist/src/config.js";
+import { classicInterface } from "../dist/src/classic.js";
 import { ingest } from "../dist/src/ingestion.js";
 import { Store } from "../dist/src/store.js";
 import { Executor } from "../dist/src/executor.js";
@@ -12,10 +13,11 @@ import { httpServer } from "../dist/src/gateway.js";
 const source = "GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA";
 const discovery = JSON.parse(
   await readFile(
-    new URL(
-      "../demo-contract/top10-audit/discovery-mainnet.json",
-      import.meta.url,
-    ),
+    process.env.AUDIT_DISCOVERY_FILE ??
+      new URL(
+        "../demo-contract/top10-audit/discovery-mainnet.json",
+        import.meta.url,
+      ),
     "utf8",
   ),
 );
@@ -50,11 +52,22 @@ const cases = {
     ["name", {}],
     ["decimals", {}],
     ["get_fees", {}],
+    ["get_assets", {}],
+    ["fetch_total_managed_funds", {}],
+    ["quote", { amount_a: "100", reserve_a: "1000", reserve_b: "2000" }],
   ],
   "Templar Protocol": [
     ["asset", {}],
     ["total_assets", {}],
     ["name", {}],
+  ],
+  "Stellar DEX": [
+    ["account_balances", { account: source }],
+    ["offers", { account: source, limit: 5 }],
+    ["orderbook", { selling: "native", buying: "AQUA:" + source, limit: 5 }],
+  ],
+  "Stellar AMM": [
+    ["liquidity_pool", { pool_id: process.env.AUDIT_MAINNET_POOL_ID ?? "" }],
   ],
   "Sushi Stellar": [
     ["get_owner", {}],
@@ -116,7 +129,9 @@ try {
     out.projects.push(result);
     const client = new Client({ name: "orloj-project-audit", version: "1.0" });
     try {
-      const i = await ingest(server, config, target.contractId);
+      const i = target.contractId.startsWith("classic:")
+        ? classicInterface(config, target.contractId)
+        : await ingest(server, config, target.contractId);
       await store.save(i);
       await client.connect(
         new StreamableHTTPClientTransport(
@@ -160,10 +175,11 @@ try {
       await client.close().catch(() => {});
     }
     await writeFile(
-      new URL(
-        "../demo-contract/top10-audit/mcp-mainnet-results.json",
-        import.meta.url,
-      ),
+      process.env.AUDIT_OUTPUT_FILE ??
+        new URL(
+          "../demo-contract/top10-audit/mcp-mainnet-results.json",
+          import.meta.url,
+        ),
       JSON.stringify({ ...out, submissionAttempts: submissions }, null, 2) +
         "\n",
     );

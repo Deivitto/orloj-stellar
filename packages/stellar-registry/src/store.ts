@@ -71,6 +71,7 @@ export class Store {
         [4, "004_local_product.sql"],
         [5, "005_app_identity.sql"],
         [6, "006_signer_epoch.sql"],
+        [7, "007_classic_adapters.sql"],
       ] as const) {
         const seen = await client.query(
           "SELECT version FROM stellar_migrations WHERE version=$1",

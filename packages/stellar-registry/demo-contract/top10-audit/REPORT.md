@@ -1,5 +1,43 @@
 # Top-ten Stellar Orloj audit — 25 October 2026
 
+
+## Remediation implemented — 25 October 2026
+
+The historical audit below is retained. Master v1.4 now covers bounded CPU headroom, declared Result returns, exact 256-bit integers and separate classic DEX/AMM adapters. Newly eligible methods still require explicit policy.
+
+| Entry | Current signature eligibility | Verified outcome / restriction |
+|---|---|---|
+| Blend Pools V2 | 17/17 mainnet backstop; 27/27 testnet pool | Mainnet reads; fresh testnet deposit/withdrawal confirmed; position decreased after withdrawal. |
+| Stellar DeFi Hub | 60/60 selected vault | Mainnet reads pass; project-published ownership provenance unverified. |
+| Aquarius Stellar | 74/75 router | Mainnet reads including u256 liquidity; testnet trust/swap confirmed and output balance increased. get_info returns untyped Val and remains excluded. |
+| Upshift | 60/60 selected vault | Mainnet reads pass; official testnet writes unverified. |
+| Gami Labs | 60/60 selected vault | Mainnet reads pass; shared Upshift infrastructure; official testnet writes unverified. |
+| DeFindex | 44/44 selected vault | Result reads and official testnet deposit/withdrawal confirmed; shares increased/decreased. |
+| Sushi Stellar | 25/25 selected factory | Mainnet factory reads pass; router/position writes on official testnet unverified. |
+| Stellar DEX | Separate classic adapter | Mainnet queries; testnet trustline, offer creation/cancellation; owner Freighter create/cancel confirmed. |
+| Templar Protocol | 26/26 experimental proxy | Three Result reads pass; experimental deployment is not verified as the ranked production TVL deployment; writes unverified. |
+| Stellar AMM | Separate classic adapter | Mainnet pool read; testnet pool trust, deposit and withdrawal confirmed with state checks. |
+
+32 mainnet HTTP MCP reads across all ten entries passed with zero mainnet submission attempts. The separate natural-language harness selected the expected tool for all ten entries and received successful MCP results (`agent-remediation-results.json`). This covers the recorded prompts; it does not establish arbitrary-language accuracy or browser chat acceptance.
+
+Blend's historical failure was CPU instruction exhaustion: 1,831,549 attempted versus 1,831,400 declared. Final authorization-enforced simulation now requests configurable CPU leeway separately from fee buffering. Fee caps remain authoritative. Protocol retests used disposable wallets and an explicitly declared maximum of 300 **test** XLM. The app maximum remained 0.2 XLM; cold Blend deposits can still legitimately exceed it. No user fee grant was enlarged.
+
+A top-level Result annotation adds no host value container. The existing depth-8 limit applies to its payload itself, which admits DeFindex's deposit without increasing that limit. Result inputs/nested Results, ambiguous options, recursive types and untyped Val remain excluded. Unknown and foreign contract errors are not guessed.
+
+Classic reads use READ_ONLY and Horizon; classic writes use ledger/reserve/trustline/authorization preflight, owner approval, the shared account lock, durable intent before one submission, and getTransaction confirmation. They never use Soroban simulation. Both policy-enabled DEX and AMM writes were denied under managed custody with no operation created. Duplicate requests reconciled to their original hash.
+
+Actual owner browser acceptance: created a one-stroop offer, hash `484117c427b7e185f7d948121d6ca7d2fe21be4795cc2f57a6a79b17d74ae7fc`; cancelled offer 931559, hash `26be04aeae06091fd29ef7f6697121360cda074a5e0cadc13c6ad1badaf2dd23`. Both displayed SUBMITTED_AND_CONFIRMED and independently returned SUCCESS; Horizon confirms the offer is absent. Each charged 100 stroops. An earlier approval expired before submission and remains REJECTED/SIGNING_FAILED with no hash. There was no automatic rebuild or resubmission.
+
+The active app wallet is managed again. Unattended grants are intentionally disabled after switching wallets and require explicit owner reauthorization. Signing payloads and private credentials are absent from public evidence.
+
+Manual checks: 125 registry tests including database-backed writes/recovery; two new app tests; app typecheck/build pass; lint has zero errors and nine pre-existing warnings. GitHub checks remain manual-only. Independent review found no remaining source-level safety blocker and independently verified Freighter and DeFindex transactions.
+
+**Remaining acceptance gaps:** integrated browser chat has no running isolated runtime broker on this host. It now fails visibly with HTTP 503 before creating/replacing agent configuration. No browser chat pass or reproducible full-stack startup is claimed. Missing official testnet deployments/provenance above still limit project write coverage. Signature eligibility is not blanket execution coverage.
+
+New evidence: `blend-failure-diagnosis.json`, `discovery-mainnet-v3.json`, `mcp-mainnet-remediation-results.json`, `new-signature-results.json`, `agent-remediation-results.json`, `testnet-remediation-results.json`, `classic-testnet-results.json`, `classic-app-results.json`, `remediation-transaction-verification.json`, `remediation-review.json`.
+
+## Historical baseline
+
 Outcome: **not issue-free and not ten complete integrations**. Seven representative Soroban contracts have callable read MCPs; Templar has an ingested inventory but no callable tools; two entries are classic protocol systems.
 
 ## Ranking and scope

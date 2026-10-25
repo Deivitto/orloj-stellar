@@ -1,0 +1,34 @@
+{
+  "reviewedAt": "2026-10-25T17:42:27.455637+00:00",
+  "independentReviewer": "verify_port_goals",
+  "sourceSafetyBlockers": [],
+  "verified": [
+    "bounded CPU leeway through installed SDK",
+    "Result payload depth 8; nested/input Results excluded",
+    "foreign same-code error attribution regression",
+    "shared owner-only classic signing and durable intent",
+    "managed DEX/AMM denials",
+    "Freighter create/cancel confirmed and offer absent",
+    "DeFindex deposit/withdrawal independently confirmed",
+    "10 expected natural-language tool selections and MCP results"
+  ],
+  "manualChecks": {
+    "registryTestsPassed": 125,
+    "newAppTestsPassed": 2,
+    "appTypecheck": "passed",
+    "appBuild": "passed",
+    "lintErrors": 0,
+    "preexistingLintWarnings": 9
+  },
+  "remainingAcceptanceGaps": [
+    "Integrated browser chat requires a running isolated runtime broker",
+    "Full Compose startup unverified",
+    "Missing official testnet deployments/provenance documented in REPORT.md",
+    "Aquarius get_info returns untyped Val and remains excluded",
+    "Representative calls do not prove every project method works"
+  ],
+  "walletState": {
+    "activeMode": "managed",
+    "unattendedGrantsEnabled": false
+  }
+}

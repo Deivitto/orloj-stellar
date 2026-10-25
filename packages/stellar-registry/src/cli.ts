@@ -1,3 +1,4 @@
+import { classicIds, classicInterface } from "./classic.js";
 import { once } from "node:events";
 import { readFile, writeFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
@@ -149,12 +150,14 @@ export async function main(argv = process.argv.slice(2)) {
       }
       case "register": {
         if (!args[0]) fail("INVALID_ARGUMENT");
-        const i = await ingest(
-          server,
-          c,
-          args[0],
-          args[1] ? await readFile(args[1]) : undefined,
-        );
+        const i = classicIds.includes(args[0] as (typeof classicIds)[number])
+          ? classicInterface(c, args[0])
+          : await ingest(
+              server,
+              c,
+              args[0],
+              args[1] ? await readFile(args[1]) : undefined,
+            );
         await store.save(i);
         result = i;
         break;
@@ -214,7 +217,7 @@ export async function main(argv = process.argv.slice(2)) {
         if (
           !(
             await store.pool.query(
-              "SELECT version FROM stellar_migrations WHERE version=6",
+              "SELECT version FROM stellar_migrations WHERE version=7",
             )
           ).rowCount
         )

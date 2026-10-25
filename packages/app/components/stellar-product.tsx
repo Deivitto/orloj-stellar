@@ -13,14 +13,17 @@ type Signature = {
 type Method = {
   name: string;
   eligible: boolean;
+  allowedMode?: "READ" | "WRITE";
   error_code?: string;
   restriction?: string;
+  exclusion?: { location: string; type: string };
   signature?: Signature;
 };
 type Contract = {
   name: string;
   address: string;
   contractName: string;
+  sourceKind?: string;
   inventory: Method[];
   excluded: unknown[];
 };
@@ -84,6 +87,7 @@ export function StellarProduct({ agentId: fixedId }: { agentId?: string }) {
     [agentId, setAgentId] = useState(fixedId ?? ""),
     [state, setState] = useState<State>(empty),
     [error, setError] = useState(""),
+    [registryUnavailable, setRegistryUnavailable] = useState(false),
     [busy, setBusy] = useState(false),
     [name, setName] = useState("My Stellar agent"),
     [contractId, setContractId] = useState("");
@@ -144,12 +148,12 @@ export function StellarProduct({ agentId: fixedId }: { agentId?: string }) {
     const poll = async () => {
       try {
         const data = await api("state");
-        if (active) setState(data);
+        if (active) {
+          setState(data);
+          setRegistryUnavailable(false);
+        }
       } catch {
-        if (active)
-          setError(
-            "Stellar registry unavailable. Check local service readiness.",
-          );
+        if (active) setRegistryUnavailable(true);
       }
     };
     void poll();
@@ -221,6 +225,11 @@ export function StellarProduct({ agentId: fixedId }: { agentId?: string }) {
         Testnet · Connect a wallet, choose contract tools, and call them through
         MCP. AI chat is optional.
       </p>
+      {registryUnavailable && (
+        <p role="alert" style={{ color: "var(--wine)", ...card }}>
+          Stellar registry unavailable. Check local service readiness.
+        </p>
+      )}
       {error && (
         <p role="alert" style={{ color: "var(--wine)", ...card }}>
           {error}
@@ -361,7 +370,7 @@ export function StellarProduct({ agentId: fixedId }: { agentId?: string }) {
           </section>
           {!fixedId && (
             <section style={card}>
-              <h2>Register a contract or asset</h2>
+              <h2>Register a contract, asset or classic market</h2>
               <input
                 aria-label="Stellar contract address"
                 placeholder="C… contract address"
@@ -391,6 +400,26 @@ export function StellarProduct({ agentId: fixedId }: { agentId?: string }) {
               >
                 Register XLM
               </button>
+              {(
+                [
+                  ["classic:stellar-dex", "Register Stellar DEX"],
+                  ["classic:stellar-amm", "Register Stellar AMM"],
+                ] as const
+              ).map(([id, label]) => (
+                <button
+                  key={id}
+                  disabled={busy}
+                  style={button}
+                  onClick={() =>
+                    void action(async () => {
+                      await api("register", { contractId: id });
+                    })
+                  }
+                >
+                  {label}
+                </button>
+              ))}
+
               <button
                 disabled={busy}
                 style={button}
@@ -561,11 +590,22 @@ function ContractPolicy({
               }
             >
               <option value="">Disabled</option>
-              <option value="READ">Simulate only</option>
-              <option value="WRITE">Allow write</option>
+              <option value="READ" disabled={m.allowedMode === "WRITE"}>
+                {contract.sourceKind?.startsWith("classic_")
+                  ? "Read only"
+                  : "Simulate only"}
+              </option>
+              <option value="WRITE" disabled={m.allowedMode === "READ"}>
+                Allow write
+              </option>
             </select>
           ) : (
-            <span>Excluded: {m.restriction ?? m.error_code}</span>
+            <span>
+              Excluded: {m.restriction ?? m.error_code}
+              {m.exclusion
+                ? ` · ${m.exclusion.location}: ${m.exclusion.type}`
+                : ""}
+            </span>
           )}
         </div>
       ))}

@@ -17,6 +17,8 @@ export const codes = [
   "AUTHORIZATION_REQUIRED",
   "SIMULATION_FAILED",
   "RESULT_DECODE_FAILED",
+  "CONTRACT_EXECUTION_FAILED",
+  "CLASSIC_QUERY_FAILED",
   "STRING_NOT_UTF8",
   "WRITE_NOT_PERMITTED",
   "SIGNER_NOT_CONFIGURED",
@@ -57,6 +59,8 @@ const messages: Record<ErrorCode, string> = {
   AUTHORIZATION_REQUIRED:
     "This function requires authorization that is not configured.",
   SIMULATION_FAILED: "Contract simulation failed.",
+  CLASSIC_QUERY_FAILED: "Classic Stellar ledger data could not be read.",
+  CONTRACT_EXECUTION_FAILED: "The contract returned an execution error.",
   RESULT_DECODE_FAILED: "The result does not match the declared type.",
   STRING_NOT_UTF8: "The returned string is not valid UTF-8.",
   WRITE_NOT_PERMITTED: "Write policy does not permit this operation.",
@@ -79,7 +83,10 @@ const messages: Record<ErrorCode, string> = {
   INTERNAL_ERROR: "The operation could not be completed.",
 };
 export class RegistryError extends Error {
-  constructor(public code: ErrorCode) {
+  constructor(
+    public code: ErrorCode,
+    public contractError?: { code: number; name?: string },
+  ) {
     super(messages[code]);
   }
 }
@@ -98,6 +105,7 @@ export function envelope(
     ...context,
     ok: false,
     error_code: e.code,
+    ...(e.contractError ? { contract_error: e.contractError } : {}),
     retryable: false,
     human_message: e.message,
   };

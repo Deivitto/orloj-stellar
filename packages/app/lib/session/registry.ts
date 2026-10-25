@@ -1,3 +1,4 @@
+import {assertRuntimeReady} from "./runtime-readiness";
 import { getPool } from "@/lib/db";
 import { randomUUID } from "node:crypto";
 import { getActiveTokenForAgent } from "@/lib/mcp-tokens";
@@ -142,6 +143,7 @@ const doCreate = async (opts: {
   acpSessionId?: string;
 }): Promise<CreateResult> => {
   const { agentId, userId, mcpNames, acpSessionId } = opts;
+  await assertRuntimeReady();
 
   const token = await getActiveTokenForAgent(agentId);
   if (!token) throw new NoActiveTokenError(agentId);

@@ -1,6 +1,6 @@
 # ORLOJ STELLAR — MASTER ARCHITECTURE & BUILD SPECIFICATION
 
-Version: 1.3 — Read + Write MCP Registry for Stellar/Soroban
+Version: 1.4 — Read + Write MCP Registry for Stellar/Soroban
 Status: Source of truth for AI coding agents
 Source: David's specification supplied by the user (24 October, 22:43). Typography normalized from the pasted message.
 
@@ -22,7 +22,7 @@ The agent never receives, holds, or transmits a private key.
 4. No runtime type guessing: decoded values must match the generated JSON Schema.
 5. The agent never sees secret keys, mnemonics, raw signing material, or raw RPC stack traces.
 6. Reads never submit transactions.
-7. Writes always simulate before signing and submission.
+7. Soroban writes always simulate before signing and submission; classic operations use explicit ledger preflight because Soroban simulation does not execute them.
 8. A write is successful only after `getTransaction` returns SUCCESS.
 9. All caches are keyed by `network + contract_id + interface_hash`.
 10. All errors use stable machine-readable codes.
@@ -149,6 +149,8 @@ Contract ID/WASM → Spec → FunctionModel → MCP Tool → JSON Schema validat
 | i64 | string | canonical decimal string, -2^63 to 2^63-1 |
 | u128 | string | decimal string, 0 to 2^128-1 |
 | i128 | string | decimal string, -2^127 to 2^127-1 |
+| u256 | string | canonical decimal string, 0 to 2^256-1 |
+| i256 | string | canonical decimal string, -2^255 to 2^255-1 |
 | Symbol | string | valid Soroban symbol |
 | Address | string | SDK StrKey validation; G or C |
 | Bytes | string | lowercase hex |
@@ -392,3 +394,30 @@ The user approved a Stellar-first local product, preserving EVM compatibility. I
 MCP writes are durable asynchronous operations with operation IDs and AWAITING_APPROVAL/PENDING states. Add a collision-free read-only operation status tool. Signing payloads stay in the owner-only signing channel. Recheck credentials, current ownership, wallet binding and policy revision atomically at durable intent. Revocation blocks new intent; existing intent is reconciled, never automatically resubmitted. Persist signed sequence and maximum time before any send. Release an ambiguous reservation only under the source-account lock after confirmed terminal status or authoritative ledger expiry/non-inclusion proof; legacy incomplete metadata remains blocked.
 
 Managed keys use AES-256-GCM with random nonces and authenticated agent/network/key-version metadata. Master keys belong only to a dedicated signer service. Wallet secrets and signer material never enter agent runtime environment or mounts. Ownership changes suspend unattended grants. Provision actual isolated agent runtime and configurable model provider, magic-link local delivery and reproducible local stack. Mainnet writes, hosted deployment, KMS/HSM and arbitrary unattended contract methods remain outside this release. Real browser-to-chat acceptance and independent verification are mandatory; missing provider credentials or hosted CI billing failures must remain explicit blockers, not claimed passes.
+
+
+## 16. Approved audit remediation (25 October 2026)
+
+The user approved implementation of the audit remediation plan. Preserve mainnet read-only and manual verification; automatic GitHub checks remain disabled.
+
+### Resource budgets
+
+Execution resource allowances and resource-fee headroom are independent. Final authorization-enforced simulation must request configurable CPU instruction leeway (default 1,000,000; range 0..10,000,000). The RPC/SDK computes the resulting resource declarations and fees; never manually reconstruct authorization. Keep the configured maximum fee and network limits authoritative. Do not resubmit an existing intent. A new testnet retest is a fresh explicit request, not recovery of the historical failed transaction. Return only sanitized resource diagnostics.
+
+### Declared result types and errors
+
+Support top-level function return `Result<T,E>` where T is in the supported closed grammar and E is the declared contract error enum or the SDK-defined Error type. Generic Error keeps its numeric code without inventing a case name. Successful Soroban Result returns are encoded by the host as the bare T; expose JSON `{tag:"Ok", values:[T]}` to preserve the declared return type. A declared contract error is a failed execution, not a successful union value: return `CONTRACT_EXECUTION_FAILED` with sanitized `contract_error: {code, name}` when a typed diagnostic attributed to the invoked contract matches the declaration. Unknown codes, cross-contract errors, and malformed values must not be guessed. Never encode a Result as a Soroban vector. Result is a top-level return annotation, so the depth-8 limit applies to payload T itself; the host adds no Result value container. Result inputs, nested Results, recursive definitions and ambiguous nested options remain excluded.
+
+Resolve referenced contract-error definitions, preserving their numeric codes. Add precise exclusion location/type and the original declared signature to inventories. Version WASM interface identity to encoding v3; old WASM interfaces require re-registration before new execution. Existing attempts reconcile with original metadata and return models; write history and tool names are preserved. Newly supported methods remain disabled until individually permitted. SAC encoding remains unchanged.
+
+### Classic protocol adapters
+
+Authorize a separate, explicitly identified classic Stellar adapter for account balances, offers, order books and liquidity-pool discovery, and owner-approved testnet operations: trustline creation, offer management and liquidity-pool deposits/withdrawals. Classic adapters never invent a Soroban contract ID and never pass classic operations through Soroban simulation. Validate exact decimal amounts, rational prices, assets, authorization, account reserves, fees, time bounds and per-operation policy. Sign through the existing owner channel, persist intent/hash/sequence/expiry before one send, and confirm using authoritative ledger transaction status. Managed unattended signing remains limited to verified SAC transfers. Classic integration must remain visibly unavailable until its independent execution and app authorization gates pass.
+
+### Coverage and provenance
+
+Track signature eligibility, enabled policy, successful reads and confirmed writes separately. Verify project-published deployment provenance before claiming an official integration. A local deployment proves fixture compatibility only. Missing official testnet deployments remain an explicit external acceptance gap. Never equate a representative factory or experimental vault with an entire project's production interface or TVL. Completion requires actual app/session testing in addition to direct MCP harness tests.
+
+Full-width u256/i256 leaves use canonical decimal strings and exact BigInt conversion, with the same validation rules as u128/i128. Untyped Val remains excluded.
+
+Classic read envelopes use `READ_ONLY`, never `SIMULATED`. Classic writes use the shared testnet-only durable intent, account locking, owner approval, single RPC submission and getTransaction confirmation; they have no Soroban resource data. `CLASSIC_QUERY_FAILED` is a stable sanitized Horizon read error.

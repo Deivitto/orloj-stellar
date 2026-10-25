@@ -9,7 +9,7 @@ import {
 import { z } from "zod";
 import { fail, RegistryError } from "./errors.js";
 import type { TypeNode, TypeModel } from "./model.js";
-const large = ["u64", "i64", "u128", "i128"];
+const large = ["u64", "i64", "u128", "i128", "u256", "i256"];
 function decimalUpTo(max: bigint): string {
   const digits = max.toString();
   const options = ["0"];
@@ -45,14 +45,16 @@ export function validator(t: TypeNode): z.ZodType {
     case "u64":
     case "i64":
     case "u128":
-    case "i128": {
+    case "i128":
+    case "u256":
+    case "i256": {
       const signed = t.kind[0] === "i";
       const bits = BigInt(t.kind.slice(1));
       const min = signed ? -(1n << (bits - 1n)) : 0n;
       const max = (1n << (signed ? bits - 1n : bits)) - 1n;
       return z
         .string()
-        .max(40)
+        .max(79)
         .regex(
           new RegExp(
             "^(?:" +
@@ -91,6 +93,11 @@ export function validator(t: TypeNode): z.ZodType {
         .max(2 * 1024 * 1024);
     case "BytesN":
       return z.string().regex(new RegExp(`^[0-9a-f]{${2 * t.size!}}$`));
+    case "Result":
+      return z.strictObject({
+        tag: z.literal("Ok"),
+        values: z.tuple([validator(t.ok)]),
+      });
     case "Option":
       return z.union([validator(t.item), z.null()]);
     case "Vec":
@@ -118,7 +125,18 @@ export function validator(t: TypeNode): z.ZodType {
       );
   }
 }
-export function supported(t: TypeNode, depth = 0): void {
+export function supported(t: TypeNode, depth = 0, resultAllowed = true): void {
+  if (
+    t.kind === "Result" &&
+    (new Set(t.errors.map((e) => e.value)).size !== t.errors.length ||
+      new Set(t.errors.map((e) => e.name)).size !== t.errors.length ||
+      t.errors.some(
+        (e) =>
+          !Number.isInteger(e.value) || e.value < 0 || e.value > 4294967295,
+      ))
+  )
+    fail("SPEC_PARSE_FAILED");
+  if (t.kind === "Result" && !resultAllowed) fail("UNSUPPORTED_SOROBAN_TYPE");
   if (depth > 8) fail("TYPE_DEPTH_EXCEEDED");
   if (
     t.kind === "BytesN" &&
@@ -128,17 +146,19 @@ export function supported(t: TypeNode, depth = 0): void {
   if (t.kind === "Option" && ["Option", "void"].includes(t.item.kind))
     fail("UNSUPPORTED_SOROBAN_TYPE");
   const children =
-    "item" in t
-      ? [t.item]
-      : t.kind === "Map"
-        ? [t.key, t.value]
-        : t.kind === "Tuple"
-          ? t.items
-          : t.kind === "Struct"
-            ? t.fields.map((f) => f.type)
-            : t.kind === "Union"
-              ? t.cases.flatMap((c) => c.items)
-              : [];
+    t.kind === "Result"
+      ? [t.ok]
+      : "item" in t
+        ? [t.item]
+        : t.kind === "Map"
+          ? [t.key, t.value]
+          : t.kind === "Tuple"
+            ? t.items
+            : t.kind === "Struct"
+              ? t.fields.map((f) => f.type)
+              : t.kind === "Union"
+                ? t.cases.flatMap((c) => c.items)
+                : [];
   if (t.kind === "Enum" || t.kind === "Union") {
     if (
       !t.cases.length ||
@@ -157,7 +177,8 @@ export function supported(t: TypeNode, depth = 0): void {
       fail("SPEC_PARSE_FAILED");
   }
   if (children.length > 100) fail("UNSUPPORTED_SOROBAN_TYPE");
-  for (const child of children) supported(child, depth + 1);
+  for (const child of children)
+    supported(child, depth + (t.kind === "Result" ? 0 : 1), false);
 }
 export function budget(
   value: unknown,
@@ -215,6 +236,7 @@ export function encode(t: TypeNode, value: unknown, nested = false): xdr.ScVal {
   }
   if (!validator(t).safeParse(value).success) fail("INVALID_ARGUMENT");
   try {
+    if (t.kind === "Result") fail("UNSUPPORTED_SOROBAN_TYPE");
     if (t.kind === "Option")
       return value === null ? xdr.ScVal.scvVoid() : encode(t.item, value, true);
     if (t.kind === "Vec")
@@ -307,7 +329,26 @@ export function decode(t: TypeNode, v: xdr.ScVal, nested = false): unknown {
   }
   try {
     let out: unknown;
-    if (t.kind === "Option")
+    if (t.kind === "Result") {
+      if (v.type === "scvError") {
+        if (v.error.type !== "sceContract") fail("RESULT_DECODE_FAILED");
+        const code = v.error.contractCode,
+          declared = t.errors.find((e) => e.value === code);
+        if (!t.genericError && !declared) fail("RESULT_DECODE_FAILED");
+        throw new RegistryError("CONTRACT_EXECUTION_FAILED", {
+          code,
+          ...(declared ? { name: declared.name } : {}),
+        });
+      }
+      out = {
+        tag: "Ok",
+        values: [
+          t.ok.kind === "Tuple" && !t.ok.items.length && v.type === "scvVoid"
+            ? []
+            : decode(t.ok, v, true),
+        ],
+      };
+    } else if (t.kind === "Option")
       out = v.type === "scvVoid" ? null : decode(t.item, v, true);
     else if (t.kind === "Vec") {
       if (v.type !== "scvVec" || !v.vec || v.vec.length > 100)
@@ -370,6 +411,8 @@ export function decode(t: TypeNode, v: xdr.ScVal, nested = false): unknown {
         i64: "scvI64",
         u128: "scvU128",
         i128: "scvI128",
+        u256: "scvU256",
+        i256: "scvI256",
         Address: "scvAddress",
         MuxedAddress: "scvAddress",
         Bytes: "scvBytes",
@@ -396,6 +439,8 @@ export function decode(t: TypeNode, v: xdr.ScVal, nested = false): unknown {
         case "scvI64":
         case "scvU128":
         case "scvI128":
+        case "scvU256":
+        case "scvI256":
           out = scValToBigInt(v).toString();
           break;
         case "scvAddress":

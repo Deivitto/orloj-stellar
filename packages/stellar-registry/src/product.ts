@@ -1,5 +1,11 @@
 import { randomUUID, randomBytes } from "node:crypto";
 import type pg from "pg";
+import {
+  classicIds,
+  classicInterface,
+  isClassic,
+  classicMode,
+} from "./classic.js";
 import { Address, Keypair, StrKey, hash, rpc, xdr } from "@stellar/stellar-sdk";
 import { z } from "zod";
 import { Store, canonical, digest } from "./store.js";
@@ -136,7 +142,11 @@ export class Product {
       fail("INVALID_ARGUMENT");
     const i = parsed.data.asset
       ? await ingestAsset(this.server, this.config, parsed.data.asset)
-      : await ingest(this.server, this.config, parsed.data.contractId!);
+      : classicIds.includes(
+            parsed.data.contractId as (typeof classicIds)[number],
+          )
+        ? classicInterface(this.config, parsed.data.contractId!)
+        : await ingest(this.server, this.config, parsed.data.contractId!);
     await this.store.save(i);
     await this.store.pool.query(
       "INSERT INTO stellar_contract_owners VALUES($1,$2,$3) ON CONFLICT DO NOTHING",
@@ -146,7 +156,7 @@ export class Product {
       ok: true,
       ...i,
       url: `/contracts/${i.contractId}/mcp`,
-      name: `stellar_${i.network}_${i.contractId}`,
+      name: `stellar_${i.network}_${i.contractId.replace(":", "_")}`,
     };
   }
   async manifest(a: AgentIdentity) {
@@ -158,18 +168,22 @@ export class Product {
       wallet = (await this.wallets(a)).find((w) => w.active);
     return result.rows.map(
       ({ interface: i }: { interface: ContractInterface }) => ({
-        name: `stellar_${i.network}_${i.contractId}`,
+        name: `stellar_${i.network}_${i.contractId.replace(":", "_")}`,
         url: `/contracts/${i.contractId}/mcp`,
         family: "stellar",
         network: i.network,
         chainId: null,
         address: i.contractId,
         contractName:
-          i.asset?.kind === "native"
-            ? "XLM"
-            : i.asset?.kind === "issued"
-              ? i.asset.code
-              : i.contractId,
+          i.sourceKind === "classic_dex"
+            ? "Stellar DEX (classic)"
+            : i.sourceKind === "classic_amm"
+              ? "Stellar AMM (classic)"
+              : i.asset?.kind === "native"
+                ? "XLM"
+                : i.asset?.kind === "issued"
+                  ? i.asset.code
+                  : i.contractId,
         description: `Stellar ${i.network} · ${i.inventory?.length ?? 0} declared methods`,
         platform: "Stellar",
         toolCount: policies.filter((p) => p.contract_id === i.contractId)
@@ -226,6 +240,8 @@ export class Product {
     const i = await this.store.get(this.config.network, contractId);
     if (!i) fail("INVALID_CONTRACT_ID");
     for (const f of functions) {
+      if (isClassic(i) && classicMode(f.name) !== f.mode)
+        fail("INVALID_ARGUMENT");
       if (
         !i.inventory?.some(
           (m) => m.name === f.name && m.eligible && m.signature,
@@ -594,7 +610,12 @@ export class Product {
   }
   publicOperation(o: ProductOperation): Record<string, unknown> {
     return o.result
-      ? { ...o.result, operation_id: o.id, can_cancel: false }
+      ? {
+          ...o.result,
+          result_status: o.result.result_status ?? o.state,
+          operation_id: o.id,
+          can_cancel: false,
+        }
       : {
           ok: true,
           operation_id: o.id,

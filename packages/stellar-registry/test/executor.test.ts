@@ -165,6 +165,7 @@ it.skipIf(!database)(
     expect(x.send).toHaveBeenCalledTimes(1);
     const simCalls = vi.mocked(x.server.simulateTransaction).mock.calls;
     expect(simCalls.at(-1)?.[2]).toBe("enforce");
+    expect(simCalls.at(-1)?.[1]).toEqual({ cpuInstructions: 1000000 });
   },
 );
 it.skipIf(!database)(

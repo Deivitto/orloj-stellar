@@ -1,0 +1,46 @@
+{
+  "verifiedAt": "2026-10-25T16:44:32.619Z",
+  "network": "testnet",
+  "hash": "b49b1ae49f28d266db55add6d30626eede3b288303b4d8ea29e359b5c3c7ba31",
+  "status": "FAILED",
+  "ledger": 5384388,
+  "declaredInstructions": 1831400,
+  "diagnostics": [
+    {
+      "in_successful_contract_call": false,
+      "event": {
+        "ext": "v0",
+        "contract_id": null,
+        "type": "diagnostic",
+        "body": {
+          "v0": {
+            "topics": [
+              {
+                "symbol": "error"
+              },
+              {
+                "error": {
+                  "budget": "exceeded_limit"
+                }
+              }
+            ],
+            "data": {
+              "vec": [
+                {
+                  "string": "operation instructions exceeds amount specified"
+                },
+                {
+                  "u64": "1831549"
+                },
+                {
+                  "u64": "1831400"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "interpretation": "CPU instruction allowance exhausted. Fee headroom is distinct from execution resource headroom. The observed 149-instruction overrun is where execution stopped, not the total resources needed to finish."
+}

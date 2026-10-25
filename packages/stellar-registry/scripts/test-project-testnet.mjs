@@ -36,6 +36,8 @@ const functions = {
   DeFindex: {
     name: "READ",
     get_fees: "READ",
+    get_assets: "READ",
+    balance: "READ",
     deposit: "WRITE",
     withdraw: "WRITE",
   },
@@ -81,6 +83,8 @@ if ((await server.getNetwork()).passphrase !== Networks.TESTNET)
 const out = {
   testedAt: new Date().toISOString(),
   network: "testnet",
+  maximumFeeStroops: config.maxFee,
+  instructionLeeway: config.instructionLeeway,
   wallet: address,
   funding: [],
   projects: [],
@@ -88,10 +92,11 @@ const out = {
 };
 const persist = () =>
   writeFile(
-    new URL(
-      "../demo-contract/top10-audit/testnet-results.json",
-      import.meta.url,
-    ),
+    process.env.AUDIT_OUTPUT_FILE ??
+      new URL(
+        "../demo-contract/top10-audit/testnet-results.json",
+        import.meta.url,
+      ),
     JSON.stringify(out, null, 2) + "\n",
   );
 const fundingResponse = await fetch(
@@ -110,7 +115,10 @@ const store = new Store(config.databaseUrl),
 await store.migrate();
 await store.credential(token, "top10-testnet-audit");
 for (const t of targets)
-  if (t.interface) await store.save(await ingest(server, config, t.contractId));
+  if (t.interface) {
+    t.interface = await ingest(server, config, t.contractId);
+    await store.save(t.interface);
+  }
 await store.save(await ingestAsset(server, config, { kind: "native" }));
 const http = httpServer(new Executor(config, server, store, signer));
 http.listen(0, "127.0.0.1");
@@ -189,8 +197,8 @@ try {
         };
         const deposit = await call(client, p, "submit", args, true);
         if (deposit.ok) {
-          await call(client, p, "get_positions", { address });
-          await call(
+          const deposited = await call(client, p, "get_positions", { address });
+          const withdrawal = await call(
             client,
             p,
             "submit",
@@ -202,12 +210,71 @@ try {
             },
             true,
           );
-          await call(client, p, "get_positions", { address });
+          const withdrawn = await call(client, p, "get_positions", { address });
+          p.depositPositionIncreased =
+            deposited.ok && deposited.data.supply.length > 0;
+          p.withdrawalConfirmed = withdrawal.ok === true;
+          p.withdrawalPositionDecreased =
+            withdrawn.ok &&
+            deposited.ok &&
+            BigInt(withdrawn.data.supply[0]?.[1] ?? "0") <
+              BigInt(deposited.data.supply[0]?.[1] ?? "0");
         }
       } else p.blocker = "Official test pool does not list native XLM";
     } else if (t.project === "DeFindex") {
       await call(client, p, "name");
       await call(client, p, "get_fees");
+      const assets = await call(client, p, "get_assets");
+      const supportedAssets = assets.ok ? assets.data.values[0] : [];
+      if (
+        tools.includes("deposit") &&
+        tools.includes("withdraw") &&
+        supportedAssets.length === 1 &&
+        supportedAssets[0].address === native
+      ) {
+        const before = await call(client, p, "balance", { id: address });
+        const deposit = await call(
+          client,
+          p,
+          "deposit",
+          {
+            amounts_desired: ["10000000"],
+            amounts_min: ["9900000"],
+            from: address,
+            invest: false,
+          },
+          true,
+        );
+        const after = await call(client, p, "balance", { id: address });
+        p.depositSharesIncreased = !!(
+          before.ok &&
+          deposit.ok &&
+          after.ok &&
+          BigInt(after.data) > BigInt(before.data)
+        );
+        if (deposit.ok && after.ok && BigInt(after.data) > 0n) {
+          const withdrawal = await call(
+            client,
+            p,
+            "withdraw",
+            {
+              withdraw_shares: (BigInt(after.data) / 2n).toString(),
+              min_amounts_out: ["0"],
+              from: address,
+            },
+            true,
+          );
+          const final = await call(client, p, "balance", { id: address });
+          p.withdrawalConfirmed = withdrawal.ok === true;
+          p.withdrawalSharesDecreased = !!(
+            final.ok &&
+            withdrawal.ok &&
+            BigInt(final.data) < BigInt(after.data)
+          );
+        }
+      } else
+        p.assetRestriction =
+          "Deposit live test requires a verified single-native-XLM vault and complete signatures.";
       p.blocker = Object.keys(functions[t.project])
         .filter((fn) => !tools.includes(fn))
         .map((fn) => ({

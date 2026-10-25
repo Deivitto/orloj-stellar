@@ -1,0 +1,179 @@
+{
+  "verifiedAt": "2026-10-25T17:09:21.736Z",
+  "network": "testnet",
+  "agentId": "9e71ea0f-19e0-436c-abd1-b8a8f126bc17",
+  "projects": [
+    {
+      "id": "classic:stellar-dex",
+      "tools": [
+        "account_balances",
+        "offers",
+        "orloj_operation_status"
+      ],
+      "read": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "classic:stellar-dex",
+        "source_kind": "classic_dex",
+        "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+        "function_name": "account_balances",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:09:22.119Z",
+        "data": [
+          {
+            "asset": "native",
+            "balance": "99999993056",
+            "buying_liabilities": "0",
+            "selling_liabilities": "0",
+            "authorized": true
+          }
+        ]
+      },
+      "managedWriteDenied": true,
+      "deniedError": "WRITE_NOT_PERMITTED"
+    },
+    {
+      "id": "classic:stellar-amm",
+      "tools": [
+        "account_balances",
+        "orloj_operation_status"
+      ],
+      "read": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "classic:stellar-amm",
+        "source_kind": "classic_amm",
+        "interface_hash": "fa8b478cd8591a6e2941c893a25f94fe9859142e2e79f88996a6c08ae280f710",
+        "function_name": "account_balances",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:09:22.916Z",
+        "data": [
+          {
+            "asset": "native",
+            "balance": "99999993056",
+            "buying_liabilities": "0",
+            "selling_liabilities": "0",
+            "authorized": true
+          }
+        ]
+      },
+      "managedWriteDenied": true,
+      "deniedError": "WRITE_NOT_PERMITTED"
+    }
+  ],
+  "operations": [
+    {
+      "ok": true,
+      "data": null,
+      "mode": "WRITE",
+      "ledger": 5384996,
+      "network": "testnet",
+      "contract_id": "classic:stellar-dex",
+      "fee_charged": "100",
+      "source_kind": "classic_dex",
+      "function_name": "manage_offer",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+      "transaction_hash": "26be04aeae06091fd29ef7f6697121360cda074a5e0cadc13c6ad1badaf2dd23",
+      "operation_id": "af5166c4-0a0b-401f-b6df-d06806d9c2e4",
+      "can_cancel": false,
+      "arguments": {
+        "price": {
+          "d": 1,
+          "n": 1
+        },
+        "amount": "0",
+        "buying": "DEMO:GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK",
+        "selling": "native",
+        "offer_id": "931559"
+      },
+      "wallet_id": "75ba280a-15bc-41b2-be15-38e35391a6be",
+      "max_fee": "2000000",
+      "signing_ready": false
+    },
+    {
+      "ok": true,
+      "data": null,
+      "mode": "WRITE",
+      "ledger": 5384988,
+      "network": "testnet",
+      "contract_id": "classic:stellar-dex",
+      "fee_charged": "100",
+      "source_kind": "classic_dex",
+      "function_name": "manage_offer",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+      "transaction_hash": "484117c427b7e185f7d948121d6ca7d2fe21be4795cc2f57a6a79b17d74ae7fc",
+      "operation_id": "a29d4a83-5896-4612-b722-10407fb986ad",
+      "can_cancel": false,
+      "arguments": {
+        "price": {
+          "d": 1,
+          "n": 1
+        },
+        "amount": "1",
+        "buying": "DEMO:GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK",
+        "selling": "native",
+        "offer_id": "0"
+      },
+      "wallet_id": "75ba280a-15bc-41b2-be15-38e35391a6be",
+      "max_fee": "2000000",
+      "signing_ready": false
+    },
+    {
+      "ok": false,
+      "mode": "WRITE",
+      "network": "testnet",
+      "retryable": false,
+      "error_code": "SIGNING_FAILED",
+      "contract_id": "classic:stellar-dex",
+      "source_kind": "classic_dex",
+      "function_name": "manage_offer",
+      "human_message": "Transaction signing failed.",
+      "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+      "result_status": "REJECTED",
+      "operation_id": "675962d3-2bad-4be2-99ad-00d0fb3dbfa6",
+      "can_cancel": false,
+      "arguments": {
+        "price": {
+          "d": 1,
+          "n": 1
+        },
+        "amount": "1",
+        "buying": "DEMO:GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK",
+        "selling": "native",
+        "offer_id": "0"
+      },
+      "wallet_id": "75ba280a-15bc-41b2-be15-38e35391a6be",
+      "max_fee": "2000000",
+      "signing_ready": false
+    }
+  ],
+  "walletMode": "managed",
+  "noOperationCreatedOnDenial": true,
+  "unattendedGrantsDisabled": true,
+  "independentTransactions": [
+    {
+      "hash": "26be04aeae06091fd29ef7f6697121360cda074a5e0cadc13c6ad1badaf2dd23",
+      "status": "SUCCESS",
+      "ledger": 5384996,
+      "feeCharged": "100"
+    },
+    {
+      "hash": "484117c427b7e185f7d948121d6ca7d2fe21be4795cc2f57a6a79b17d74ae7fc",
+      "status": "SUCCESS",
+      "ledger": 5384988,
+      "feeCharged": "100"
+    }
+  ],
+  "demoOfferAbsent": true,
+  "browserVerified": {
+    "ownerReview": true,
+    "freighterNetwork": "Test Net",
+    "freighterAddress": "GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK",
+    "createAndCancelConfirmedVisible": true,
+    "originalExpiredApprovalNeverSubmitted": true
+  }
+}

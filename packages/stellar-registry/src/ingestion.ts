@@ -15,7 +15,8 @@ export function parseType(
   entries: xdr.ScSpecEntry[],
   path: string[] = [],
 ): TypeNode {
-  if (path.length > 8) fail("TYPE_DEPTH_EXCEEDED");
+  if (path.length - (path[0] === "Result" ? 1 : 0) > 8)
+    fail("TYPE_DEPTH_EXCEEDED");
   const leaves: Record<string, TypeNode["kind"]> = {
     scSpecTypeBool: "bool",
     scSpecTypeU32: "u32",
@@ -24,6 +25,8 @@ export function parseType(
     scSpecTypeI64: "i64",
     scSpecTypeU128: "u128",
     scSpecTypeI128: "i128",
+    scSpecTypeU256: "u256",
+    scSpecTypeI256: "i256",
     scSpecTypeSymbol: "Symbol",
     scSpecTypeAddress: "Address",
     scSpecTypeMuxedAddress: "MuxedAddress",
@@ -33,6 +36,32 @@ export function parseType(
   };
   if (leaves[t.type]) return { kind: leaves[t.type] } as TypeNode;
   switch (t.type) {
+    case "scSpecTypeResult": {
+      if (path.length) fail("UNSUPPORTED_SOROBAN_TYPE");
+      const error = t.result.errorType;
+      const declaration =
+        error.type === "scSpecTypeUdt"
+          ? entries.find(
+              (e) =>
+                e.type === "scSpecEntryUdtErrorEnumV0" &&
+                e.udtErrorEnumV0.name.toString() === error.udt.name.toString(),
+            )
+          : undefined;
+      if (error.type !== "scSpecTypeError" && !declaration)
+        fail("UNSUPPORTED_SOROBAN_TYPE");
+      return {
+        kind: "Result",
+        genericError: error.type === "scSpecTypeError",
+        ok: parseType(t.result.okType, entries, ["Result"]),
+        errors:
+          declaration?.type === "scSpecEntryUdtErrorEnumV0"
+            ? declaration.udtErrorEnumV0.cases.map((c) => ({
+                name: c.name.toString(),
+                value: c.value,
+              }))
+            : [],
+      };
+    }
     case "scSpecTypeBytesN":
       return { kind: "BytesN", size: t.bytesN.n };
     case "scSpecTypeOption":
@@ -120,6 +149,67 @@ export function parseType(
       return fail("UNSUPPORTED_SOROBAN_TYPE");
   }
 }
+function explainExclusion(f: xdr.ScSpecFunctionV0, entries: xdr.ScSpecEntry[]) {
+  function visit(
+    t: xdr.ScSpecTypeDef,
+    location: string,
+    path: string[] = [],
+  ): { location: string; type: string } | undefined {
+    try {
+      model(parseType(t, entries, path));
+      return;
+    } catch {
+      /* Narrow to the unsupported component. */
+    }
+    const raw = t.toJSON();
+    const candidates: [xdr.ScSpecTypeDef, string][] = [];
+    if (t.type === "scSpecTypeResult")
+      candidates.push([t.result.okType, ".ok"]);
+    if (t.type === "scSpecTypeOption")
+      candidates.push([t.option.valueType, ".option"]);
+    if (t.type === "scSpecTypeVec")
+      candidates.push([t.vec.elementType, ".item"]);
+    if (t.type === "scSpecTypeMap")
+      candidates.push([t.map.keyType, ".key"], [t.map.valueType, ".value"]);
+    if (t.type === "scSpecTypeUdt") {
+      const e = entries.find(
+        (e) =>
+          e.type === "scSpecEntryUdtStructV0" &&
+          e.udtStructV0.name.toString() === t.udt.name.toString(),
+      );
+      if (e?.type === "scSpecEntryUdtStructV0")
+        candidates.push(
+          ...e.udtStructV0.fields.map(
+            (f) =>
+              [f.type, "." + f.name.toString()] as [xdr.ScSpecTypeDef, string],
+          ),
+        );
+    }
+    if (t.type === "scSpecTypeTuple")
+      candidates.push(
+        ...t.tuple.valueTypes.map(
+          (v, n) => [v, `[${n}]`] as [xdr.ScSpecTypeDef, string],
+        ),
+      );
+    if (path.length < 9)
+      for (const [child, suffix] of candidates) {
+        const reason = visit(child, location + suffix, [...path, t.type]);
+        if (reason) return reason;
+      }
+    return { location, type: typeof raw === "string" ? raw : t.type };
+  }
+  for (const p of f.inputs) {
+    if (p.type.type === "scSpecTypeResult")
+      return { location: "inputs." + p.name.toString(), type: p.type.type };
+    const reason = visit(p.type, "inputs." + p.name.toString());
+    if (reason) return reason;
+  }
+  for (const [n, t] of f.outputs.entries()) {
+    const reason = visit(t, `outputs[${n}]`);
+    if (reason) return reason;
+  }
+  return { location: "signature", type: "unsupported composite" };
+}
 export function inspect(
   wasm: Uint8Array,
   c: Config,
@@ -140,10 +230,11 @@ export function inspect(
   return inspectSpec(spec, c, id, {
     wasmHash: wasmHash(wasm),
     sourceKind: "wasm",
+    encodingVersion: 3,
     protocolVersion,
     interfaceHash: wasmHash(
       Buffer.concat([
-        Buffer.from(`orloj-encoding-v2:${protocolVersion ?? "unbound"}:`),
+        Buffer.from(`orloj-encoding-v3:${protocolVersion ?? "unbound"}:`),
         Buffer.from(wasm),
       ]),
     ),
@@ -159,6 +250,7 @@ export function inspectSpec(
   function withProtocol(node: TypeNode): TypeNode {
     if (node.kind === "MuxedAddress") node.protocol = identity.protocolVersion;
     if ("item" in node) withProtocol(node.item);
+    if (node.kind === "Result") withProtocol(node.ok);
     if (node.kind === "Map") {
       withProtocol(node.key);
       withProtocol(node.value);
@@ -192,7 +284,9 @@ export function inspectSpec(
     try {
       if (f.outputs.length > 1) fail("UNSUPPORTED_SOROBAN_TYPE");
       const params = f.inputs.map((p) => {
-        const type = model(withProtocol(parseType(p.type, spec.entries)));
+        const node = withProtocol(parseType(p.type, spec.entries));
+        if (node.kind === "Result") fail("UNSUPPORTED_SOROBAN_TYPE");
+        const type = model(node);
         return {
           name: p.name.toString(),
           sorobanType: type.sorobanType,
@@ -263,6 +357,8 @@ export function inspectSpec(
           eligible: false,
           policyStatus: "disabled",
           error_code: e.code,
+          declaredSignature: f.toJSON(),
+          exclusion: explainExclusion(f, spec.entries),
         });
       } else throw e;
     }

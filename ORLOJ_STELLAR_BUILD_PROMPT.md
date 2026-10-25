@@ -57,9 +57,9 @@ Implement in this exact order:
 4. Type converter
    - Implement only the supported closed grammar.
    - Reject unsupported types with UNSUPPORTED_SOROBAN_TYPE.
-   - Use canonical decimal strings for u64/i64/u128/i128 as specified in master version 1.2.
+   - Use canonical decimal strings for u64/i64/u128/i128 as specified in master version 1.4.
    - Validate Address with SDK StrKey decoding.
-   - Implement the expanded bounded grammar and SAC ingestion in master version 1.2; reject ambiguous options, recursive and unknown types.
+   - Implement the expanded bounded grammar and SAC ingestion in master version 1.4; reject ambiguous options, recursive and unknown types.
 5. MCP tool generator
    - Generate one MCP tool per eligible function.
    - Sanitize tool names.

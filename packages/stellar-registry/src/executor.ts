@@ -4,13 +4,20 @@ import {
   contract,
   rpc,
   StrKey,
+  xdr,
 } from "@stellar/stellar-sdk";
+import {
+  isClassic,
+  classicInterface,
+  classicRead,
+  prepareClassic,
+} from "./classic.js";
 import { validator, encode, decode, budget } from "./codec.js";
 import { permitted, type Config } from "./config.js";
 import { envelope, fail, mapped, RegistryError } from "./errors.js";
 import { wasmHash, ingest } from "./ingestion.js";
 import { canonical, digest, Store, type Attempt } from "./store.js";
-import type { ContractInterface, FunctionModel } from "./model.js";
+import type { ContractInterface, FunctionModel, TypeNode } from "./model.js";
 import type pg from "pg";
 import type { Signer } from "./signer.js";
 export function argumentsFor(
@@ -35,10 +42,64 @@ export function argumentsFor(
   }
   return normalized;
 }
+export function declaredContractError(
+  events: { event: xdr.ContractEvent }[],
+  id: string,
+  returns: TypeNode,
+): RegistryError | undefined {
+  if (returns.kind !== "Result") return;
+  const expected = Buffer.from(StrKey.decodeContract(id));
+  let candidate: RegistryError | undefined;
+  for (const { event } of events) {
+    if (event.type !== xdr.ContractEventType.diagnostic) continue;
+    const topics = event.body.v0.topics;
+    const marker =
+      topics[0]?.type === "scvSymbol" ? topics[0].sym.toString() : "";
+    if (marker === "host_fn_failed") {
+      const terminal = topics.find((v) => v.type === "scvError");
+      if (
+        !terminal ||
+        terminal.type !== "scvError" ||
+        terminal.error.type !== "sceContract" ||
+        terminal.error.contractCode !== candidate?.contractError?.code
+      )
+        candidate = undefined;
+      continue;
+    }
+    if (marker !== "error") continue;
+    // Any later error supersedes a possibly caught earlier error, including foreign calls.
+    candidate = undefined;
+    if (
+      !event.contractId ||
+      !Buffer.from(event.contractId.value).equals(expected)
+    )
+      continue;
+    for (const v of topics.slice(1)) {
+      if (v.type !== "scvError" || v.error.type !== "sceContract") continue;
+      const code = v.error.contractCode;
+      const c = returns.errors.find((c) => c.value === code);
+      if (!returns.genericError && !c) continue;
+      candidate = new RegistryError("CONTRACT_EXECUTION_FAILED", {
+        code,
+        ...(c ? { name: c.name } : {}),
+      });
+    }
+  }
+  return candidate;
+}
 export function requireSimulation(
   s: rpc.Api.SimulateTransactionResponse,
   assetId?: string,
+  declared?: { id: string; returns: TypeNode },
 ) {
+  if (declared && rpc.Api.isSimulationError(s)) {
+    const error = declaredContractError(
+      s.events ?? [],
+      declared.id,
+      declared.returns,
+    );
+    if (error) throw error;
+  }
   if (assetId && rpc.Api.isSimulationError(s)) {
     const expected = Buffer.from(StrKey.decodeContract(assetId)).toString(
       "hex",
@@ -86,6 +147,14 @@ export class Executor {
   ) {}
   async current(i: ContractInterface) {
     if (i.network !== this.config.network) fail("STALE_INTERFACE");
+    if (isClassic(i)) {
+      if (
+        classicInterface(this.config, i.contractId).interfaceHash !==
+        i.interfaceHash
+      )
+        fail("STALE_INTERFACE");
+      return;
+    }
     if (i.sourceKind === "stellar_asset") {
       const current = await ingest(this.server, this.config, i.contractId);
       if (
@@ -95,6 +164,8 @@ export class Executor {
         fail("STALE_INTERFACE");
       return;
     }
+    if (i.sourceKind === "wasm" && i.encodingVersion !== 3)
+      fail("STALE_INTERFACE");
     if (i.protocolVersion !== undefined) {
       const net = await mapped("SPEC_PARSE_FAILED", () =>
         this.server.getNetwork(),
@@ -138,6 +209,14 @@ export class Executor {
       if (f.mode === "WRITE")
         return await this.write(i, f, values, principal, key, context);
       await this.current(i);
+      if (isClassic(i))
+        return {
+          ...context,
+          ok: true,
+          result_status: "READ_ONLY",
+          read_at: new Date().toISOString(),
+          data: await classicRead(this.config, f, values),
+        };
       const account = await mapped("ACCOUNT_NOT_FOUND", () =>
         this.server.getAccount(this.config.simulationSource),
       );
@@ -158,6 +237,7 @@ export class Executor {
           this.server.simulateTransaction(tx),
         ),
         i.sourceKind === "stellar_asset" ? i.contractId : undefined,
+        { id: i.contractId, returns: f.returns.node },
       );
       if (sim.result!.auth.length) fail("AUTHORIZATION_REQUIRED");
       return {
@@ -252,84 +332,10 @@ export class Executor {
         await mapped("ACCOUNT_NOT_FOUND", () =>
           this.server.getAccount(signer.address),
         );
-        const tx = await mapped("SIMULATION_FAILED", () =>
-          contract.AssembledTransaction.build({
-            contractId: i.contractId,
-            method: f.sorobanName,
-            args: f.params.map((p) => encode(p.type.node, values[p.name])),
-            publicKey: signer.address,
-            networkPassphrase: c.networkPassphrase,
-            rpcUrl: c.rpcUrl,
-            server: this.server,
-            parseResultXdr: (v) => decode(f.returns.node, v),
-            simulate: false,
-            restore: false,
-            timeoutInSeconds: 60,
-          }),
-        );
-        await mapped("SIMULATION_FAILED", () =>
-          tx.simulate({ restore: false }),
-        );
-        requireSimulation(
-          tx.simulation!,
-          i.sourceKind === "stellar_asset" ? i.contractId : undefined,
-        );
-        for (const address of tx.needsNonInvokerSigningBy()) {
-          if (address !== signer.address) fail("AUTHORIZATION_FAILED");
-          await mapped("AUTHORIZATION_FAILED", () =>
-            tx.signAuthEntries({
-              address,
-              signAuthEntry: signer.sign_authorization_entries,
-            }),
-          );
-        }
-        const started = Date.now();
-        const final = requireSimulation(
-          await mapped("AUTHORIZATION_FAILED", () =>
-            this.server.simulateTransaction(tx.built!, undefined, "enforce"),
-          ),
-          i.sourceKind === "stellar_asset" ? i.contractId : undefined,
-        );
-        const buffered = (BigInt(final.minResourceFee) * 120n + 99n) / 100n;
-        final.transactionData.setResourceFee(buffered);
-        const built = rpc
-          .assembleTransaction(tx.built!, {
-            ...final,
-            minResourceFee: buffered.toString(),
-          })
-          .build();
-        const finalTx = contract.AssembledTransaction.fromJson(tx.options, {
-          tx: built.toXdr(),
-          simulationResult: {
-            auth: final.result!.auth.map((a) => a.toXdr("base64")),
-            retval: final.result!.retval.toXdr("base64"),
-          },
-          simulationTransactionData: final.transactionData
-            .build()
-            .toXdr("base64"),
-        });
-        console.error(
-          JSON.stringify({
-            event: "fee_estimate",
-            fee: built.fee,
-            max_fee: c.maxFee,
-          }),
-        );
-        if (BigInt(built.fee) > BigInt(c.maxFee!)) fail("FEE_POLICY_REJECTED");
-        if (Date.now() - started > c.simulationMaxAgeMs)
-          fail("SIMULATION_FAILED");
-        await mapped("SIGNING_FAILED", () =>
-          finalTx.sign({
-            force: true,
-            signTransaction: signer.sign_transaction_envelope,
-          }),
-        );
-        tx.signed = finalTx.signed;
-        if (!tx.signed || BigInt(tx.signed.fee) > BigInt(c.maxFee!))
-          fail("FEE_POLICY_REJECTED");
-        if (Date.now() - started > c.simulationMaxAgeMs)
-          fail("SIMULATION_FAILED");
-        const hash = Buffer.from(tx.signed.hash()).toString("hex");
+        const signed = isClassic(i)
+          ? await prepareClassic(c, i.contractId, f, values, signer, principal)
+          : await this.prepareSoroban(i, f, values);
+        const hash = Buffer.from(signed.hash()).toString("hex");
         attempt!.transaction_hash = hash;
         context.transaction_hash = hash;
         try {
@@ -337,14 +343,14 @@ export class Executor {
             client,
             attempt!.id,
             hash,
-            tx.signed.sequence,
-            tx.signed.timeBounds?.maxTime ?? "0",
+            signed.sequence,
+            signed.timeBounds?.maxTime ?? "0",
             this.intentGuard
               ? (locked) =>
                   this.intentGuard!(locked, {
                     hash,
-                    sequence: tx.signed!.sequence,
-                    maxTime: tx.signed!.timeBounds?.maxTime ?? "0",
+                    sequence: signed.sequence,
+                    maxTime: signed.timeBounds?.maxTime ?? "0",
                   })
               : undefined,
           );
@@ -365,7 +371,7 @@ export class Executor {
         attempt!.state = "INTENT";
         let sent: rpc.Api.SendTransactionResponse;
         try {
-          sent = await this.server.sendTransaction(tx.signed);
+          sent = await this.server.sendTransaction(signed);
         } catch {
           return;
         }
@@ -401,6 +407,93 @@ export class Executor {
       },
       originalContext(attempt),
     );
+  }
+  private async prepareSoroban(
+    i: ContractInterface,
+    f: FunctionModel,
+    values: Record<string, unknown>,
+  ) {
+    const c = this.config,
+      signer = this.signer!;
+    const tx = await mapped("SIMULATION_FAILED", () =>
+      contract.AssembledTransaction.build({
+        contractId: i.contractId,
+        method: f.sorobanName,
+        args: f.params.map((p) => encode(p.type.node, values[p.name])),
+        publicKey: signer.address,
+        networkPassphrase: c.networkPassphrase,
+        rpcUrl: c.rpcUrl,
+        server: this.server,
+        parseResultXdr: (v) => decode(f.returns.node, v),
+        simulate: false,
+        restore: false,
+        timeoutInSeconds: 60,
+      }),
+    );
+    await mapped("SIMULATION_FAILED", () => tx.simulate({ restore: false }));
+    requireSimulation(
+      tx.simulation!,
+      i.sourceKind === "stellar_asset" ? i.contractId : undefined,
+      { id: i.contractId, returns: f.returns.node },
+    );
+    for (const address of tx.needsNonInvokerSigningBy()) {
+      if (address !== signer.address) fail("AUTHORIZATION_FAILED");
+      await mapped("AUTHORIZATION_FAILED", () =>
+        tx.signAuthEntries({
+          address,
+          signAuthEntry: signer.sign_authorization_entries,
+        }),
+      );
+    }
+    const started = Date.now();
+    const final = requireSimulation(
+      await mapped("AUTHORIZATION_FAILED", () =>
+        this.server.simulateTransaction(
+          tx.built!,
+          { cpuInstructions: c.instructionLeeway },
+          "enforce",
+        ),
+      ),
+      i.sourceKind === "stellar_asset" ? i.contractId : undefined,
+      { id: i.contractId, returns: f.returns.node },
+    );
+    const buffered = (BigInt(final.minResourceFee) * 120n + 99n) / 100n;
+    final.transactionData.setResourceFee(buffered);
+    const built = rpc
+      .assembleTransaction(tx.built!, {
+        ...final,
+        minResourceFee: buffered.toString(),
+      })
+      .build();
+    const finalTx = contract.AssembledTransaction.fromJson(tx.options, {
+      tx: built.toXdr(),
+      simulationResult: {
+        auth: final.result!.auth.map((a) => a.toXdr("base64")),
+        retval: final.result!.retval.toXdr("base64"),
+      },
+      simulationTransactionData: final.transactionData.build().toXdr("base64"),
+    });
+    console.error(
+      JSON.stringify({
+        event: "fee_estimate",
+        fee: built.fee,
+        max_fee: c.maxFee,
+      }),
+    );
+    if (BigInt(built.fee) > BigInt(c.maxFee!)) fail("FEE_POLICY_REJECTED");
+    if (Date.now() - started > c.simulationMaxAgeMs) fail("SIMULATION_FAILED");
+    await mapped("SIGNING_FAILED", () =>
+      finalTx.sign({
+        force: true,
+        signTransaction: signer.sign_transaction_envelope,
+      }),
+    );
+    tx.signed = finalTx.signed;
+    if (!tx.signed || BigInt(tx.signed.fee) > BigInt(c.maxFee!))
+      fail("FEE_POLICY_REJECTED");
+    if (Date.now() - started > c.simulationMaxAgeMs) fail("SIMULATION_FAILED");
+
+    return tx.signed;
   }
   async reconcile(
     a: Attempt,
@@ -448,10 +541,16 @@ export class Executor {
         return stored ?? response;
       }
       if (r?.status === "FAILED") {
+        const contractError = declaredContractError(
+          r.diagnosticEventsXdr ?? [],
+          String(context.contract_id),
+          f.returns.node,
+        )?.contractError;
         const response = envelope(
           new RegistryError("TRANSACTION_FAILED_ON_CHAIN"),
           {
             ...ctx,
+            ...(contractError ? { contract_error: contractError } : {}),
             result_status: "FAILED_ON_CHAIN",
             ledger: r.ledger,
             fee_charged: r.resultXdr.feeCharged.toString(),

@@ -1,0 +1,810 @@
+{
+  "testedAt": "2026-10-25T17:02:39.241Z",
+  "network": "mainnet",
+  "writeMode": false,
+  "projects": [
+    {
+      "project": "Blend Pools V2",
+      "contractId": "CAQQR5SWBXKIGZKPBZDH3KM5GQ5GUTPKB7JAFCINLZBC5WXPJKRG3IM7",
+      "source": "https://docs.blend.capital/mainnet-deployments",
+      "checks": [
+        {
+          "name": "reward_zone",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CAQQR5SWBXKIGZKPBZDH3KM5GQ5GUTPKB7JAFCINLZBC5WXPJKRG3IM7",
+          "source_kind": "wasm",
+          "interface_hash": "814abb7be2989f1907ce676b01b782a826dcbae4adf28b67666ee333f63932ae",
+          "wasm_hash": "c1f4502a757e25c611f5a159bc1ab0eef64085adac6c68123dca66e87faffbc2",
+          "function_name": "reward_zone",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:40.202Z",
+          "data": []
+        },
+        {
+          "name": "backstop_token",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CAQQR5SWBXKIGZKPBZDH3KM5GQ5GUTPKB7JAFCINLZBC5WXPJKRG3IM7",
+          "source_kind": "wasm",
+          "interface_hash": "814abb7be2989f1907ce676b01b782a826dcbae4adf28b67666ee333f63932ae",
+          "wasm_hash": "c1f4502a757e25c611f5a159bc1ab0eef64085adac6c68123dca66e87faffbc2",
+          "function_name": "backstop_token",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:40.523Z",
+          "data": "CAS3FL6TLZKDGGSISDBWGGPXT3NRR4DYTZD7YOD3HMYO6LTJUVGRVEAM"
+        }
+      ],
+      "excluded": [],
+      "tools": [
+        "backstop_token",
+        "reward_zone"
+      ],
+      "eligible": 17,
+      "declared": 17
+    },
+    {
+      "project": "Stellar DeFi Hub",
+      "contractId": "CALFCZ4TY2CLHDHNJWCZX6JKYGUPV7P3GNQ3UVABXNE5JCV2E774APUM",
+      "source": "https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/projects/stellarDefiHub/index.js",
+      "checks": [
+        {
+          "name": "name",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CALFCZ4TY2CLHDHNJWCZX6JKYGUPV7P3GNQ3UVABXNE5JCV2E774APUM",
+          "source_kind": "wasm",
+          "interface_hash": "5dec4475b10b18e6099b48402c7c1dc63d328348883d820501c972ba45193e70",
+          "wasm_hash": "3bd05dfa2bf65299d359e86a4672a45900e8c5768d9f056ad8da5ccd779bcd12",
+          "function_name": "name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:41.204Z",
+          "data": "Sentora USDC"
+        },
+        {
+          "name": "query_asset",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CALFCZ4TY2CLHDHNJWCZX6JKYGUPV7P3GNQ3UVABXNE5JCV2E774APUM",
+          "source_kind": "wasm",
+          "interface_hash": "5dec4475b10b18e6099b48402c7c1dc63d328348883d820501c972ba45193e70",
+          "wasm_hash": "3bd05dfa2bf65299d359e86a4672a45900e8c5768d9f056ad8da5ccd779bcd12",
+          "function_name": "query_asset",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:41.543Z",
+          "data": "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75"
+        },
+        {
+          "name": "total_assets",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CALFCZ4TY2CLHDHNJWCZX6JKYGUPV7P3GNQ3UVABXNE5JCV2E774APUM",
+          "source_kind": "wasm",
+          "interface_hash": "5dec4475b10b18e6099b48402c7c1dc63d328348883d820501c972ba45193e70",
+          "wasm_hash": "3bd05dfa2bf65299d359e86a4672a45900e8c5768d9f056ad8da5ccd779bcd12",
+          "function_name": "total_assets",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:41.901Z",
+          "data": "402480021191530"
+        }
+      ],
+      "excluded": [],
+      "tools": [
+        "name",
+        "query_asset",
+        "total_assets"
+      ],
+      "eligible": 60,
+      "declared": 60
+    },
+    {
+      "project": "Aquarius Stellar",
+      "contractId": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+      "source": "https://docs.aqua.network/developers/code-examples/prerequisites-and-basics",
+      "checks": [
+        {
+          "name": "version",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+          "source_kind": "wasm",
+          "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "version",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:42.618Z",
+          "data": 220
+        },
+        {
+          "name": "contract_name",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+          "source_kind": "wasm",
+          "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "contract_name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:43.021Z",
+          "data": "AMMRouter"
+        },
+        {
+          "name": "get_tokens_sets_count",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+          "source_kind": "wasm",
+          "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "get_tokens_sets_count",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:43.387Z",
+          "data": "325"
+        },
+        {
+          "name": "get_pools_for_tokens_range",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+          "source_kind": "wasm",
+          "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "get_pools_for_tokens_range",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:43.744Z",
+          "data": [
+            [
+              [
+                "CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA",
+                "CAUIKL3IYGMERDRUN6YSCLWVAKIFG5Q4YJHUKM4S4NJZQIA3BAS6OJPK"
+              ],
+              [
+                [
+                  "0b607c211d1f2f4e74c00e1ecf8024603bf5971a1af9d638ca06713393ee9651",
+                  "CDKVJYMN34ZIEXSLNFYHVAFF6M6FM5E2U6OHXOTBKH2WLBULXOE53YDP"
+                ],
+                [
+                  "24f9c991c44acf33fff5f44031c40385d235dc212d7379e824ba3db1c35371f3",
+                  "CAVB532FDYEWBXNSCSKACTZI3BV3QBNFLH2UQRR5HIKFKLFVQW5YGZVY"
+                ],
+                [
+                  "37b955f3708dae748cad465441fcad70b26ffe272385227a4a737234ae429bdf",
+                  "CCSY43EHJAHT3NQDYKAMJXRFBEEH7OXDL3J3VNGO33UUSEXWNN27GBIZ"
+                ],
+                [
+                  "9ac7a9cde23ac2ada11105eeaa42e43c2ea8332ca0aa8f41f58d7160274d718e",
+                  "CCY2PXGMKNQHO7WNYXEWX76L2C5BH3JUW3RCATGUYKY7QQTRILBZIFWV"
+                ],
+                [
+                  "b2e02fcfca6c96f8ad5cbd84e7784a777b36d9c96a2459402c4f458462aab7f0",
+                  "CDE57N6XTUPBKYYDGQMXX7E7SLNOLFY3JEQB4MULSMR2AKTSAENGX2HC"
+                ],
+                [
+                  "ed45429155f876475d3c7ac18d34273d638d6a5b2fcc736db36d71a5788852c5",
+                  "CA4HTZNY2RBZWEQE5GBMNREZMFRPAZSVJ6OGPC7T3VM7NHRJYFAVID2S"
+                ]
+              ]
+            ]
+          ]
+        }
+      ],
+      "excluded": [
+        {
+          "name": "get_info",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        }
+      ],
+      "tools": [
+        "version",
+        "contract_name",
+        "get_tokens_sets_count",
+        "get_pools_for_tokens_range"
+      ],
+      "eligible": 74,
+      "declared": 75
+    },
+    {
+      "project": "Upshift",
+      "contractId": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+      "source": "https://docs.upshift.finance/contracts/addresses",
+      "checks": [
+        {
+          "name": "name",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+          "source_kind": "wasm",
+          "interface_hash": "84d159f821d7c760c465d812c1254ddce4857c89aa895f1dfd5ede5b910340bd",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:44.370Z",
+          "data": "earnXLM"
+        },
+        {
+          "name": "query_asset",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+          "source_kind": "wasm",
+          "interface_hash": "84d159f821d7c760c465d812c1254ddce4857c89aa895f1dfd5ede5b910340bd",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "query_asset",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:44.709Z",
+          "data": "CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA"
+        },
+        {
+          "name": "total_assets",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+          "source_kind": "wasm",
+          "interface_hash": "84d159f821d7c760c465d812c1254ddce4857c89aa895f1dfd5ede5b910340bd",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "total_assets",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:45.078Z",
+          "data": "205696503328936"
+        },
+        {
+          "name": "get_strategy_balances",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+          "source_kind": "wasm",
+          "interface_hash": "84d159f821d7c760c465d812c1254ddce4857c89aa895f1dfd5ede5b910340bd",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "get_strategy_balances",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:45.423Z",
+          "data": "0"
+        }
+      ],
+      "excluded": [],
+      "tools": [
+        "name",
+        "query_asset",
+        "total_assets",
+        "get_strategy_balances"
+      ],
+      "eligible": 60,
+      "declared": 60
+    },
+    {
+      "project": "Gami Labs",
+      "contractId": "CCL3WITWFFXIHV2I52ECV5DPIEOFSTU3PBPR53ILPLF2IP5KHECXRUTY",
+      "source": "https://docs.upshift.finance/contracts/addresses",
+      "checks": [
+        {
+          "name": "name",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CCL3WITWFFXIHV2I52ECV5DPIEOFSTU3PBPR53ILPLF2IP5KHECXRUTY",
+          "source_kind": "wasm",
+          "interface_hash": "84d159f821d7c760c465d812c1254ddce4857c89aa895f1dfd5ede5b910340bd",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:46.048Z",
+          "data": "earnUSDC"
+        },
+        {
+          "name": "query_asset",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CCL3WITWFFXIHV2I52ECV5DPIEOFSTU3PBPR53ILPLF2IP5KHECXRUTY",
+          "source_kind": "wasm",
+          "interface_hash": "84d159f821d7c760c465d812c1254ddce4857c89aa895f1dfd5ede5b910340bd",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "query_asset",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:46.414Z",
+          "data": "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75"
+        },
+        {
+          "name": "total_assets",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CCL3WITWFFXIHV2I52ECV5DPIEOFSTU3PBPR53ILPLF2IP5KHECXRUTY",
+          "source_kind": "wasm",
+          "interface_hash": "84d159f821d7c760c465d812c1254ddce4857c89aa895f1dfd5ede5b910340bd",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "total_assets",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:46.784Z",
+          "data": "268073693411441"
+        }
+      ],
+      "excluded": [],
+      "tools": [
+        "name",
+        "query_asset",
+        "total_assets"
+      ],
+      "eligible": 60,
+      "declared": 60
+    },
+    {
+      "project": "DeFindex",
+      "contractId": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+      "source": "https://api.defindex.io/vault/discover?network=mainnet",
+      "checks": [
+        {
+          "name": "name",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+          "source_kind": "wasm",
+          "interface_hash": "a9f6b8697f677d82f021656cdb93e2427c7158f6378de7605dbc4c3dd03ce657",
+          "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+          "function_name": "name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:47.576Z",
+          "data": "DeFindex-Vault-BeansUsdcVault"
+        },
+        {
+          "name": "decimals",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+          "source_kind": "wasm",
+          "interface_hash": "a9f6b8697f677d82f021656cdb93e2427c7158f6378de7605dbc4c3dd03ce657",
+          "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+          "function_name": "decimals",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:47.975Z",
+          "data": 7
+        },
+        {
+          "name": "get_fees",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+          "source_kind": "wasm",
+          "interface_hash": "a9f6b8697f677d82f021656cdb93e2427c7158f6378de7605dbc4c3dd03ce657",
+          "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+          "function_name": "get_fees",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:48.318Z",
+          "data": [
+            1000,
+            2000
+          ]
+        },
+        {
+          "name": "get_assets",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+          "source_kind": "wasm",
+          "interface_hash": "a9f6b8697f677d82f021656cdb93e2427c7158f6378de7605dbc4c3dd03ce657",
+          "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+          "function_name": "get_assets",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:48.674Z",
+          "data": {
+            "tag": "Ok",
+            "values": [
+              [
+                {
+                  "address": "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75",
+                  "strategies": [
+                    {
+                      "address": "CDB2WMKQQNVZMEBY7Q7GZ5C7E7IAFSNMZ7GGVD6WKTCEWK7XOIAVZSAP",
+                      "name": "usdc_blend_autocompound_fixed",
+                      "paused": false
+                    },
+                    {
+                      "address": "CCSRX5E4337QMCMC3KO3RDFYI57T5NZV5XB3W3TWE4USCASKGL5URKJL",
+                      "name": "usdc_blend_autocompound_yieldblox",
+                      "paused": true
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        {
+          "name": "fetch_total_managed_funds",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+          "source_kind": "wasm",
+          "interface_hash": "a9f6b8697f677d82f021656cdb93e2427c7158f6378de7605dbc4c3dd03ce657",
+          "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+          "function_name": "fetch_total_managed_funds",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:49.048Z",
+          "data": {
+            "tag": "Ok",
+            "values": [
+              [
+                {
+                  "asset": "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75",
+                  "idle_amount": "4373938451",
+                  "invested_amount": "2562324186085",
+                  "strategy_allocations": [
+                    {
+                      "amount": "2562324186085",
+                      "paused": false,
+                      "strategy_address": "CDB2WMKQQNVZMEBY7Q7GZ5C7E7IAFSNMZ7GGVD6WKTCEWK7XOIAVZSAP"
+                    },
+                    {
+                      "amount": "0",
+                      "paused": true,
+                      "strategy_address": "CCSRX5E4337QMCMC3KO3RDFYI57T5NZV5XB3W3TWE4USCASKGL5URKJL"
+                    }
+                  ],
+                  "total_amount": "2566698124536"
+                }
+              ]
+            ]
+          }
+        },
+        {
+          "name": "quote",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+          "source_kind": "wasm",
+          "interface_hash": "a9f6b8697f677d82f021656cdb93e2427c7158f6378de7605dbc4c3dd03ce657",
+          "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+          "function_name": "quote",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:49.397Z",
+          "data": {
+            "tag": "Ok",
+            "values": [
+              "200"
+            ]
+          }
+        }
+      ],
+      "excluded": [
+        {
+          "name": "deposit",
+          "reason": "TYPE_DEPTH_EXCEEDED"
+        }
+      ],
+      "tools": [
+        "decimals",
+        "name",
+        "get_assets",
+        "fetch_total_managed_funds",
+        "get_fees",
+        "quote"
+      ],
+      "eligible": 43,
+      "declared": 44
+    },
+    {
+      "project": "Sushi Stellar",
+      "contractId": "CD3KRKGDRVWPXVB3VXLUMQKMX6XZ6Q2H334IVZD4XXNAMKSRVQL5GLYF",
+      "source": "https://github.com/sushi-labs/sushiswap/blob/master/packages/stellar/contract-bindings/factory/README.md",
+      "checks": [
+        {
+          "name": "get_owner",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CD3KRKGDRVWPXVB3VXLUMQKMX6XZ6Q2H334IVZD4XXNAMKSRVQL5GLYF",
+          "source_kind": "wasm",
+          "interface_hash": "2a6a12b1f92fbe5c46279a08dbd20c7442dd920a0ec61f4f795713590458c6ad",
+          "wasm_hash": "9f94c577ea24c2f71cbb0c964c9c9d321e02448d1fe946020afb18974b1c2602",
+          "function_name": "get_owner",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:50.051Z",
+          "data": "GC7RIP4D7UETKBZU7FNUYW5XIR2IPLUQDV2DUTZRKVF6C3P2A5QEDSZI"
+        },
+        {
+          "name": "get_pool_wasm_hash",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CD3KRKGDRVWPXVB3VXLUMQKMX6XZ6Q2H334IVZD4XXNAMKSRVQL5GLYF",
+          "source_kind": "wasm",
+          "interface_hash": "2a6a12b1f92fbe5c46279a08dbd20c7442dd920a0ec61f4f795713590458c6ad",
+          "wasm_hash": "9f94c577ea24c2f71cbb0c964c9c9d321e02448d1fe946020afb18974b1c2602",
+          "function_name": "get_pool_wasm_hash",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:50.418Z",
+          "data": "003710b383f9da7d650a7f719a7be479110266427817ebbed61d924505fcd7c7"
+        },
+        {
+          "name": "get_protocol_fee_0",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CD3KRKGDRVWPXVB3VXLUMQKMX6XZ6Q2H334IVZD4XXNAMKSRVQL5GLYF",
+          "source_kind": "wasm",
+          "interface_hash": "2a6a12b1f92fbe5c46279a08dbd20c7442dd920a0ec61f4f795713590458c6ad",
+          "wasm_hash": "9f94c577ea24c2f71cbb0c964c9c9d321e02448d1fe946020afb18974b1c2602",
+          "function_name": "get_protocol_fee_0",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:50.765Z",
+          "data": 4
+        }
+      ],
+      "excluded": [],
+      "tools": [
+        "get_owner",
+        "get_pool_wasm_hash",
+        "get_protocol_fee_0"
+      ],
+      "eligible": 25,
+      "declared": 25
+    },
+    {
+      "project": "Templar Protocol",
+      "contractId": "CDBBJXSK22AFN34GHAHOLZVEZOHSXGWZYMBMYPFRYBJSO5D7BTN7P6QX",
+      "source": "https://github.com/Templar-Protocol/contracts/blob/dev/contract/vault/deployments/tTUSDC/mainnet/manifest.json",
+      "checks": [
+        {
+          "name": "asset",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CDBBJXSK22AFN34GHAHOLZVEZOHSXGWZYMBMYPFRYBJSO5D7BTN7P6QX",
+          "source_kind": "wasm",
+          "interface_hash": "899d21735bec1b7872b280ff0c3fd527d926af2f57cf6a00802b614aee9bff2e",
+          "wasm_hash": "6e00a774d7ad80e70d4243049c23be3a8f7159dcb2a1da540140c0fee9fa6fa1",
+          "function_name": "asset",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:51.405Z",
+          "data": {
+            "tag": "Ok",
+            "values": [
+              "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75"
+            ]
+          }
+        },
+        {
+          "name": "total_assets",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CDBBJXSK22AFN34GHAHOLZVEZOHSXGWZYMBMYPFRYBJSO5D7BTN7P6QX",
+          "source_kind": "wasm",
+          "interface_hash": "899d21735bec1b7872b280ff0c3fd527d926af2f57cf6a00802b614aee9bff2e",
+          "wasm_hash": "6e00a774d7ad80e70d4243049c23be3a8f7159dcb2a1da540140c0fee9fa6fa1",
+          "function_name": "total_assets",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:51.839Z",
+          "data": {
+            "tag": "Ok",
+            "values": [
+              "420200000"
+            ]
+          }
+        },
+        {
+          "name": "name",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CDBBJXSK22AFN34GHAHOLZVEZOHSXGWZYMBMYPFRYBJSO5D7BTN7P6QX",
+          "source_kind": "wasm",
+          "interface_hash": "899d21735bec1b7872b280ff0c3fd527d926af2f57cf6a00802b614aee9bff2e",
+          "wasm_hash": "6e00a774d7ad80e70d4243049c23be3a8f7159dcb2a1da540140c0fee9fa6fa1",
+          "function_name": "name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:02:52.179Z",
+          "data": {
+            "tag": "Ok",
+            "values": [
+              "Test Templar USDC"
+            ]
+          }
+        }
+      ],
+      "excluded": [],
+      "tools": [
+        "asset",
+        "total_assets",
+        "name"
+      ],
+      "eligible": 26,
+      "declared": 26
+    },
+    {
+      "project": "Stellar DEX",
+      "contractId": "classic:stellar-dex",
+      "source": "https://developers.stellar.org/docs/learn/fundamentals/liquidity-on-stellar-sdex-liquidity-pools",
+      "checks": [
+        {
+          "name": "account_balances",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "classic:stellar-dex",
+          "source_kind": "classic_dex",
+          "interface_hash": "ee717b8ae6be1346205daccd034754897e2016c39d48a5faef93123c5c60c9ba",
+          "function_name": "account_balances",
+          "ok": true,
+          "result_status": "READ_ONLY",
+          "read_at": "2026-10-25T17:02:52.224Z",
+          "data": [
+            {
+              "asset": "native",
+              "balance": "336717608013",
+              "buying_liabilities": "0",
+              "selling_liabilities": "0",
+              "authorized": true
+            }
+          ]
+        },
+        {
+          "name": "offers",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "classic:stellar-dex",
+          "source_kind": "classic_dex",
+          "interface_hash": "ee717b8ae6be1346205daccd034754897e2016c39d48a5faef93123c5c60c9ba",
+          "function_name": "offers",
+          "ok": true,
+          "result_status": "READ_ONLY",
+          "read_at": "2026-10-25T17:02:52.831Z",
+          "data": []
+        },
+        {
+          "name": "orderbook",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "classic:stellar-dex",
+          "source_kind": "classic_dex",
+          "interface_hash": "ee717b8ae6be1346205daccd034754897e2016c39d48a5faef93123c5c60c9ba",
+          "function_name": "orderbook",
+          "ok": true,
+          "result_status": "READ_ONLY",
+          "read_at": "2026-10-25T17:02:52.985Z",
+          "data": {
+            "bids": [
+              {
+                "amount": "477700775127",
+                "price": {
+                  "n": 2000000,
+                  "d": 3393
+                }
+              },
+              {
+                "amount": "499370709655",
+                "price": {
+                  "n": 5000000,
+                  "d": 8483
+                }
+              },
+              {
+                "amount": "70682064000",
+                "price": {
+                  "n": 1472543,
+                  "d": 2500
+                }
+              },
+              {
+                "amount": "1010856198105",
+                "price": {
+                  "n": 589,
+                  "d": 1
+                }
+              },
+              {
+                "amount": "33871248995",
+                "price": {
+                  "n": 993724628,
+                  "d": 1687831
+                }
+              }
+            ],
+            "asks": [
+              {
+                "amount": "356062283",
+                "price": {
+                  "n": 1275382570,
+                  "d": 2154447
+                }
+              },
+              {
+                "amount": "820564990",
+                "price": {
+                  "n": 1000000,
+                  "d": 1681
+                }
+              },
+              {
+                "amount": "500000000",
+                "price": {
+                  "n": 340767220,
+                  "d": 572779
+                }
+              },
+              {
+                "amount": "120000000",
+                "price": {
+                  "n": 298181,
+                  "d": 500
+                }
+              },
+              {
+                "amount": "314708077",
+                "price": {
+                  "n": 195759274,
+                  "d": 327447
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "tools": [
+        "account_balances",
+        "offers",
+        "orderbook"
+      ],
+      "eligible": 5,
+      "declared": 5
+    },
+    {
+      "project": "Stellar AMM",
+      "contractId": "classic:stellar-amm",
+      "source": "https://developers.stellar.org/docs/learn/fundamentals/liquidity-on-stellar-sdex-liquidity-pools",
+      "checks": [
+        {
+          "name": "liquidity_pool",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "classic:stellar-amm",
+          "source_kind": "classic_amm",
+          "interface_hash": "cb04e5b6ec7d604192be4d523d55205822cf4da38481c48b56168d3acebf40d2",
+          "function_name": "liquidity_pool",
+          "ok": true,
+          "result_status": "READ_ONLY",
+          "read_at": "2026-10-25T17:02:53.739Z",
+          "data": {
+            "pool_id": "0000a8198b5e25994c1ca5b0556faeb27325ac746296944144e0a7406d501e8a",
+            "total_shares": "54942144063",
+            "total_trustlines": "1",
+            "reserves": [
+              {
+                "asset": "native",
+                "amount": "2687758"
+              },
+              {
+                "asset": "GOLDBANK001:GDEUQ2MX3YXMITFOTC3CO3GW5V3XE3IVG7JKLZZAOZ7WFYIN256INDUS",
+                "amount": "2094082988023562"
+              }
+            ]
+          }
+        }
+      ],
+      "tools": [
+        "liquidity_pool"
+      ],
+      "eligible": 6,
+      "declared": 6
+    }
+  ],
+  "submissionAttempts": 0
+}
