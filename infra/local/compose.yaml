@@ -83,6 +83,8 @@ services:
       ZEROCLAW_MODEL_API_KEY: ${ZEROCLAW_MODEL_API_KEY:-}
       ZEROCLAW_MODEL_URL: ${ZEROCLAW_MODEL_URL:-https://router-api.0g.ai/v1}
       ZEROCLAW_MODEL: ${ZEROCLAW_MODEL:-qwen3.7-max}
+      ZEROCLAW_NATIVE_TOOLS: "${ZEROCLAW_NATIVE_TOOLS:-}"
+      ZEROCLAW_REPLAY_REASONING: "${ZEROCLAW_REPLAY_REASONING:-}"
       RUNTIME_BROKER_URL: http://broker:3010
       RUNTIME_TOKEN_FILE: /run/orloj-secrets/runtime
     secrets: [control, runtime]

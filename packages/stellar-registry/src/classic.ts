@@ -16,7 +16,7 @@ import { budget, model, validator } from "./codec.js";
 import { fail, mapped } from "./errors.js";
 import type { ContractInterface, FunctionModel, TypeNode } from "./model.js";
 import type { Signer } from "./signer.js";
-import { digest } from "./store.js";
+import { digest, type Store } from "./store.js";
 export const classicIds = [
   "classic:stellar-dex",
   "classic:stellar-amm",
@@ -706,4 +706,18 @@ export async function prepareClassic(
   )
     fail("SIGNING_FAILED");
   return signed;
+}
+
+/** Refresh only already-registered built-in adapters after schema-generator upgrades. */
+export async function refreshClassicInterfaces(
+  store: Pick<Store, "get" | "save">,
+  config: Config,
+) {
+  for (const id of classicIds) {
+    const cached = await store.get(config.network, id);
+    if (!cached || !isClassic(cached)) continue;
+    const current = classicInterface(config, id);
+    if (current.interfaceHash !== cached.interfaceHash)
+      await store.save(current);
+  }
 }

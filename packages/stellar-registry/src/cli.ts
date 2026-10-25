@@ -1,4 +1,8 @@
-import { classicIds, classicInterface } from "./classic.js";
+import {
+  classicIds,
+  classicInterface,
+  refreshClassicInterfaces,
+} from "./classic.js";
 import { once } from "node:events";
 import { readFile, writeFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
@@ -222,6 +226,7 @@ export async function main(argv = process.argv.slice(2)) {
           ).rowCount
         )
           fail("INTERNAL_ERROR");
+        await refreshClassicInterfaces(store, c);
         const product = c.productMode
           ? new Product(c, server, store, {
               serviceToken: (

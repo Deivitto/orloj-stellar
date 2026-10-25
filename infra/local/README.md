@@ -155,3 +155,27 @@ GitHub Actions is disabled for this private repository. The former workflow is a
 Run `node --test scripts/local-stack.test.mjs` for launcher detection checks. Run `TEST_DATABASE_URL=postgres://... node --test packages/app/test/*.test.mts packages/app/test/*.test.mjs` for all app credential/selection/readiness checks. Registry checks use `TEST_DATABASE_URL=postgres://... pnpm --filter @orloj/stellar-registry test`. These are operator-invoked local commands, not hosted workflows.
 
 Managed exact-call permissions extend the original SAC transfer budgets. They bind an invocation to its interface hash and exact normalized arguments, with call quotas and fee reservations. See [the registry guide](../../packages/stellar-registry/README.md#managed-exact-call-grants-and-declared-val). Mainnet stays read-only and Classic writes still require Freighter. Re-register WASM contracts when upgrading to encoding v5. Run migration 008 before starting the updated app/registry/signer; keep the database and original signer master key backed up together.
+
+## Native app with an isolated Docker runtime
+
+A native app can use the same pinned container runtime through the native broker. Set `ZEROCLAW_AGENTS_DIR` to a short, private, persistent directory (for example `$HOME/.orloj/agents`), and set the broker's `AGENT_BIND_ROOT` to that exact canonical path. Each agent directory must be at most 70 bytes long, including its UUID: longer paths exceed the runtime's Unix socket limit. Move existing agent directories while the app is stopped; preserve their owner stamps and selection sidecars. This does not move or replace managed wallet storage.
+
+The native broker binds only the requested agent directory at the identical path, checks its instance stamp, rejects symlink escapes and runs with that directory's nonroot UID/GID. It never mounts the checkout, root of all agents, signer secrets or Docker socket into the runtime. Bind the native broker to loopback with `HOST=127.0.0.1`; retain its private runtime credential. Container stacks continue using per-agent named-volume subpaths by default.
+
+Set `STELLAR_RUNTIME_REGISTRY_URL` when containers need a different route from the app's control channel. On this Colima host, `http://host.lima.internal:3002` reaches the native loopback registry. `STELLAR_REGISTRY_URL` and public/browser URLs retain their separate meanings; EVM URLs are unchanged. Check reachability from the runtime network before startup.
+
+
+For a model that supports OpenAI native tool schemas, set `ZEROCLAW_NATIVE_TOOLS=true`; use `false` only for a provider/model requiring text fallback, or leave it empty to retain the runtime's default. This is a wire-format setting, not a grant: the exact MCP allowlist and blocked built-in tools remain in force. The pinned runtime documents this override in its [custom provider reference](https://docs.zeroclaw.com/v0.8.6/en/providers/custom.html). Groq's gpt-oss-20b accepts native tool schemas; text-fallback requests without tool definitions can be rejected with `tool_use_failed`.
+
+For Groq, also set `ZEROCLAW_REPLAY_REASONING=false`: its assistant-history schema rejects `reasoning_content`. The custom runtime provider otherwise replays that field after a successful tool call, causing the final-answer request to fail. The setting changes only provider history formatting and leaves the exact tool allowlist and signing policies intact.
+
+Example native broker startup, from the checkout root (private app configuration must use the same agents directory):
+
+```sh
+AGENT_BIND_ROOT="$HOME/.orloj/agents" AGENT_NETWORK=bridge \
+  AGENT_VOLUME=orloj-native-runtime HOST=127.0.0.1 \
+  RUNTIME_TOKEN_FILE="$PWD/.local/secrets/runtime" \
+  node infra/local/runtime-broker.mjs
+```
+
+The free Groq account used in live acceptance has an 8,000 token/minute limit. Longer tool conversations can reach HTTP 429 even when a request is smaller than the model's context window. The current private test-agent configuration uses `[reliability] provider_backoff_ms = 10000` and `provider_retries = 4` to give bounded provider retries time to wait. Keep operator settings above the app-managed marker; the app preserves them. These settings concern model HTTP calls, never Stellar submission retries. Free-provider quotas can still delay or reject chat; the UI reports that explicitly. No additional keys, account rotation or paid upgrade is required by this configuration.

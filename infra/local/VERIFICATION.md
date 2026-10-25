@@ -1,5 +1,14 @@
 # Local product verification — 2026-10-25
 
+## Latest: browser read chat verified
+
+A real authenticated browser conversation used the configured Groq gpt-oss-20b provider, the pinned isolated Docker agent runtime, and the app-authenticated MCP endpoints. Soroban XLM balance and classic DEX account_balances both returned 99999993056 base units = 9999.9993056 XLM, matching a separate Horizon account lookup. No write operation was created; existing history remained four successes and one rejection, and unattended grants stayed disabled. Screenshots and the detailed JSON evidence live in `packages/stellar-registry/demo-contract/browser-chat-*`.
+
+Testing fixed native-app mount/path wiring, the runtime IPC path length, custom-provider native tools, unsupported Groq reasoning replay, and a stale classic adapter cache. The temporary provider diagnostic relay was stopped; acceptance uses direct HTTPS to Groq. The free account has an 8,000-token/minute limit; repeated long turns produced a correctly surfaced HTTP 429. The current private test-agent retry settings are bounded (four retries, 10-second base backoff). Free quotas still apply.
+
+Local checks: 152 registry tests, 12 app/runtime/launcher tests, both builds and TypeScript checks pass; lint has zero errors and nine existing warnings. Compose configuration validates. The live setup is a native app plus isolated Docker runtime, not a claim that the complete Compose stack was started. Chat-triggered writes were not retested in this followup, and independent re-review remains pending workspace credits. Older blocker notes below are historical.
+
+
 Independent verifier: `verify_port_goals` (read-only review). Its concrete findings
 were treated as acceptance fixes, including identity epochs, ambiguous submission
 retention, expiry proof, worker bounds, runtime isolation and atomic recovery.

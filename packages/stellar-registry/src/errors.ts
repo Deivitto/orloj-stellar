@@ -77,7 +77,7 @@ const messages: Record<ErrorCode, string> = {
   TRANSACTION_FAILED_ON_CHAIN: "The transaction failed on chain.",
   IDEMPOTENCY_CONFLICT: "The idempotency key is bound to a different request.",
   STALE_INTERFACE:
-    "The deployed code changed; refresh registration and tool discovery.",
+    "The cached interface no longer matches the current contract or built-in adapter; refresh registration and tool discovery.",
   UNAUTHORIZED: "Authentication is required.",
   RATE_LIMITED: "The request rate limit was exceeded.",
   INTERNAL_ERROR: "The operation could not be completed.",

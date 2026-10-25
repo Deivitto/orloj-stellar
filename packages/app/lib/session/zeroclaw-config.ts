@@ -324,6 +324,21 @@ export const applyManagedConfig = async (
       path: "/providers/models/custom/default/model",
       value: process.env.ZEROCLAW_MODEL,
     });
+  for (const [setting, field] of [
+    ["ZEROCLAW_NATIVE_TOOLS", "native_tools"],
+    ["ZEROCLAW_REPLAY_REASONING", "replay_assistant_reasoning"],
+  ]) {
+    const value = process.env[setting];
+    if (value) {
+      if (!["true", "false"].includes(value))
+        throw new Error(`${setting} must be true or false`);
+      ops.push({
+        op: "add",
+        path: `/providers/models/custom/default/${field}`,
+        value: value === "true",
+      });
+    }
+  }
   const key = modelApiKey();
   // Omitted rather than written as "" when unset: an empty patch value would overwrite a key
   // an operator had set by hand in the config dir.
