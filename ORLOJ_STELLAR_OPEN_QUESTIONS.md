@@ -10,4 +10,4 @@ On 25 October 2026, the user delegated all seven decisions. Master specification
 6. Omitted top-level Option arguments and explicit null both encode None.
 7. Require durable idempotency and persist submission intent/hash before sending; reconcile ambiguous outcomes without resubmission.
 
-These decisions are documented, not yet implemented or tested against Stellar testnet.
+These decisions are implemented in `packages/stellar-registry`. Live testnet read/write and duplicate-key reconciliation evidence is recorded in `demo-contract/evidence.json`; the package README documents operational limits and verification.

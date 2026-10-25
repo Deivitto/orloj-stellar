@@ -67,3 +67,7 @@ Before installing any new dependency:
 ## Orloj Stellar build target
 
 This private mirror is the base for Orloj Stellar. Read `ORLOJ_STELLAR_MASTER.md` (version 1.1) and `ORLOJ_STELLAR_BUILD_PROMPT.md` before implementation. The master specification and its approved clarifications govern Stellar work; the existing EVM implementation is reference code. Decisions are recorded in `ORLOJ_STELLAR_OPEN_QUESTIONS.md`. If a requested change conflicts with the master, ask for clarification.
+
+### Implemented Stellar service
+
+`packages/stellar-registry` is the independent TypeScript Soroban service. See its README for migrations, configuration, operator CLI, MCP endpoints, write recovery, and the testnet demo. Use `pnpm --filter @orloj/stellar-registry typecheck`, `test`, and `build`. PostgreSQL integration tests require `TEST_DATABASE_URL`; build the real WASM fixture with `pnpm --filter @orloj/stellar-registry contract:build` before running tests. Live testnet evidence and a terminal recording are saved in its `demo-contract/` directory. Never commit `.env.demo` or token files.

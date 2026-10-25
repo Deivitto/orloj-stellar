@@ -1,0 +1,119 @@
+{
+  "recordedAt": "2026-10-25T11:26:43.319Z",
+  "deployment": {
+    "network": "testnet",
+    "contractId": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+    "wasmHash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+    "deployedAt": "2026-10-25T11:15:22.142Z"
+  },
+  "checks": [
+    {
+      "check": "ingest",
+      "ok": true,
+      "functions": [
+        "count",
+        "echo_u64",
+        "echo_vec",
+        "echo_i128",
+        "increment",
+        "authorized",
+        "echo_record"
+      ],
+      "excluded": [
+        {
+          "name": "unsupported",
+          "error_code": "UNSUPPORTED_SOROBAN_TYPE"
+        }
+      ]
+    },
+    {
+      "check": "mcp_discovery",
+      "ok": true,
+      "tools": [
+        "count",
+        "echo_u64",
+        "echo_vec",
+        "echo_i128",
+        "increment",
+        "authorized",
+        "echo_record"
+      ]
+    },
+    {
+      "check": "read_before",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "count",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T11:26:44.390Z",
+      "data": 1
+    },
+    {
+      "check": "u64_max",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "echo_u64",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T11:26:45.661Z",
+      "data": "18446744073709551615"
+    },
+    {
+      "check": "auth_required",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "authorized",
+      "ok": false,
+      "error_code": "AUTHORIZATION_REQUIRED",
+      "retryable": false,
+      "human_message": "This function requires authorization that is not configured."
+    },
+    {
+      "check": "confirmed_write",
+      "ok": true,
+      "data": 2,
+      "mode": "WRITE",
+      "ledger": 5380805,
+      "network": "testnet",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "fee_charged": "2921",
+      "function_name": "increment",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "transaction_hash": "3b7b204f4a102946075b1bf9f2008a42a8d250cf3984fbba2be2ace0d975594d"
+    },
+    {
+      "check": "duplicate_write",
+      "ok": true,
+      "data": 2,
+      "mode": "WRITE",
+      "ledger": 5380805,
+      "network": "testnet",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "fee_charged": "2921",
+      "function_name": "increment",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "transaction_hash": "3b7b204f4a102946075b1bf9f2008a42a8d250cf3984fbba2be2ace0d975594d"
+    },
+    {
+      "check": "read_after",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
+      "function_name": "count",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T11:26:56.514Z",
+      "data": 2
+    }
+  ]
+}

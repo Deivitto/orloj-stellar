@@ -1,0 +1,29 @@
+{
+  "name": "@orloj/stellar-registry",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "start": "node --env-file-if-exists=.env dist/src/cli.js serve",
+    "cli": "node --env-file-if-exists=.env dist/src/cli.js",
+    "contract:build": "stellar contract build --manifest-path demo-contract/Cargo.toml --out-dir demo-contract/artifacts --locked --optimize=false",
+    "demo:setup": "node scripts/setup-testnet.mjs",
+    "demo:deploy": "node scripts/deploy-testnet.mjs",
+    "demo": "node scripts/demo-testnet.mjs"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "17.3.0",
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "zod": "4.6.7",
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "vitest": "5.0.5",
+    "typescript": "7.0.2",
+    "@types/node": "26.6.5",
+    "@types/pg": "8.23.1"
+  }
+}

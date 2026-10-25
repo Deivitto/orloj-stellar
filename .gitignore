@@ -43,3 +43,7 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# Stellar contract build artifacts
+packages/stellar-registry/demo-contract/target/
+packages/stellar-registry/demo-contract/artifacts/

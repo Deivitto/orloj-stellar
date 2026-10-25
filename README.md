@@ -1,5 +1,7 @@
 # Orloj Registry [app.orloj.xyz](https://app.orloj.xyz/)
 
+**Stellar/Soroban development:** the independent [Orloj Stellar service](packages/stellar-registry/README.md) provides the registry, CLI, testnet demo, and durable write reconciliation. The original EVM application is documented below.
+
 > *Orloj* (Czech for "astronomical clock") — a nod to Prague's iconic timepiece, built for **ETHPrague Hackathon 2026** and continued at **ETHGlobal Lisbon 2026**.
 
 Orloj is a registry that exposes smart-contract interfaces to AI agents as **MCP (Model Context Protocol) servers**. MCPs are generated dynamically from [Sourcify](https://sourcify.dev/)-verified contract metadata, and signing is delegated to a **pluggable KMS layer** — pick **1Claw** (HSM + TEE) or **SpaceComputer Orbitport** (orbital HSM + SpaceTEE) per vault. Each registered contract is served as its own MCP endpoint by a single hot-pluggable registry process, gated by per-agent bearer tokens — agents never touch keys, RPCs, or gas.
