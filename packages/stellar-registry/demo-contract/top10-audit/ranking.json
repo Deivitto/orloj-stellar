@@ -1,0 +1,97 @@
+{
+  "retrievedAt": "2026-10-25T16:13:53.706262+00:00",
+  "source": "https://api.llama.fi/protocols",
+  "method": "Sort Stellar-specific TVL descending; exclude CEX; preserve source protocol categories and overlapping vault products.",
+  "projects": [
+    {
+      "rank": 1,
+      "name": "Blend Pools V2",
+      "slug": "blend-pools-v2",
+      "tvl_stellar_usd": 132510611.25383648,
+      "category": "Lending",
+      "url": "https://www.blend.capital",
+      "parentProtocol": "parent#blend"
+    },
+    {
+      "rank": 2,
+      "name": "Stellar DeFi Hub",
+      "slug": "stellar-defi-hub",
+      "tvl_stellar_usd": 112433646.34239522,
+      "category": "Farm",
+      "url": "https://stellardefihub.com/",
+      "parentProtocol": "parent#sentora"
+    },
+    {
+      "rank": 3,
+      "name": "Aquarius Stellar",
+      "slug": "aquarius-stellar",
+      "tvl_stellar_usd": 37837156.973771825,
+      "category": "Dexs",
+      "url": "https://aqua.network",
+      "parentProtocol": null
+    },
+    {
+      "rank": 4,
+      "name": "Upshift",
+      "slug": "upshift",
+      "tvl_stellar_usd": 30277239.64556867,
+      "category": "Onchain Capital Allocator",
+      "url": "https://app.upshift.finance",
+      "parentProtocol": null
+    },
+    {
+      "rank": 5,
+      "name": "Gami Labs",
+      "slug": "gami-labs",
+      "tvl_stellar_usd": 30277233.72268942,
+      "category": "Risk Curators",
+      "url": "https://gamilabs.io/",
+      "parentProtocol": null
+    },
+    {
+      "rank": 6,
+      "name": "DeFindex",
+      "slug": "defindex",
+      "tvl_stellar_usd": 19122707.70099707,
+      "category": "Yield Aggregator",
+      "url": "https://www.defindex.io/",
+      "parentProtocol": null
+    },
+    {
+      "rank": 7,
+      "name": "Sushi Stellar",
+      "slug": "sushi-stellar",
+      "tvl_stellar_usd": 15353198.919112977,
+      "category": "Dexs",
+      "url": "https://sushi.com/",
+      "parentProtocol": "parent#sushi"
+    },
+    {
+      "rank": 8,
+      "name": "Stellar DEX",
+      "slug": "stellar-dex",
+      "tvl_stellar_usd": 14894953.592984816,
+      "category": "Dexs",
+      "url": "https://developers.stellar.org/docs/learn/fundamentals/liquidity-on-stellar-sdex-liquidity-pools",
+      "parentProtocol": null
+    },
+    {
+      "rank": 9,
+      "name": "Templar Protocol",
+      "slug": "templar-protocol",
+      "tvl_stellar_usd": 11858177.29463603,
+      "category": "Lending",
+      "url": "https://www.templarfi.org/",
+      "parentProtocol": null
+    },
+    {
+      "rank": 10,
+      "name": "Stellar AMM",
+      "slug": "stellar-amm",
+      "tvl_stellar_usd": 8453183.342968479,
+      "category": "Dexs",
+      "url": "https://developers.stellar.org/docs/learn/fundamentals/liquidity-on-stellar-sdex-liquidity-pools#automated-market-makers-amms",
+      "parentProtocol": null
+    }
+  ]
+}

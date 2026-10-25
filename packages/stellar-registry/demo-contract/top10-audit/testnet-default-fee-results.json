@@ -1,0 +1,342 @@
+{
+  "testedAt": "2026-10-25T16:22:33.897Z",
+  "network": "testnet",
+  "wallet": "GBQGQU3ADJVZXVV7LHLANN4GA6MC5QGBNUNX2SM3PRPHMZACE3C7QOSJ",
+  "funding": [
+    {
+      "source": "Stellar Friendbot",
+      "hash": "015d75588bb5fcae17c10830e815a30a4a1f63a114313b5723923b2bf43e9092",
+      "address": "GBQGQU3ADJVZXVV7LHLANN4GA6MC5QGBNUNX2SM3PRPHMZACE3C7QOSJ",
+      "rpcStatus": "SUCCESS"
+    }
+  ],
+  "projects": [
+    {
+      "project": "Blend Pools V2",
+      "contractId": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+      "source": "https://github.com/blend-capital/blend-utils/blob/main/testnet.contracts.json",
+      "checks": [
+        {
+          "name": "get_reserve_list",
+          "args": {},
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "source_kind": "wasm",
+          "interface_hash": "f397c6fe4265881e401b794b70d8183f85a7f5ae16057c03ab9ba5ab5615ad92",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "function_name": "get_reserve_list",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:22:41.031Z",
+          "data": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+            "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+            "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+          ]
+        },
+        {
+          "name": "get_positions",
+          "args": {
+            "address": "GBQGQU3ADJVZXVV7LHLANN4GA6MC5QGBNUNX2SM3PRPHMZACE3C7QOSJ"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "source_kind": "wasm",
+          "interface_hash": "f397c6fe4265881e401b794b70d8183f85a7f5ae16057c03ab9ba5ab5615ad92",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "function_name": "get_positions",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:22:41.805Z",
+          "data": {
+            "collateral": [],
+            "liabilities": [],
+            "supply": []
+          }
+        },
+        {
+          "name": "submit",
+          "args": {
+            "from": "GBQGQU3ADJVZXVV7LHLANN4GA6MC5QGBNUNX2SM3PRPHMZACE3C7QOSJ",
+            "spender": "GBQGQU3ADJVZXVV7LHLANN4GA6MC5QGBNUNX2SM3PRPHMZACE3C7QOSJ",
+            "to": "GBQGQU3ADJVZXVV7LHLANN4GA6MC5QGBNUNX2SM3PRPHMZACE3C7QOSJ",
+            "requests": [
+              {
+                "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                "amount": "10000000",
+                "request_type": 0
+              }
+            ]
+          },
+          "mode": "WRITE",
+          "network": "testnet",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "source_kind": "wasm",
+          "interface_hash": "f397c6fe4265881e401b794b70d8183f85a7f5ae16057c03ab9ba5ab5615ad92",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "function_name": "submit",
+          "ok": false,
+          "error_code": "FEE_POLICY_REJECTED",
+          "retryable": false,
+          "human_message": "The transaction exceeds the fee policy."
+        }
+      ],
+      "tools": [
+        "get_reserve_list",
+        "get_positions",
+        "submit"
+      ]
+    },
+    {
+      "project": "DeFindex",
+      "contractId": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+      "source": "https://github.com/paltalabs/defindex/blob/main/public/testnet.contracts.json",
+      "checks": [
+        {
+          "name": "name",
+          "args": {},
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+          "source_kind": "wasm",
+          "interface_hash": "8d33db8814966230864104e5d19bed75fb94b1319ba284d13206cf1674f9fe61",
+          "wasm_hash": "f345228dca59c6605789620e9ec62ff4847a0927c33dac7581a955fe746016be",
+          "function_name": "name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:22:44.194Z",
+          "data": "DeFindex-Vault-Defindex Vault"
+        },
+        {
+          "name": "get_fees",
+          "args": {},
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+          "source_kind": "wasm",
+          "interface_hash": "8d33db8814966230864104e5d19bed75fb94b1319ba284d13206cf1674f9fe61",
+          "wasm_hash": "f345228dca59c6605789620e9ec62ff4847a0927c33dac7581a955fe746016be",
+          "function_name": "get_fees",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:22:46.261Z",
+          "data": [
+            100,
+            2000
+          ]
+        }
+      ],
+      "tools": [
+        "get_fees",
+        "name"
+      ],
+      "blocker": [
+        {
+          "function": "deposit",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "function": "withdraw",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        }
+      ]
+    },
+    {
+      "project": "Aquarius Stellar",
+      "contractId": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+      "source": "https://docs.aqua.network/developers/code-examples/prerequisites-and-basics",
+      "checks": [
+        {
+          "name": "version",
+          "args": {},
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+          "source_kind": "wasm",
+          "interface_hash": "cb33a2c7e6a5c707f75ac0e900bfb832d0778550ebe24c45303abd592e7f1d62",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "version",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:22:47.047Z",
+          "data": 220
+        },
+        {
+          "name": "get_tokens_sets_count",
+          "args": {},
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+          "source_kind": "wasm",
+          "interface_hash": "cb33a2c7e6a5c707f75ac0e900bfb832d0778550ebe24c45303abd592e7f1d62",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "get_tokens_sets_count",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:22:47.782Z",
+          "data": "340"
+        },
+        {
+          "name": "get_pools_for_tokens_range",
+          "args": {
+            "start": "0",
+            "end": "1"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+          "source_kind": "wasm",
+          "interface_hash": "cb33a2c7e6a5c707f75ac0e900bfb832d0778550ebe24c45303abd592e7f1d62",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "get_pools_for_tokens_range",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:22:48.557Z",
+          "data": [
+            [
+              [
+                "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+                "CBL6KD2LFMLAUKFFWNNXWOXFN73GAXLEA4WMJRLQ5L76DMYTM3KWQVJN"
+              ],
+              [
+                [
+                  "24f9c991c44acf33fff5f44031c40385d235dc212d7379e824ba3db1c35371f3",
+                  "CCS6EFFKPQWG5SKMMYL4UQIXVYVDNIXAPHKHUM7IGJVN7QIAWXD2L7TO"
+                ],
+                [
+                  "4ffd5f56a9ff4ae92fc59d55a1663cee87fb1e0fab02a89462994b5c5e5cb5e5",
+                  "CDDLEQE6CPQGIK3RU4MK5CX2IAWN6CXWNJ2C3VOXV4FOVF3BBQFVZDIC"
+                ],
+                [
+                  "8328b65c4d32886fb1876be01b4ad13ef5ff14719d7c735d4060da683315473d",
+                  "CC2NBF7M6QBEOUNTV2C4BK42ID2WK2O3AJRC777BND4O3B6JUV7EY33J"
+                ],
+                [
+                  "9ac7a9cde23ac2ada11105eeaa42e43c2ea8332ca0aa8f41f58d7160274d718e",
+                  "CDLYWB5CCSNOEXPGHSKYO4FW3R4XFQVI2HR2QC735YDVCSEQJABQDFXI"
+                ],
+                [
+                  "a2baf8e09afee05df65a5803a48d575465d081f563728ac5261d16121dde4a98",
+                  "CDRT5VO5HMEBOLRAPZYSCFAKH2YB44BMBEG6EKKFTB2VHBFGBVIZLXCR"
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "name": "get_pools_for_tokens_range",
+          "args": {
+            "start": "1",
+            "end": "2"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+          "source_kind": "wasm",
+          "interface_hash": "cb33a2c7e6a5c707f75ac0e900bfb832d0778550ebe24c45303abd592e7f1d62",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "get_pools_for_tokens_range",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:22:49.259Z",
+          "data": [
+            [
+              [
+                "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+                "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+              ],
+              [
+                [
+                  "49136338380911dda8f39cc141fcdbfb001149f9a9fde30c7fa6a098e6a96fd6",
+                  "CAD5TBS4NKO35YDYZN3ULQFXDXVL7BPK4Q2RUG7N4DVPYNNOEAUAQJ6F"
+                ],
+                [
+                  "9ac7a9cde23ac2ada11105eeaa42e43c2ea8332ca0aa8f41f58d7160274d718e",
+                  "CD3LFMMLBQ6RBJUD3Z2LFDFE6544WDRMWHEZYPI5YDVESYRSO2TT32BX"
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "name": "estimate_swap",
+          "args": {
+            "tokens": [
+              "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+              "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+            ],
+            "token_in": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "token_out": "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+            "pool_index": "49136338380911dda8f39cc141fcdbfb001149f9a9fde30c7fa6a098e6a96fd6",
+            "in_amount": "100000"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+          "source_kind": "wasm",
+          "interface_hash": "cb33a2c7e6a5c707f75ac0e900bfb832d0778550ebe24c45303abd592e7f1d62",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "estimate_swap",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:22:49.994Z",
+          "data": "16121"
+        }
+      ],
+      "tools": [
+        "swap",
+        "version",
+        "get_tokens",
+        "estimate_swap",
+        "get_tokens_sets_count",
+        "get_pools_for_tokens_range"
+      ],
+      "availableNativePair": [
+        [
+          "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+          "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+        ],
+        [
+          [
+            "49136338380911dda8f39cc141fcdbfb001149f9a9fde30c7fa6a098e6a96fd6",
+            "CAD5TBS4NKO35YDYZN3ULQFXDXVL7BPK4Q2RUG7N4DVPYNNOEAUAQJ6F"
+          ],
+          [
+            "9ac7a9cde23ac2ada11105eeaa42e43c2ea8332ca0aa8f41f58d7160274d718e",
+            "CD3LFMMLBQ6RBJUD3Z2LFDFE6544WDRMWHEZYPI5YDVESYRSO2TT32BX"
+          ]
+        ]
+      ],
+      "swapQuote": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+        "source_kind": "wasm",
+        "interface_hash": "cb33a2c7e6a5c707f75ac0e900bfb832d0778550ebe24c45303abd592e7f1d62",
+        "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+        "function_name": "estimate_swap",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T16:22:49.994Z",
+        "data": "16121"
+      },
+      "blocker": "Swap requires verifying output-token trustline/funding before submission"
+    }
+  ],
+  "transactions": [],
+  "finalNativeBalance": {
+    "mode": "READ",
+    "network": "testnet",
+    "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "source_kind": "stellar_asset",
+    "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+    "function_name": "balance",
+    "ok": false,
+    "error_code": "INVALID_ARGUMENT",
+    "retryable": false,
+    "human_message": "Arguments do not match the tool schema."
+  }
+}
