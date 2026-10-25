@@ -255,3 +255,11 @@ it("applies the bounded grammar to Result payload itself without an invented hos
     model({ kind: "Result", ok: { kind: "Vec", item: ok }, errors: [] }),
   ).toThrow("depth");
 });
+
+it("encodes declared unit tuples as void and excludes ambiguous Option<unit>", () => {
+  const unit: TypeNode = { kind: "Tuple", items: [] };
+  expect(encode(unit, []).type).toBe("scvVoid");
+  expect(decode(unit, xdr.ScVal.scvVoid())).toEqual([]);
+  expect(() => decode(unit, xdr.ScVal.scvVec([]))).toThrow("declared type");
+  expect(() => model({ kind: "Option", item: unit })).toThrow("unsupported");
+});

@@ -18,7 +18,7 @@ The historical audit below is retained. Master v1.4 now covers bounded CPU headr
 | Templar Protocol | 26/26 experimental proxy | Three Result reads pass; experimental deployment is not verified as the ranked production TVL deployment; writes unverified. |
 | Stellar AMM | Separate classic adapter | Mainnet pool read; testnet pool trust, deposit and withdrawal confirmed with state checks. |
 
-32 mainnet HTTP MCP reads across all ten entries passed with zero mainnet submission attempts. The separate natural-language harness selected the expected tool for all ten entries and received successful MCP results (`agent-remediation-results.json`). This covers the recorded prompts; it does not establish arbitrary-language accuracy or browser chat acceptance.
+32 mainnet HTTP MCP reads across all ten entries passed with zero mainnet submission attempts. A further ten read calls checked the final encoding-v4 interfaces against their regenerated identities. The separate natural-language harness selected the expected tool for all ten entries and received successful MCP results (`agent-remediation-results.json`). This covers the recorded prompts; it does not establish arbitrary-language accuracy or browser chat acceptance.
 
 Blend's historical failure was CPU instruction exhaustion: 1,831,549 attempted versus 1,831,400 declared. Final authorization-enforced simulation now requests configurable CPU leeway separately from fee buffering. Fee caps remain authoritative. Protocol retests used disposable wallets and an explicitly declared maximum of 300 **test** XLM. The app maximum remained 0.2 XLM; cold Blend deposits can still legitimately exceed it. No user fee grant was enlarged.
 
@@ -30,11 +30,11 @@ Actual owner browser acceptance: created a one-stroop offer, hash `484117c427b7e
 
 The active app wallet is managed again. Unattended grants are intentionally disabled after switching wallets and require explicit owner reauthorization. Signing payloads and private credentials are absent from public evidence.
 
-Manual checks: 125 registry tests including database-backed writes/recovery; two new app tests; app typecheck/build pass; lint has zero errors and nine pre-existing warnings. GitHub checks remain manual-only. Independent review found no remaining source-level safety blocker and independently verified Freighter and DeFindex transactions.
+Manual checks: 126 registry tests including database-backed writes/recovery; two new app tests; app typecheck/build pass; lint has zero errors and nine pre-existing warnings. GitHub checks remain manual-only. Independent review found no remaining source-level safety blocker in the main implementation and independently verified Freighter and DeFindex transactions. The final unit-tuple/encoding-v4 followup passed local tests; independent re-review was stopped by workspace credit exhaustion.
 
 **Remaining acceptance gaps:** integrated browser chat has no running isolated runtime broker on this host. It now fails visibly with HTTP 503 before creating/replacing agent configuration. No browser chat pass or reproducible full-stack startup is claimed. Missing official testnet deployments/provenance above still limit project write coverage. Signature eligibility is not blanket execution coverage.
 
-New evidence: `blend-failure-diagnosis.json`, `discovery-mainnet-v3.json`, `mcp-mainnet-remediation-results.json`, `new-signature-results.json`, `agent-remediation-results.json`, `testnet-remediation-results.json`, `classic-testnet-results.json`, `classic-app-results.json`, `remediation-transaction-verification.json`, `remediation-review.json`.
+New evidence: `blend-failure-diagnosis.json`, `discovery-mainnet-v4.json`, `mcp-mainnet-remediation-results.json`, `new-signature-results.json`, `agent-remediation-results.json`, `testnet-remediation-results.json`, `classic-testnet-results.json`, `classic-app-results.json`, `remediation-transaction-verification.json`, `remediation-review.json`, `encoding-v4-read-results.json`.
 
 ## Historical baseline
 

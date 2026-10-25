@@ -13,7 +13,7 @@
     "10 expected natural-language tool selections and MCP results"
   ],
   "manualChecks": {
-    "registryTestsPassed": 125,
+    "registryTestsPassed": 126,
     "newAppTestsPassed": 2,
     "appTypecheck": "passed",
     "appBuild": "passed",
@@ -25,10 +25,12 @@
     "Full Compose startup unverified",
     "Missing official testnet deployments/provenance documented in REPORT.md",
     "Aquarius get_info returns untyped Val and remains excluded",
-    "Representative calls do not prove every project method works"
+    "Representative calls do not prove every project method works",
+    "Independent re-review of the final unit-tuple / encoding-v4 followup is pending workspace credits."
   ],
   "walletState": {
     "activeMode": "managed",
     "unattendedGrantsEnabled": false
-  }
+  },
+  "independentReviewScope": "Main implementation through commit 231a3dc. The final unit-tuple / encoding-v4 followup passed local regression tests but independent re-review was stopped by workspace credit exhaustion."
 }

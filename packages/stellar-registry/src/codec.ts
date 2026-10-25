@@ -143,7 +143,11 @@ export function supported(t: TypeNode, depth = 0, resultAllowed = true): void {
     (!Number.isInteger(t.size) || t.size! < 0 || t.size! > 256)
   )
     fail("UNSUPPORTED_SOROBAN_TYPE");
-  if (t.kind === "Option" && ["Option", "void"].includes(t.item.kind))
+  if (
+    t.kind === "Option" &&
+    (["Option", "void"].includes(t.item.kind) ||
+      (t.item.kind === "Tuple" && t.item.items.length === 0))
+  )
     fail("UNSUPPORTED_SOROBAN_TYPE");
   const children =
     t.kind === "Result"
@@ -243,6 +247,7 @@ export function encode(t: TypeNode, value: unknown, nested = false): xdr.ScVal {
       return xdr.ScVal.scvVec(
         (value as unknown[]).map((v) => encode(t.item, v, true)),
       );
+    if (t.kind === "Tuple" && t.items.length === 0) return xdr.ScVal.scvVoid();
     if (t.kind === "Tuple")
       return xdr.ScVal.scvVec(
         t.items.map((type, n) => encode(type, (value as unknown[])[n], true)),
@@ -354,6 +359,9 @@ export function decode(t: TypeNode, v: xdr.ScVal, nested = false): unknown {
       if (v.type !== "scvVec" || !v.vec || v.vec.length > 100)
         fail("RESULT_DECODE_FAILED");
       out = v.vec.map((x) => decode(t.item, x, true));
+    } else if (t.kind === "Tuple" && t.items.length === 0) {
+      if (v.type !== "scvVoid") fail("RESULT_DECODE_FAILED");
+      out = [];
     } else if (t.kind === "Tuple" || t.kind === "Union") {
       if (v.type !== "scvVec" || !v.vec) fail("RESULT_DECODE_FAILED");
       if (t.kind === "Tuple") {

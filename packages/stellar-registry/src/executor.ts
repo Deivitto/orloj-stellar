@@ -164,7 +164,7 @@ export class Executor {
         fail("STALE_INTERFACE");
       return;
     }
-    if (i.sourceKind === "wasm" && i.encodingVersion !== 3)
+    if (i.sourceKind === "wasm" && i.encodingVersion !== 4)
       fail("STALE_INTERFACE");
     if (i.protocolVersion !== undefined) {
       const net = await mapped("SPEC_PARSE_FAILED", () =>

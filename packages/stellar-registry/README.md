@@ -140,7 +140,7 @@ Public evidence is saved in `demo-contract/assets-read-evidence.json`, `assets-w
 
 ## Audit remediation and classic Stellar
 
-WASM schema identity now uses encoding v3. Re-register existing WASM contracts before invoking them with this build; old write attempts remain reconcilable with their original schemas and hashes. New eligible functions do not acquire policies automatically.
+WASM schema identity now uses encoding v4. Re-register existing WASM contracts before invoking them with this build; old write attempts remain reconcilable with their original schemas and hashes. New eligible functions do not acquire policies automatically.
 
 Top-level declared `Result<T,E>` returns produce `{ "tag": "Ok", "values": [value] }` on successful execution. Declared contract failures use `CONTRACT_EXECUTION_FAILED` and sanitized numeric/name metadata. Result inputs/nested Results, ambiguous options and untyped Val remain excluded. u256/i256 use exact canonical decimal strings. Inventory exclusions now retain the declared signature and failing type location.
 

@@ -408,7 +408,7 @@ Execution resource allowances and resource-fee headroom are independent. Final a
 
 Support top-level function return `Result<T,E>` where T is in the supported closed grammar and E is the declared contract error enum or the SDK-defined Error type. Generic Error keeps its numeric code without inventing a case name. Successful Soroban Result returns are encoded by the host as the bare T; expose JSON `{tag:"Ok", values:[T]}` to preserve the declared return type. A declared contract error is a failed execution, not a successful union value: return `CONTRACT_EXECUTION_FAILED` with sanitized `contract_error: {code, name}` when a typed diagnostic attributed to the invoked contract matches the declaration. Unknown codes, cross-contract errors, and malformed values must not be guessed. Never encode a Result as a Soroban vector. Result is a top-level return annotation, so the depth-8 limit applies to payload T itself; the host adds no Result value container. Result inputs, nested Results, recursive definitions and ambiguous nested options remain excluded.
 
-Resolve referenced contract-error definitions, preserving their numeric codes. Add precise exclusion location/type and the original declared signature to inventories. Version WASM interface identity to encoding v3; old WASM interfaces require re-registration before new execution. Existing attempts reconcile with original metadata and return models; write history and tool names are preserved. Newly supported methods remain disabled until individually permitted. SAC encoding remains unchanged.
+Resolve referenced contract-error definitions, preserving their numeric codes. Add precise exclusion location/type and the original declared signature to inventories. Version WASM interface identity to encoding v4; old WASM interfaces require re-registration before new execution. Existing attempts reconcile with original metadata and return models; write history and tool names are preserved. Newly supported methods remain disabled until individually permitted. SAC encoding remains unchanged.
 
 ### Classic protocol adapters
 
@@ -421,3 +421,5 @@ Track signature eligibility, enabled policy, successful reads and confirmed writ
 Full-width u256/i256 leaves use canonical decimal strings and exact BigInt conversion, with the same validation rules as u128/i128. Untyped Val remains excluded.
 
 Classic read envelopes use `READ_ONLY`, never `SIMULATED`. Classic writes use the shared testnet-only durable intent, account locking, owner approval, single RPC submission and getTransaction confirmation; they have no Soroban resource data. `CLASSIC_QUERY_FAILED` is a stable sanitized Horizon read error.
+
+A zero-element Tuple denotes Soroban unit: JSON `[]`, wire ScVal Void. Reject Option of this unit type because None and Some(unit) share the same wire value. Nonempty tuples keep their vector encoding.

@@ -230,11 +230,11 @@ export function inspect(
   return inspectSpec(spec, c, id, {
     wasmHash: wasmHash(wasm),
     sourceKind: "wasm",
-    encodingVersion: 3,
+    encodingVersion: 4,
     protocolVersion,
     interfaceHash: wasmHash(
       Buffer.concat([
-        Buffer.from(`orloj-encoding-v3:${protocolVersion ?? "unbound"}:`),
+        Buffer.from(`orloj-encoding-v4:${protocolVersion ?? "unbound"}:`),
         Buffer.from(wasm),
       ]),
     ),
