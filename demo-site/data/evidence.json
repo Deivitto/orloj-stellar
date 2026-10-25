@@ -1,0 +1,353 @@
+{
+  "schemaVersion": 1,
+  "snapshotDate": "2026-10-25",
+  "notice": "Historical Testnet acceptance evidence. This showcase sends no transactions and hosts no application backend.",
+  "transactions": {
+    "network": "testnet",
+    "uniqueConfirmedCount": 39,
+    "includes": [
+      "protocol calls",
+      "funding",
+      "fixture setup",
+      "retained diagnostic probes"
+    ],
+    "verifiedAt": "2026-10-25T20:43:04.340Z",
+    "records": [
+      {
+        "hash": "6a1d603a8e695fe588dcfba1bde89da70965df6908f6ff0fb49825464cf4c7fa",
+        "status": "SUCCESS",
+        "ledger": 5387414,
+        "fee_charged": "100"
+      },
+      {
+        "hash": "af146584981eaea52b0cc7c1d95e011de95b8c7e679254f001955e4ad413a9f4",
+        "status": "SUCCESS",
+        "ledger": 5387417,
+        "fee_charged": "454527"
+      },
+      {
+        "hash": "7591ba9cf404bd143eb5fd082b555568190c561f04f413053f3eca59933e26de",
+        "status": "SUCCESS",
+        "ledger": 5387419,
+        "fee_charged": "12925"
+      },
+      {
+        "hash": "8540a061a950195f41204f743a056f275dfce33f4cffb8d0caa8e0a71b3bb45a",
+        "status": "SUCCESS",
+        "ledger": 5387422,
+        "fee_charged": "263452"
+      },
+      {
+        "hash": "bcf2bc685f7d9f421045c51485c1a47b9028bed46e03cf0092e5cc91382acfcb",
+        "status": "SUCCESS",
+        "ledger": 5387426,
+        "fee_charged": "14911"
+      },
+      {
+        "hash": "30dd5b5837c3e8b5300d889d884d7c9dcb16e8786129ad7ae3c3a35b8715624a",
+        "status": "SUCCESS",
+        "ledger": 5387429,
+        "fee_charged": "7432"
+      },
+      {
+        "hash": "32a6faac221b286c657b10ee86b43f501e40b516eb69c8dc99bac73e9ffa8472",
+        "status": "SUCCESS",
+        "ledger": 5387431,
+        "fee_charged": "23509"
+      },
+      {
+        "hash": "6ca0822fba07c039b60a6c40b376c9a5a702e58ab5994015646548a5ed9e1d99",
+        "status": "SUCCESS",
+        "ledger": 5387411,
+        "fee_charged": "100"
+      },
+      {
+        "hash": "50160df689b4c688e97ade08edb602e9471afe73fc0c6db581cb92db623dc605",
+        "status": "SUCCESS",
+        "ledger": 5387412,
+        "fee_charged": "100"
+      },
+      {
+        "hash": "af0192c10749c4ea9c56c824c3bb5826c98b1f98d9270f87962dae82b9a47d71",
+        "status": "SUCCESS",
+        "ledger": 5387414,
+        "fee_charged": "100"
+      },
+      {
+        "hash": "215830b18dd02540d45ecad245e409cb4434bdca1605463c9d2c04a7ae436a03",
+        "status": "SUCCESS",
+        "ledger": 5387417,
+        "fee_charged": "100"
+      },
+      {
+        "hash": "b9782a87e954c94072472b47db7c3bf957c9ecd7c07d272b509f4236554768c5",
+        "status": "SUCCESS",
+        "ledger": 5387419,
+        "fee_charged": "100"
+      },
+      {
+        "hash": "784506abf665f81279e1e858ea352639d6ea88837c0db5f4cf2812fd2b01d6b5",
+        "status": "SUCCESS",
+        "ledger": 5387421,
+        "fee_charged": "100"
+      },
+      {
+        "hash": "2cbeaef85d6d48fe92a20ccce0110ee97cf4e3e0834bbb2fd752fa2290b357e2",
+        "status": "SUCCESS",
+        "ledger": 5387423,
+        "fee_charged": "100"
+      },
+      {
+        "hash": "f25300dd50b6785c627f687cdd52b893b528571ff4619399cd31a01efb805f85",
+        "status": "SUCCESS",
+        "ledger": 5387426,
+        "fee_charged": "100"
+      },
+      {
+        "hash": "be1f527f3da41ee114cb4c4a62af1db4bb8dace2e16ce8addb28a4b3aab25b83",
+        "status": "SUCCESS",
+        "ledger": 5387416,
+        "fee_charged": "100"
+      },
+      {
+        "hash": "3875e71f0e952a197201ca9026db141c7d2fefb7d7592824c5925c1cda6483f2",
+        "status": "SUCCESS",
+        "ledger": 5387440,
+        "fee_charged": "100"
+      },
+      {
+        "hash": "e021d78d9ec00579713a388446ec062179558e0d7732c3efeb20e73434285b48",
+        "status": "SUCCESS",
+        "ledger": 5387441,
+        "fee_charged": "52492"
+      },
+      {
+        "hash": "e338715fd72baa7a23cfcba5c920fb5327fcd9886481908a4ea208cf559750f2",
+        "status": "SUCCESS",
+        "ledger": 5387443,
+        "fee_charged": "4113"
+      },
+      {
+        "hash": "d02e0fa9de27ea2b67db688e508132fee3755f5bcebe87849fed8f5c774127d9",
+        "status": "SUCCESS",
+        "ledger": 5387445,
+        "fee_charged": "7455"
+      },
+      {
+        "hash": "ee7ef82b9d2b2f94b7ea98722a14b61cc353e091471aab34f2da62bcb642cf88",
+        "status": "SUCCESS",
+        "ledger": 5387447,
+        "fee_charged": "7455"
+      },
+      {
+        "hash": "68fac12c3a2e5dd83300c9ee92badcd9d3eb65b7e2fdeec7d97c1cff8631a30c",
+        "status": "SUCCESS",
+        "ledger": 5387450,
+        "fee_charged": "4934"
+      },
+      {
+        "hash": "7942ee6194e38ef7fffda4114dc755ec8e147b1ffbb7550972e699c0435b432f",
+        "status": "SUCCESS",
+        "ledger": 5387451,
+        "fee_charged": "4934"
+      },
+      {
+        "hash": "58c8cca84f15900c3544d6a36c71d519ca354c6716cebe08b932d090ccdd1741",
+        "status": "SUCCESS",
+        "ledger": 5387453,
+        "fee_charged": "4935"
+      },
+      {
+        "hash": "2c88d9d5b041d6e9d6545ea50b84bf87ee651dc6a0b084ef58613a27eb670a39",
+        "status": "SUCCESS",
+        "ledger": 5387455,
+        "fee_charged": "6266"
+      },
+      {
+        "hash": "d71ca18c71c437d4cd9d9d2d7ee91f1689adce256f4113e119bebafceab6e937",
+        "status": "SUCCESS",
+        "ledger": 5387457,
+        "fee_charged": "9676"
+      },
+      {
+        "hash": "f193f99853916c2401625ad6e0fcf53cf4f577749b5953d07efc94466094dc4a",
+        "status": "SUCCESS",
+        "ledger": 5387458,
+        "fee_charged": "7586"
+      },
+      {
+        "hash": "f3fc3bbce5acdfa9516c5fc0a2bd9058637159931c1343a8206a46114e9dd36d",
+        "status": "SUCCESS",
+        "ledger": 5387459,
+        "fee_charged": "4936"
+      },
+      {
+        "hash": "c8143ffff68990242e12d87894a4f4bc7d0441ae2abfee4a94c2ccc0f8b9d6c7",
+        "status": "SUCCESS",
+        "ledger": 5387460,
+        "fee_charged": "7024"
+      },
+      {
+        "hash": "d66ea51a72180ce33fb9d4bdaa8e87770da8a2bd78b3d38e4d7feb57d1cc31b3",
+        "status": "SUCCESS",
+        "ledger": 5387461,
+        "fee_charged": "4963"
+      },
+      {
+        "hash": "6dbfd3b11856ef8514abd0d1cb81d76bd458b5e738df54a59f00e7eed4a56b42",
+        "status": "SUCCESS",
+        "ledger": 5387463,
+        "fee_charged": "5839"
+      },
+      {
+        "hash": "9146400c824bcc11813e3b5e480ce22a743c958738b62ae4790d48c9a74f301b",
+        "status": "SUCCESS",
+        "ledger": 5387465,
+        "fee_charged": "4934"
+      },
+      {
+        "hash": "e2d6e1d4c3dc7d706b67266b5b8bfb8a8c5d70cd4c5b8328ad8062532c852046",
+        "status": "SUCCESS",
+        "ledger": 5387467,
+        "fee_charged": "4113"
+      },
+      {
+        "hash": "bcbbb540757e0cff490f70b64abf31999ef58e9fe1bdc74cb0054924ca7236de",
+        "status": "SUCCESS",
+        "ledger": 5387469,
+        "fee_charged": "4935"
+      },
+      {
+        "hash": "0788d47775988ee4090739a7c196b1537d79e6df19ecde96ca64217e09604c98",
+        "status": "SUCCESS",
+        "ledger": 5387401,
+        "fee_charged": "100"
+      },
+      {
+        "hash": "dfa5a7cc21ccdfc23f8d25209d3f33df3b901486530fac159f88aa0b36612214",
+        "status": "SUCCESS",
+        "ledger": 5387403,
+        "fee_charged": "454528"
+      },
+      {
+        "hash": "f46810f417a8c164f8293ab3babfbdd18e0c764ddf16a43b0d105ed6d887455b",
+        "status": "SUCCESS",
+        "ledger": 5387404,
+        "fee_charged": "12882"
+      },
+      {
+        "hash": "8a8b1e671919469944bfeb02fbdfd4d843340928645faea826b784204f8e722c",
+        "status": "SUCCESS",
+        "ledger": 5387405,
+        "fee_charged": "12808"
+      },
+      {
+        "hash": "6594046f583cea6e7f2ecbb686bec325a0d86018ba3547a8a32a1296ad9eed18",
+        "status": "SUCCESS",
+        "ledger": 5387446,
+        "fee_charged": "7228"
+      }
+    ]
+  },
+  "checks": {
+    "totalPassed": 168,
+    "registry": 153,
+    "app": 9,
+    "runtimeMountAndLauncher": 6,
+    "lintErrors": 0,
+    "existingLintWarnings": 9
+  },
+  "example": {
+    "network": "testnet",
+    "transactionHash": "6594046f583cea6e7f2ecbb686bec325a0d86018ba3547a8a32a1296ad9eed18",
+    "status": "SUCCESS",
+    "amountBaseUnits": "1",
+    "amountXlm": "0.0000001",
+    "feeStroops": "7228",
+    "feeXlm": "0.0007228",
+    "ledger": 5387446,
+    "temporaryGrantRemoved": true
+  },
+  "projects": {
+    "rankingRetrievedAt": "2026-10-25T20:35:23.459057+00:00",
+    "rankingSource": "https://api.llama.fi/protocols",
+    "method": "Descending Stellar-specific TVL; excludes CEX. Overlapping products are not independent capital.",
+    "readScope": "Representative selected interfaces; not blanket project-method coverage.",
+    "entries": [
+      {
+        "rank": 1,
+        "name": "Blend Pools V2",
+        "stellarTvlUsdAtSnapshot": 132148691.84853898,
+        "testnetWriteEvidence": true
+      },
+      {
+        "rank": 2,
+        "name": "Stellar DeFi Hub",
+        "stellarTvlUsdAtSnapshot": 112548283.0819987,
+        "testnetWriteEvidence": false
+      },
+      {
+        "rank": 3,
+        "name": "Aquarius Stellar",
+        "stellarTvlUsdAtSnapshot": 37871128.828192115,
+        "testnetWriteEvidence": true
+      },
+      {
+        "rank": 4,
+        "name": "Upshift",
+        "stellarTvlUsdAtSnapshot": 30284481.00079444,
+        "testnetWriteEvidence": false
+      },
+      {
+        "rank": 5,
+        "name": "Gami Labs",
+        "stellarTvlUsdAtSnapshot": 30275331.594139475,
+        "testnetWriteEvidence": false
+      },
+      {
+        "rank": 6,
+        "name": "DeFindex",
+        "stellarTvlUsdAtSnapshot": 19117078.56247857,
+        "testnetWriteEvidence": true
+      },
+      {
+        "rank": 7,
+        "name": "Sushi Stellar",
+        "stellarTvlUsdAtSnapshot": 15352366.15043102,
+        "testnetWriteEvidence": false
+      },
+      {
+        "rank": 8,
+        "name": "Stellar DEX",
+        "stellarTvlUsdAtSnapshot": 14903957.61059678,
+        "testnetWriteEvidence": true
+      },
+      {
+        "rank": 9,
+        "name": "Templar Protocol",
+        "stellarTvlUsdAtSnapshot": 11858720.79531534,
+        "testnetWriteEvidence": false
+      },
+      {
+        "rank": 10,
+        "name": "Stellar AMM",
+        "stellarTvlUsdAtSnapshot": 8449658.165863032,
+        "testnetWriteEvidence": true
+      },
+      {
+        "rank": 11,
+        "name": "Defa By InvoiceMate",
+        "stellarTvlUsdAtSnapshot": 4013414.040812774,
+        "testnetWriteEvidence": false
+      }
+    ]
+  },
+  "limits": [
+    "Five of eleven ranked entries have Testnet write coverage; no all-method claim.",
+    "DeFa by InvoiceMate coverage is a TVL logger, not lending-pool writes.",
+    "Some official deployment attribution and Testnet addresses remain unverified.",
+    "Unsupported signatures and unavailable privileges remain exclusions.",
+    "Free model-provider quotas can delay or reject chat.",
+    "No Mainnet writes, hosted backend or new transfers in this showcase."
+  ]
+}

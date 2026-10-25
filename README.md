@@ -1,4 +1,6 @@
-# Orloj Stellar — latest verified status
+# Orloj Stellar — public demo and verified status
+
+**Public showcase: [Watch the Orloj Stellar demo](https://orloj-stellar-demo.vercel.app).** A 70-second captioned video comes first, followed by real screenshots, a guided walkthrough and curated transaction evidence. **Recorded Testnet demo — the working application runs locally.** The public page cannot connect wallets, run MCP calls or send transactions.
 
 Updated 25 October 2026. **Run the hackathon demo locally at [localhost:3000/en](http://localhost:3000/en).** The full Stellar app is not deployed on Vercel; the older `app.orloj.xyz` link below describes the original EVM project, not this fork's hosted Stellar release. No paid hosting has been provisioned.
 

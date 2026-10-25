@@ -1,0 +1,78 @@
+{
+  "verifiedAt": "2026-10-25T22:02:41.995531+00:00",
+  "url": "https://orloj-stellar-demo.vercel.app",
+  "scope": "Public static showcase only; working app and secrets remain local.",
+  "video": {
+    "durationSeconds": 69.958333,
+    "resolution": "1280x720",
+    "codec": "H.264",
+    "fps": 24,
+    "audio": false,
+    "captions": "English WebVTT plus visible scene captions",
+    "autoplay": false,
+    "construction": "Seven ten-second scenes assembled from actual application screen captures; historical Testnet evidence, no newly recorded transaction.",
+    "representativeEncodedFramesReviewed": [
+      45,
+      55
+    ],
+    "remoteHashMatchesLocal": true
+  },
+  "browserChecks": {
+    "anonymousPageHttp200": true,
+    "videoPlaybackPassed": true,
+    "captionTrackLoaded": true,
+    "keyboardHomeEndPassed": true,
+    "previousNextPassed": true,
+    "transcriptExpansionPassed": true,
+    "mobileWidth": 390,
+    "mobileHorizontalOverflow": false,
+    "allDeclaredResourcesSameOrigin": true,
+    "connectSrc": "none",
+    "noAnalyticsOrThirdPartyEmbeds": true
+  },
+  "privacy": {
+    "noEnvironmentVariablesConfigured": true,
+    "privateFilePathsHttp404": [
+      "/.env",
+      "/.local/app.env",
+      "/.vercel/project.json"
+    ],
+    "publicMediaVisuallyReviewed": true,
+    "publicTextCredentialScanPassed": true,
+    "agentIdentifiersExcluded": true,
+    "repositoryRemainsPrivate": true,
+    "noApplicationBackendPublished": true
+  },
+  "localApp": {
+    "historicalOperationCountBeforeAndAfter": 6,
+    "unattendedGrants": 0,
+    "newSubmissions": 0,
+    "applicationSourceChanged": false
+  },
+  "deployment": {
+    "project": "orloj-stellar-demo",
+    "provider": "Vercel",
+    "uploadSource": "demo-site only",
+    "automaticGitDeploymentEnabled": false,
+    "paidUpgradeOrCustomDomainAdded": false,
+    "hostedGithubActionsEnabled": false
+  },
+  "publicAssetSha256": {
+    "index.html": "f3fd629ad4f2bfa2265fd19f2208ab47fdb1abbf51b7800d141a9ebaa007f24e",
+    "vercel.json": "250e22d9b5edd70275d63504f004605d1ed12668756c3151e2528a83e42b3165",
+    "icon.svg": "8b29e227f4727083c2fdf1a8662a258c5fc68cdabc0ad3601de9975644297685",
+    "demo.js": "0e817803e211775791c54db770c789152a890449878c1c4bd8ce77aa87074e39",
+    "style.css": "df57afdd75ac235ee942400694cbaf9ef10247f04d093ff5ccc5aa5fc5c3f3e3",
+    "data/evidence.json": "9cc2d3c0a2dfcd0aaf9ad589850a6b421cea304b5d239f48fa64a34550aa61f6",
+    "data/transcript.json": "18bf2b2663a83fbea1caebe2b957ae73ad81be69581ab6fe94dff8244e69630a",
+    "assets/recovery.png": "b59d90f31615517273cbef146781e9b811d7be55ef834b0d26862a8bb7483e05",
+    "assets/captions.vtt": "e7c330d4b8299cd5b6883bef6274e8fe079f0196f5a9d1e6d1f58949e533e0d4",
+    "assets/results.png": "3320284c4e5a106eebca590592dc9c2a6daeb3dc481b8ef6577d7ac2bb20d476",
+    "assets/permissions.png": "83c7f26b0a7b60dbdcffd26b41920b82e876768a54a10cf270dc2b8865afeca6",
+    "assets/intro.png": "2e43cb9c3c130786316428283a5a4d0cbe6cb29627c4a60cdc089154b24e28ea",
+    "assets/walkthrough.mp4": "8e7e947b1cc437bfcf525eafc27b4173a23e04d041613523e719adf9bf4c3686",
+    "assets/confirmed.png": "abdaf85b0c05c45bc8976b68c5e62eb759858107ebd2346291247837e0821030",
+    "assets/balance.png": "c863b8643d10f3fe5bc147b006c2a1528dc1b866dd7db6ad88c0cb728fb366e2",
+    "assets/registration.png": "9d3fca3bafd7bb9f38b30b95b70b83704e1b1e161c85d00d3fb51c89407ea1be"
+  }
+}
