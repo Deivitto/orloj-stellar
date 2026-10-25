@@ -1,0 +1,76 @@
+{
+  "testedAt": "2026-10-25T20:36:41.579Z",
+  "network": "mainnet",
+  "writeMode": false,
+  "projects": [
+    {
+      "project": "Defa By InvoiceMate",
+      "contractId": "CDVVH3KWXWLVUO5OLLBBZSCZICV46PDKYA2G2HYBTWH4A6EJWTBRIXRK",
+      "source": "https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/projects/defa/index.js",
+      "checks": [
+        {
+          "name": "get_active_tvl",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CDVVH3KWXWLVUO5OLLBBZSCZICV46PDKYA2G2HYBTWH4A6EJWTBRIXRK",
+          "source_kind": "wasm",
+          "interface_hash": "9039f34655cc7bac4c14e283f62477349596995732a1fdbf28d3884bb32d80ba",
+          "wasm_hash": "c52393a20f9409fb7e30e38c801b259a15cbc4f9f8229950cf2eb01505cb1203",
+          "function_name": "get_active_tvl",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T20:36:42.727Z",
+          "data": "40149598600000"
+        },
+        {
+          "name": "get_tvl",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CDVVH3KWXWLVUO5OLLBBZSCZICV46PDKYA2G2HYBTWH4A6EJWTBRIXRK",
+          "source_kind": "wasm",
+          "interface_hash": "9039f34655cc7bac4c14e283f62477349596995732a1fdbf28d3884bb32d80ba",
+          "wasm_hash": "c52393a20f9409fb7e30e38c801b259a15cbc4f9f8229950cf2eb01505cb1203",
+          "function_name": "get_tvl",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T20:36:43.089Z",
+          "data": {
+            "bad_debt_amount_overall": "0",
+            "claimed_back_principal_yield": "2430000000",
+            "claimed_insured_amount_overall": "0",
+            "disbursed_amount_overall_pools": "40152028600000",
+            "insured_amount_overall": "0",
+            "platform_fee_overall": "301770285998",
+            "principal_to_repay_overall": "40152028600000",
+            "raised_in_overall_pools": "40152028600000",
+            "repaid_amount_overall": "2430000000",
+            "yield_to_repay_overall": "1755831143998"
+          }
+        },
+        {
+          "name": "read_version",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CDVVH3KWXWLVUO5OLLBBZSCZICV46PDKYA2G2HYBTWH4A6EJWTBRIXRK",
+          "source_kind": "wasm",
+          "interface_hash": "9039f34655cc7bac4c14e283f62477349596995732a1fdbf28d3884bb32d80ba",
+          "wasm_hash": "c52393a20f9409fb7e30e38c801b259a15cbc4f9f8229950cf2eb01505cb1203",
+          "function_name": "read_version",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T20:36:43.459Z",
+          "data": 1
+        }
+      ],
+      "excluded": [],
+      "tools": [
+        "get_tvl",
+        "read_version",
+        "get_active_tvl"
+      ],
+      "eligible": 16,
+      "declared": 16
+    }
+  ],
+  "submissionAttempts": 0
+}

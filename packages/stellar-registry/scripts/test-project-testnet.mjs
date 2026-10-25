@@ -78,6 +78,18 @@ const config = parseConfig({
 });
 if (BigInt(config.maxFee) > 3000000000n) throw Error("Audit fee cap exceeded");
 const server = new rpc.Server(config.rpcUrl, { timeout: 20000 });
+let submissionCount = 0,
+  envelopeSignCount = 0;
+const send = server.sendTransaction.bind(server);
+server.sendTransaction = async (...args) => {
+  submissionCount++;
+  return send(...args);
+};
+const sign = signer.sign_transaction_envelope;
+signer.sign_transaction_envelope = async (...args) => {
+  envelopeSignCount++;
+  return sign(...args);
+};
 if ((await server.getNetwork()).passphrase !== Networks.TESTNET)
   throw Error("Wrong network");
 const out = {
@@ -89,6 +101,7 @@ const out = {
   funding: [],
   projects: [],
   transactions: [],
+  safetyChecks: [],
 };
 const persist = () =>
   writeFile(
@@ -157,6 +170,13 @@ async function call(client, project, name, args = {}, write = false) {
       ledger: independent.ledger,
     });
   }
+  if (process.env.AUDIT_DEEP === "true" && write && result?.transaction_hash) {
+    const sendsBefore = submissionCount, signsBefore = envelopeSignCount;
+    const duplicate = (await client.callTool({name, arguments: {...args, idempotency_key: key}})).structuredContent;
+    const ok = duplicate?.transaction_hash === result.transaction_hash && submissionCount === sendsBefore && envelopeSignCount === signsBefore;
+    out.safetyChecks.push({project: project.project, check: "duplicate_reconciles_without_signing_or_sending", name, ok, hash: result.transaction_hash});
+    if (!ok) throw Error("Duplicate request changed signing/submission");
+  }
   await persist();
   console.log(
     JSON.stringify({
@@ -168,6 +188,14 @@ async function call(client, project, name, args = {}, write = false) {
     }),
   );
   return result;
+}
+async function reject(client, project, name, args, expected) {
+  const sendsBefore = submissionCount, signsBefore = envelopeSignCount;
+  const result = (await client.callTool({name, arguments: {...args, idempotency_key: randomUUID()}})).structuredContent;
+  const ok = result?.ok === false && !result.transaction_hash && submissionCount === sendsBefore && envelopeSignCount === signsBefore && (!expected || expected.includes(result.error_code));
+  out.safetyChecks.push({project:project.project, check:"rejected_before_signing_and_submission", name, error_code:result?.error_code, transaction_hash:result?.transaction_hash, result_status:result?.result_status, expected, ok});
+  await persist();
+  if (!ok) throw Error("Negative protocol test did not fail safely");
 }
 try {
   for (const t of targets) {
@@ -185,6 +213,10 @@ try {
     const client = await connect(t.contractId),
       tools = (await client.listTools()).tools.map((x) => x.name);
     p.tools = tools;
+    if (process.env.AUDIT_DEEP === "true") {
+      const read = Object.entries(functions[t.project]).find(([,mode])=>mode === "READ")[0];
+      await reject(client,p,read,{unexpected_property:true},["INVALID_ARGUMENT"]);
+    }
     if (t.project === "Blend Pools V2") {
       const reserves = await call(client, p, "get_reserve_list");
       await call(client, p, "get_positions", { address });
@@ -213,6 +245,7 @@ try {
           const withdrawn = await call(client, p, "get_positions", { address });
           p.depositPositionIncreased =
             deposited.ok && deposited.data.supply.length > 0;
+          if (process.env.AUDIT_DEEP === "true") await reject(client,p,"submit",{...args,from:Keypair.random().publicKey(),requests:[{address:native,amount:"1",request_type:1}]});
           p.withdrawalConfirmed = withdrawal.ok === true;
           p.withdrawalPositionDecreased =
             withdrawn.ok &&
@@ -264,6 +297,7 @@ try {
             },
             true,
           );
+          if (process.env.AUDIT_DEEP === "true") await reject(client,p,"withdraw",{withdraw_shares:"999999999999999999999",min_amounts_out:["0"],from:address});
           const final = await call(client, p, "balance", { id: address });
           p.withdrawalConfirmed = withdrawal.ok === true;
           p.withdrawalSharesDecreased = !!(
@@ -349,6 +383,7 @@ try {
                 const before = await call(tokenClient, p, "balance", {
                   [param]: address,
                 });
+                if (process.env.AUDIT_DEEP === "true") await reject(client,p,"swap",{user:address,tokens,token_in:native,token_out:other,pool_index:pool,in_amount:"100000",out_min:"999999999999999999999"});
                 const swap = await call(
                   client,
                   p,
@@ -387,7 +422,15 @@ try {
   out.finalNativeBalance = await nativeClient
     .callTool({ name: "balance", arguments: { addr: address } })
     .then((r) => r.structuredContent);
+  out.submissionCount = submissionCount;
+  out.envelopeSignCount = envelopeSignCount;
+  out.allSafetyChecksPassed = out.safetyChecks.every((x) => x.ok);
   await persist();
+  if (process.env.AUDIT_DEEP === "true" && out.projects.some((p) =>
+    p.project === "Aquarius Stellar"
+      ? !p.outputBalanceIncreased
+      : !p.withdrawalConfirmed || !(p.depositPositionIncreased ?? p.depositSharesIncreased) || !(p.withdrawalPositionDecreased ?? p.withdrawalSharesDecreased)
+  )) throw Error("Protocol state checks incomplete");
 } finally {
   for (const client of clients) await client.close().catch(() => {});
   await new Promise((resolve) => http.close(resolve));

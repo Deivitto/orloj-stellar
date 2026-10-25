@@ -1,0 +1,239 @@
+{
+  "retrievedAt": "2026-10-25T20:35:23.459057+00:00",
+  "source": "https://api.llama.fi/protocols",
+  "method": "Stellar chainTvls descending; exclude CEX",
+  "projects": [
+    {
+      "rank": 1,
+      "name": "Blend Pools V2",
+      "slug": "blend-pools-v2",
+      "tvl_stellar_usd": 132148691.84853898,
+      "url": "https://www.blend.capital",
+      "category": "Lending"
+    },
+    {
+      "rank": 2,
+      "name": "Stellar DeFi Hub",
+      "slug": "stellar-defi-hub",
+      "tvl_stellar_usd": 112548283.0819987,
+      "url": "https://stellardefihub.com/",
+      "category": "Farm"
+    },
+    {
+      "rank": 3,
+      "name": "Aquarius Stellar",
+      "slug": "aquarius-stellar",
+      "tvl_stellar_usd": 37871128.828192115,
+      "url": "https://aqua.network",
+      "category": "Dexs"
+    },
+    {
+      "rank": 4,
+      "name": "Upshift",
+      "slug": "upshift",
+      "tvl_stellar_usd": 30284481.00079444,
+      "url": "https://app.upshift.finance",
+      "category": "Onchain Capital Allocator"
+    },
+    {
+      "rank": 5,
+      "name": "Gami Labs",
+      "slug": "gami-labs",
+      "tvl_stellar_usd": 30275331.594139475,
+      "url": "https://gamilabs.io/",
+      "category": "Risk Curators"
+    },
+    {
+      "rank": 6,
+      "name": "DeFindex",
+      "slug": "defindex",
+      "tvl_stellar_usd": 19117078.56247857,
+      "url": "https://www.defindex.io/",
+      "category": "Yield Aggregator"
+    },
+    {
+      "rank": 7,
+      "name": "Sushi Stellar",
+      "slug": "sushi-stellar",
+      "tvl_stellar_usd": 15352366.15043102,
+      "url": "https://sushi.com/",
+      "category": "Dexs"
+    },
+    {
+      "rank": 8,
+      "name": "Stellar DEX",
+      "slug": "stellar-dex",
+      "tvl_stellar_usd": 14903957.61059678,
+      "url": "https://developers.stellar.org/docs/learn/fundamentals/liquidity-on-stellar-sdex-liquidity-pools",
+      "category": "Dexs"
+    },
+    {
+      "rank": 9,
+      "name": "Templar Protocol",
+      "slug": "templar-protocol",
+      "tvl_stellar_usd": 11858720.79531534,
+      "url": "https://www.templarfi.org/",
+      "category": "Lending"
+    },
+    {
+      "rank": 10,
+      "name": "Stellar AMM",
+      "slug": "stellar-amm",
+      "tvl_stellar_usd": 8449658.165863032,
+      "url": "https://developers.stellar.org/docs/learn/fundamentals/liquidity-on-stellar-sdex-liquidity-pools#automated-market-makers-amms",
+      "category": "Dexs"
+    },
+    {
+      "rank": 11,
+      "name": "Defa By InvoiceMate",
+      "slug": "defa-by-invoicemate",
+      "tvl_stellar_usd": 4013414.040812774,
+      "url": "https://imdefa.com/",
+      "category": "RWA"
+    },
+    {
+      "rank": 12,
+      "name": "Huma",
+      "slug": "huma",
+      "tvl_stellar_usd": 2726187.5138999806,
+      "url": "https://app.huma.finance",
+      "category": "RWA"
+    },
+    {
+      "rank": 13,
+      "name": "Soroswap AMM",
+      "slug": "soroswap-amm",
+      "tvl_stellar_usd": 1165261.7596815303,
+      "url": "https://soroswap.finance/",
+      "category": "Dexs"
+    },
+    {
+      "rank": 14,
+      "name": "Scopuly",
+      "slug": "scopuly",
+      "tvl_stellar_usd": 1029146.6874761,
+      "url": "",
+      "category": "Dexs"
+    },
+    {
+      "rank": 15,
+      "name": "Spectra V2",
+      "slug": "spectra-v2",
+      "tvl_stellar_usd": 501450.15879571013,
+      "url": "https://app.spectra.finance/fixed-rate",
+      "category": "Yield"
+    },
+    {
+      "rank": 16,
+      "name": "Excellar",
+      "slug": "excellar",
+      "tvl_stellar_usd": 404178.9950349,
+      "url": "https://excellar.finance",
+      "category": "Basis Trading"
+    },
+    {
+      "rank": 17,
+      "name": "Untangled RWA",
+      "slug": "untangled-rwa",
+      "tvl_stellar_usd": 151480.7056312501,
+      "url": "https://untangled.finance/",
+      "category": "RWA"
+    },
+    {
+      "rank": 18,
+      "name": "XOXNO Lending",
+      "slug": "xoxno-lending",
+      "tvl_stellar_usd": 149223.82926167856,
+      "url": "https://xoxno.com",
+      "category": "Lending"
+    },
+    {
+      "rank": 19,
+      "name": "NEAR Intents",
+      "slug": "near-intents",
+      "tvl_stellar_usd": 74395.3577047299,
+      "url": "https://near.com/",
+      "category": "Bridge"
+    },
+    {
+      "rank": 20,
+      "name": "Phoenix DeFi Hub",
+      "slug": "phoenix-defi-hub",
+      "tvl_stellar_usd": 47332.36159291002,
+      "url": "https://www.phoenix-hub.io/",
+      "category": "Dexs"
+    },
+    {
+      "rank": 21,
+      "name": "Blend Pools",
+      "slug": "blend-pools",
+      "tvl_stellar_usd": 43806.21358265941,
+      "url": "https://www.blend.capital",
+      "category": "Lending"
+    },
+    {
+      "rank": 22,
+      "name": "Vaquita Protocol",
+      "slug": "vaquita-protocol",
+      "tvl_stellar_usd": 37567.942245342565,
+      "url": "https://www.vaquita.fi/",
+      "category": "Yield Aggregator"
+    },
+    {
+      "rank": 23,
+      "name": "Peridot",
+      "slug": "peridot",
+      "tvl_stellar_usd": 18953.275134575473,
+      "url": "https://peridot.finance/",
+      "category": "Lending"
+    },
+    {
+      "rank": 24,
+      "name": "WhaleHub",
+      "slug": "whalehub",
+      "tvl_stellar_usd": 13277.039248224546,
+      "url": "https://whalehub.io/",
+      "category": "Farm"
+    },
+    {
+      "rank": 25,
+      "name": "SoDEX Bridge",
+      "slug": "sodex-bridge",
+      "tvl_stellar_usd": 6377.589545203424,
+      "url": "https://ssi.sosovalue.com",
+      "category": "Bridge"
+    },
+    {
+      "rank": 26,
+      "name": "Balanced Exchange",
+      "slug": "balanced-exchange",
+      "tvl_stellar_usd": 5583.879048485589,
+      "url": "https://app.balanced.network/trade",
+      "category": "Dexs"
+    },
+    {
+      "rank": 27,
+      "name": "K2 Lend",
+      "slug": "k2-lend",
+      "tvl_stellar_usd": 1644.711007756099,
+      "url": "https://k2lend.com",
+      "category": "Dexs"
+    },
+    {
+      "rank": 28,
+      "name": "Slender",
+      "slug": "slender",
+      "tvl_stellar_usd": 88.32230060198965,
+      "url": " ",
+      "category": "Lending"
+    },
+    {
+      "rank": 29,
+      "name": "Alula",
+      "slug": "alula",
+      "tvl_stellar_usd": 7.114353340911699,
+      "url": "https://app.alula.finance",
+      "category": "Lending"
+    }
+  ]
+}

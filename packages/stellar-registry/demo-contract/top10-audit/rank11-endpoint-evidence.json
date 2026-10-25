@@ -1,0 +1,23 @@
+{
+  "verifiedAt": "2026-10-25T20:47:09.428Z",
+  "url": "http://127.0.0.1:3013/contracts/CDVVH3KWXWLVUO5OLLBBZSCZICV46PDKYA2G2HYBTWH4A6EJWTBRIXRK/mcp",
+  "tools": [
+    "get_tvl",
+    "read_version",
+    "get_active_tvl"
+  ],
+  "result": {
+    "mode": "READ",
+    "network": "mainnet",
+    "contract_id": "CDVVH3KWXWLVUO5OLLBBZSCZICV46PDKYA2G2HYBTWH4A6EJWTBRIXRK",
+    "source_kind": "wasm",
+    "interface_hash": "9039f34655cc7bac4c14e283f62477349596995732a1fdbf28d3884bb32d80ba",
+    "wasm_hash": "c52393a20f9409fb7e30e38c801b259a15cbc4f9f8229950cf2eb01505cb1203",
+    "function_name": "get_active_tvl",
+    "ok": true,
+    "result_status": "SIMULATED",
+    "simulated_at": "2026-10-25T20:47:09.423Z",
+    "data": "40149598600000"
+  },
+  "readOnly": true
+}
