@@ -1,0 +1,748 @@
+{
+  "testedAt": "2026-10-25T16:25:39.683Z",
+  "network": "mainnet",
+  "writeMode": false,
+  "projects": [
+    {
+      "project": "Blend Pools V2",
+      "contractId": "CAQQR5SWBXKIGZKPBZDH3KM5GQ5GUTPKB7JAFCINLZBC5WXPJKRG3IM7",
+      "source": "https://docs.blend.capital/mainnet-deployments",
+      "checks": [
+        {
+          "name": "reward_zone",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CAQQR5SWBXKIGZKPBZDH3KM5GQ5GUTPKB7JAFCINLZBC5WXPJKRG3IM7",
+          "source_kind": "wasm",
+          "interface_hash": "fcad8901cec335d75990780b64fe75176445c9ae6d5a58cacc5f2d7cc911a3f9",
+          "wasm_hash": "c1f4502a757e25c611f5a159bc1ab0eef64085adac6c68123dca66e87faffbc2",
+          "function_name": "reward_zone",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:40.686Z",
+          "data": []
+        },
+        {
+          "name": "backstop_token",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CAQQR5SWBXKIGZKPBZDH3KM5GQ5GUTPKB7JAFCINLZBC5WXPJKRG3IM7",
+          "source_kind": "wasm",
+          "interface_hash": "fcad8901cec335d75990780b64fe75176445c9ae6d5a58cacc5f2d7cc911a3f9",
+          "wasm_hash": "c1f4502a757e25c611f5a159bc1ab0eef64085adac6c68123dca66e87faffbc2",
+          "function_name": "backstop_token",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:41.038Z",
+          "data": "CAS3FL6TLZKDGGSISDBWGGPXT3NRR4DYTZD7YOD3HMYO6LTJUVGRVEAM"
+        }
+      ],
+      "excluded": [],
+      "tools": [
+        "backstop_token",
+        "reward_zone"
+      ],
+      "eligible": 17,
+      "declared": 17
+    },
+    {
+      "project": "Stellar DeFi Hub",
+      "contractId": "CALFCZ4TY2CLHDHNJWCZX6JKYGUPV7P3GNQ3UVABXNE5JCV2E774APUM",
+      "source": "https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/projects/stellarDefiHub/index.js",
+      "checks": [
+        {
+          "name": "name",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CALFCZ4TY2CLHDHNJWCZX6JKYGUPV7P3GNQ3UVABXNE5JCV2E774APUM",
+          "source_kind": "wasm",
+          "interface_hash": "942c0310da4be8961c431a907b0d8afce7b6e95f4a455de2f3a1696ac27820d5",
+          "wasm_hash": "3bd05dfa2bf65299d359e86a4672a45900e8c5768d9f056ad8da5ccd779bcd12",
+          "function_name": "name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:41.730Z",
+          "data": "Sentora USDC"
+        },
+        {
+          "name": "query_asset",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CALFCZ4TY2CLHDHNJWCZX6JKYGUPV7P3GNQ3UVABXNE5JCV2E774APUM",
+          "source_kind": "wasm",
+          "interface_hash": "942c0310da4be8961c431a907b0d8afce7b6e95f4a455de2f3a1696ac27820d5",
+          "wasm_hash": "3bd05dfa2bf65299d359e86a4672a45900e8c5768d9f056ad8da5ccd779bcd12",
+          "function_name": "query_asset",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:42.079Z",
+          "data": "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75"
+        },
+        {
+          "name": "total_assets",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CALFCZ4TY2CLHDHNJWCZX6JKYGUPV7P3GNQ3UVABXNE5JCV2E774APUM",
+          "source_kind": "wasm",
+          "interface_hash": "942c0310da4be8961c431a907b0d8afce7b6e95f4a455de2f3a1696ac27820d5",
+          "wasm_hash": "3bd05dfa2bf65299d359e86a4672a45900e8c5768d9f056ad8da5ccd779bcd12",
+          "function_name": "total_assets",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:42.435Z",
+          "data": "402480021191530"
+        }
+      ],
+      "excluded": [],
+      "tools": [
+        "name",
+        "query_asset",
+        "total_assets"
+      ],
+      "eligible": 60,
+      "declared": 60
+    },
+    {
+      "project": "Aquarius Stellar",
+      "contractId": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+      "source": "https://docs.aqua.network/developers/code-examples/prerequisites-and-basics",
+      "checks": [
+        {
+          "name": "version",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+          "source_kind": "wasm",
+          "interface_hash": "cb33a2c7e6a5c707f75ac0e900bfb832d0778550ebe24c45303abd592e7f1d62",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "version",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:43.152Z",
+          "data": 220
+        },
+        {
+          "name": "contract_name",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+          "source_kind": "wasm",
+          "interface_hash": "cb33a2c7e6a5c707f75ac0e900bfb832d0778550ebe24c45303abd592e7f1d62",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "contract_name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:43.501Z",
+          "data": "AMMRouter"
+        },
+        {
+          "name": "get_tokens_sets_count",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+          "source_kind": "wasm",
+          "interface_hash": "cb33a2c7e6a5c707f75ac0e900bfb832d0778550ebe24c45303abd592e7f1d62",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "get_tokens_sets_count",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:43.878Z",
+          "data": "325"
+        },
+        {
+          "name": "get_pools_for_tokens_range",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+          "source_kind": "wasm",
+          "interface_hash": "cb33a2c7e6a5c707f75ac0e900bfb832d0778550ebe24c45303abd592e7f1d62",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "get_pools_for_tokens_range",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:44.225Z",
+          "data": [
+            [
+              [
+                "CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA",
+                "CAUIKL3IYGMERDRUN6YSCLWVAKIFG5Q4YJHUKM4S4NJZQIA3BAS6OJPK"
+              ],
+              [
+                [
+                  "0b607c211d1f2f4e74c00e1ecf8024603bf5971a1af9d638ca06713393ee9651",
+                  "CDKVJYMN34ZIEXSLNFYHVAFF6M6FM5E2U6OHXOTBKH2WLBULXOE53YDP"
+                ],
+                [
+                  "24f9c991c44acf33fff5f44031c40385d235dc212d7379e824ba3db1c35371f3",
+                  "CAVB532FDYEWBXNSCSKACTZI3BV3QBNFLH2UQRR5HIKFKLFVQW5YGZVY"
+                ],
+                [
+                  "37b955f3708dae748cad465441fcad70b26ffe272385227a4a737234ae429bdf",
+                  "CCSY43EHJAHT3NQDYKAMJXRFBEEH7OXDL3J3VNGO33UUSEXWNN27GBIZ"
+                ],
+                [
+                  "9ac7a9cde23ac2ada11105eeaa42e43c2ea8332ca0aa8f41f58d7160274d718e",
+                  "CCY2PXGMKNQHO7WNYXEWX76L2C5BH3JUW3RCATGUYKY7QQTRILBZIFWV"
+                ],
+                [
+                  "b2e02fcfca6c96f8ad5cbd84e7784a777b36d9c96a2459402c4f458462aab7f0",
+                  "CDE57N6XTUPBKYYDGQMXX7E7SLNOLFY3JEQB4MULSMR2AKTSAENGX2HC"
+                ],
+                [
+                  "ed45429155f876475d3c7ac18d34273d638d6a5b2fcc736db36d71a5788852c5",
+                  "CA4HTZNY2RBZWEQE5GBMNREZMFRPAZSVJ6OGPC7T3VM7NHRJYFAVID2S"
+                ]
+              ]
+            ]
+          ]
+        }
+      ],
+      "excluded": [
+        {
+          "name": "get_info",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_liquidity",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_total_liquidity",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_tokens_for_reward",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        }
+      ],
+      "tools": [
+        "version",
+        "contract_name",
+        "get_tokens_sets_count",
+        "get_pools_for_tokens_range"
+      ],
+      "eligible": 71,
+      "declared": 75
+    },
+    {
+      "project": "Upshift",
+      "contractId": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+      "source": "https://docs.upshift.finance/contracts/addresses",
+      "checks": [
+        {
+          "name": "name",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+          "source_kind": "wasm",
+          "interface_hash": "383b7568cd63056f5b44e00aed0b2cd74960e980af388de7cc73274145e47d80",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:44.898Z",
+          "data": "earnXLM"
+        },
+        {
+          "name": "query_asset",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+          "source_kind": "wasm",
+          "interface_hash": "383b7568cd63056f5b44e00aed0b2cd74960e980af388de7cc73274145e47d80",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "query_asset",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:45.253Z",
+          "data": "CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA"
+        },
+        {
+          "name": "total_assets",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+          "source_kind": "wasm",
+          "interface_hash": "383b7568cd63056f5b44e00aed0b2cd74960e980af388de7cc73274145e47d80",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "total_assets",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:45.613Z",
+          "data": "205696503328936"
+        },
+        {
+          "name": "get_strategy_balances",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+          "source_kind": "wasm",
+          "interface_hash": "383b7568cd63056f5b44e00aed0b2cd74960e980af388de7cc73274145e47d80",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "get_strategy_balances",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:45.962Z",
+          "data": "0"
+        }
+      ],
+      "excluded": [],
+      "tools": [
+        "name",
+        "query_asset",
+        "total_assets",
+        "get_strategy_balances"
+      ],
+      "eligible": 60,
+      "declared": 60
+    },
+    {
+      "project": "Gami Labs",
+      "contractId": "CCL3WITWFFXIHV2I52ECV5DPIEOFSTU3PBPR53ILPLF2IP5KHECXRUTY",
+      "source": "https://docs.upshift.finance/contracts/addresses",
+      "checks": [
+        {
+          "name": "name",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CCL3WITWFFXIHV2I52ECV5DPIEOFSTU3PBPR53ILPLF2IP5KHECXRUTY",
+          "source_kind": "wasm",
+          "interface_hash": "383b7568cd63056f5b44e00aed0b2cd74960e980af388de7cc73274145e47d80",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:46.661Z",
+          "data": "earnUSDC"
+        },
+        {
+          "name": "query_asset",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CCL3WITWFFXIHV2I52ECV5DPIEOFSTU3PBPR53ILPLF2IP5KHECXRUTY",
+          "source_kind": "wasm",
+          "interface_hash": "383b7568cd63056f5b44e00aed0b2cd74960e980af388de7cc73274145e47d80",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "query_asset",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:47.004Z",
+          "data": "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75"
+        },
+        {
+          "name": "total_assets",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CCL3WITWFFXIHV2I52ECV5DPIEOFSTU3PBPR53ILPLF2IP5KHECXRUTY",
+          "source_kind": "wasm",
+          "interface_hash": "383b7568cd63056f5b44e00aed0b2cd74960e980af388de7cc73274145e47d80",
+          "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+          "function_name": "total_assets",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:47.522Z",
+          "data": "268073693411441"
+        }
+      ],
+      "excluded": [],
+      "tools": [
+        "name",
+        "query_asset",
+        "total_assets"
+      ],
+      "eligible": 60,
+      "declared": 60
+    },
+    {
+      "project": "DeFindex",
+      "contractId": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+      "source": "https://api.defindex.io/vault/discover?network=mainnet",
+      "checks": [
+        {
+          "name": "name",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+          "source_kind": "wasm",
+          "interface_hash": "3f4dbb1bc2e6e1dcd3058a15cd661826d729ff22635ac71967e6a1f684aaacbe",
+          "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+          "function_name": "name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:48.264Z",
+          "data": "DeFindex-Vault-BeansUsdcVault"
+        },
+        {
+          "name": "decimals",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+          "source_kind": "wasm",
+          "interface_hash": "3f4dbb1bc2e6e1dcd3058a15cd661826d729ff22635ac71967e6a1f684aaacbe",
+          "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+          "function_name": "decimals",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:48.591Z",
+          "data": 7
+        },
+        {
+          "name": "get_fees",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+          "source_kind": "wasm",
+          "interface_hash": "3f4dbb1bc2e6e1dcd3058a15cd661826d729ff22635ac71967e6a1f684aaacbe",
+          "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+          "function_name": "get_fees",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:48.914Z",
+          "data": [
+            1000,
+            2000
+          ]
+        }
+      ],
+      "excluded": [
+        {
+          "name": "deposit",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "withdraw",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "rescue",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "pause_strategy",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "unpause_strategy",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_assets",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "fetch_total_managed_funds",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_asset_amounts_per_shares",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "report",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_fee_receiver",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "set_manager",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_manager",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_emergency_manager",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_rebalance_manager",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "upgrade",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "rebalance",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "lock_fees",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "release_fees",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "distribute_fees",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "sort_tokens",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "pair_for",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_reserves_with_factory",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_reserves_with_pair",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "quote",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_amount_out",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_amount_in",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_amounts_out",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "get_amounts_in",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        }
+      ],
+      "tools": [
+        "decimals",
+        "name",
+        "get_fees"
+      ],
+      "eligible": 16,
+      "declared": 44
+    },
+    {
+      "project": "Sushi Stellar",
+      "contractId": "CD3KRKGDRVWPXVB3VXLUMQKMX6XZ6Q2H334IVZD4XXNAMKSRVQL5GLYF",
+      "source": "https://github.com/sushi-labs/sushiswap/blob/master/packages/stellar/contract-bindings/factory/README.md",
+      "checks": [
+        {
+          "name": "get_owner",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CD3KRKGDRVWPXVB3VXLUMQKMX6XZ6Q2H334IVZD4XXNAMKSRVQL5GLYF",
+          "source_kind": "wasm",
+          "interface_hash": "ae013ca822e267cb2dd79de6af663c515a7f3cc681bbefe51b44fa944da42d26",
+          "wasm_hash": "9f94c577ea24c2f71cbb0c964c9c9d321e02448d1fe946020afb18974b1c2602",
+          "function_name": "get_owner",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:49.492Z",
+          "data": "GC7RIP4D7UETKBZU7FNUYW5XIR2IPLUQDV2DUTZRKVF6C3P2A5QEDSZI"
+        },
+        {
+          "name": "get_pool_wasm_hash",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CD3KRKGDRVWPXVB3VXLUMQKMX6XZ6Q2H334IVZD4XXNAMKSRVQL5GLYF",
+          "source_kind": "wasm",
+          "interface_hash": "ae013ca822e267cb2dd79de6af663c515a7f3cc681bbefe51b44fa944da42d26",
+          "wasm_hash": "9f94c577ea24c2f71cbb0c964c9c9d321e02448d1fe946020afb18974b1c2602",
+          "function_name": "get_pool_wasm_hash",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:49.817Z",
+          "data": "003710b383f9da7d650a7f719a7be479110266427817ebbed61d924505fcd7c7"
+        },
+        {
+          "name": "get_protocol_fee_0",
+          "mode": "READ",
+          "network": "mainnet",
+          "contract_id": "CD3KRKGDRVWPXVB3VXLUMQKMX6XZ6Q2H334IVZD4XXNAMKSRVQL5GLYF",
+          "source_kind": "wasm",
+          "interface_hash": "ae013ca822e267cb2dd79de6af663c515a7f3cc681bbefe51b44fa944da42d26",
+          "wasm_hash": "9f94c577ea24c2f71cbb0c964c9c9d321e02448d1fe946020afb18974b1c2602",
+          "function_name": "get_protocol_fee_0",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T16:25:50.146Z",
+          "data": 4
+        }
+      ],
+      "excluded": [
+        {
+          "name": "set_upgrade_frozen",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "upgrade_pool",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "migrate_pool",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "set_protocol_fee",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "create_pool",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "create_and_initialize_pool",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "e_fee_amt",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        }
+      ],
+      "tools": [
+        "get_owner",
+        "get_pool_wasm_hash",
+        "get_protocol_fee_0"
+      ],
+      "eligible": 18,
+      "declared": 25
+    },
+    {
+      "project": "Templar Protocol",
+      "contractId": "CDBBJXSK22AFN34GHAHOLZVEZOHSXGWZYMBMYPFRYBJSO5D7BTN7P6QX",
+      "source": "https://github.com/Templar-Protocol/contracts/blob/dev/contract/vault/deployments/tTUSDC/mainnet/manifest.json",
+      "checks": [
+        {
+          "name": "asset",
+          "ok": false,
+          "reason": "Tool excluded by interface or policy"
+        },
+        {
+          "name": "total_assets",
+          "ok": false,
+          "reason": "Tool excluded by interface or policy"
+        },
+        {
+          "name": "name",
+          "ok": false,
+          "reason": "Tool excluded by interface or policy"
+        }
+      ],
+      "excluded": [
+        {
+          "name": "deposit",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "deposit_with_min",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "mint",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "withdraw",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "redeem",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "request_withdraw",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "execute_withdraw",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "asset",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "total_assets",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "total_supply",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "balance_of",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "convert_to_shares",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "convert_to_assets",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "preview_deposit",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "preview_mint",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "preview_withdraw",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "preview_redeem",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "max_deposit",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "max_mint",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "max_withdraw",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "max_redeem",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "decimals",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "name",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "symbol",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "initialize",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        },
+        {
+          "name": "extend_ttl",
+          "reason": "UNSUPPORTED_SOROBAN_TYPE"
+        }
+      ],
+      "tools": [],
+      "eligible": 0,
+      "declared": 26
+    }
+  ],
+  "submissionAttempts": 0
+}

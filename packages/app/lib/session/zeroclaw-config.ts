@@ -1,5 +1,15 @@
 import { spawn } from "node:child_process";
-import { access, chmod, copyFile, mkdir, mkdtemp, rename, rm } from "node:fs/promises";
+import {
+  access,
+  chmod,
+  copyFile,
+  mkdir,
+  mkdtemp,
+  rename,
+  rm,
+  readFile,
+  writeFile,
+} from "node:fs/promises";
 import path from "node:path";
 
 // Captured once at module load rather than read per call: `next dev`, `next start`, a
@@ -35,6 +45,17 @@ export class ZeroclawBinaryMissingError extends Error {
 const resolveFromAppRoot = (p: string): string =>
   path.isAbsolute(p) ? p : path.resolve(APP_ROOT, p);
 
+export const runtimeEnvironment = (): NodeJS.ProcessEnv =>
+  Object.fromEntries(
+    [
+      "PATH",
+      "LANG",
+      "TMPDIR",
+      "NODE_ENV",
+      "RUNTIME_BROKER_URL",
+      "RUNTIME_TOKEN_FILE",
+    ].flatMap((k) => (process.env[k] ? [[k, process.env[k]!]] : [])),
+  ) as NodeJS.ProcessEnv;
 export const zeroclawBin = (): string => process.env.ZEROCLAW_BIN || "zeroclaw";
 
 const agentsRoot = (): string =>
@@ -42,13 +63,16 @@ const agentsRoot = (): string =>
 
 const templateConfigPath = (): string =>
   path.join(
-    resolveFromAppRoot(process.env.ZEROCLAW_TEMPLATE_DIR || "../zeroclaw-agents/default"),
+    resolveFromAppRoot(
+      process.env.ZEROCLAW_TEMPLATE_DIR || "../zeroclaw-agents/default",
+    ),
     "config.toml",
   );
 
 // The model provider key. Never in the template — that file is tracked in a public repo — so
 // it is patched into each provisioned config instead.
-const modelApiKey = (): string | undefined => process.env.ZEROCLAW_MODEL_API_KEY || undefined;
+const modelApiKey = (): string | undefined =>
+  process.env.ZEROCLAW_MODEL_API_KEY || undefined;
 
 const intEnv = (name: string, fallback: number): number => {
   const raw = process.env[name];
@@ -60,7 +84,8 @@ const intEnv = (name: string, fallback: number): number => {
 export const sessionTimeoutSecs = (): number =>
   intEnv("ZEROCLAW_SESSION_TIMEOUT_SECS", 3600);
 
-export const idleTimeoutMs = (): number => intEnv("ZEROCLAW_IDLE_TIMEOUT_MS", 1_800_000);
+export const idleTimeoutMs = (): number =>
+  intEnv("ZEROCLAW_IDLE_TIMEOUT_MS", 1_800_000);
 
 // The single place an agent id is validated before it becomes a path segment or an argv
 // slot. Pure — it creates nothing, because `GET /api/agents/[id]/mcps` and `killByAgent`
@@ -104,7 +129,8 @@ export const skillsDir = (agentId: string): string =>
 // installing the same skill cannot collide and a hit needs no re-verification.
 export const skillsCacheDir = (): string =>
   resolveFromAppRoot(
-    process.env.ZG_SKILLS_CACHE_DIR || path.join(agentsRoot(), "..", "skills-cache"),
+    process.env.ZG_SKILLS_CACHE_DIR ||
+      path.join(agentsRoot(), "..", "skills-cache"),
   );
 
 export const configDirExists = async (agentId: string): Promise<boolean> => {
@@ -120,9 +146,23 @@ export const configDirExists = async (agentId: string): Promise<boolean> => {
 // interrupted setup cannot leave a dir the existence check would read as provisioned.
 export const provisionConfigDir = async (
   agentId: string,
+  ownership?: { userId: string; instanceId: string },
 ): Promise<{ dir: string; created: boolean }> => {
   const dir = agentDir(agentId);
-  if (await configDirExists(agentId)) return { dir, created: false };
+  if (await configDirExists(agentId)) {
+    if (!ownership) return { dir, created: false };
+    let matches = false;
+    try {
+      const stamp = JSON.parse(
+        await readFile(path.join(dir, ".orloj-owner.json"), "utf8"),
+      );
+      matches =
+        stamp.userId === ownership.userId &&
+        stamp.instanceId === ownership.instanceId;
+    } catch {}
+    if (matches) return { dir, created: false };
+    await rename(dir, `${dir}.retired-${Date.now()}`);
+  }
 
   const template = templateConfigPath();
   try {
@@ -140,6 +180,12 @@ export const provisionConfigDir = async (
     // zeroclaw creates data/, agents/<alias>/workspace/ and shared/ itself on first run.
     await copyFile(template, path.join(staging, "config.toml"));
     await chmod(path.join(staging, "config.toml"), 0o600);
+    if (ownership)
+      await writeFile(
+        path.join(staging, ".orloj-owner.json"),
+        JSON.stringify(ownership),
+        { mode: 0o600 },
+      );
     await chmod(staging, 0o700);
     await rename(staging, dir);
   } catch (err) {
@@ -162,7 +208,10 @@ export const removeConfigDir = async (agentId: string): Promise<void> => {
 
 const runZeroclaw = (args: string[], stdin?: string): Promise<string> =>
   new Promise((resolve, reject) => {
-    const child = spawn(zeroclawBin(), args, { stdio: ["pipe", "pipe", "pipe"] });
+    const child = spawn(zeroclawBin(), args, {
+      stdio: ["pipe", "pipe", "pipe"],
+      env: runtimeEnvironment(),
+    });
     let out = "";
     let err = "";
     child.stdout.setEncoding("utf8");
@@ -170,11 +219,18 @@ const runZeroclaw = (args: string[], stdin?: string): Promise<string> =>
     child.stdout.on("data", (c: string) => (out += c));
     child.stderr.on("data", (c: string) => (err += c));
     child.on("error", (e: NodeJS.ErrnoException) => {
-      reject(e.code === "ENOENT" ? new ZeroclawBinaryMissingError(zeroclawBin()) : e);
+      reject(
+        e.code === "ENOENT" ? new ZeroclawBinaryMissingError(zeroclawBin()) : e,
+      );
     });
     child.on("close", (code) => {
       if (code === 0) resolve(out);
-      else reject(new Error(`zeroclaw ${args[0]} exited ${code}: ${err.trim() || out.trim()}`));
+      else
+        reject(
+          new Error(
+            `zeroclaw ${args[0]} exited ${code}: ${err.trim() || out.trim()}`,
+          ),
+        );
     });
     if (stdin !== undefined) child.stdin.end(stdin);
     else child.stdin.end();
@@ -192,7 +248,10 @@ const runZeroclaw = (args: string[], stdin?: string): Promise<string> =>
 // [agents.default] entry configured`, naming a symptom three steps from the typo. `config
 // patch` refuses to write an unparseable config and exits non-zero with the TOML error and
 // line number, so the same defect surfaces here instead, before anything spawns.
-export const applyManagedConfig = async (dir: string): Promise<void> => {
+export const applyManagedConfig = async (
+  dir: string,
+  approvedTools: string[] = [],
+): Promise<void> => {
   const ops: Array<{ op: string; path: string; value: unknown }> = [
     { op: "add", path: "/agents/default/acp_enable_mcp", value: true },
     // Registers the skills bundle. Written on every start, not just on create, so agents
@@ -208,11 +267,75 @@ export const applyManagedConfig = async (dir: string): Promise<void> => {
     },
     { op: "add", path: "/agents/default/skill_bundles", value: [SKILL_BUNDLE] },
   ];
+  if (process.env.ORLOJ_PRODUCT === "stellar") {
+    ops.push(
+      { op: "add", path: "/risk_profiles/yolo/level", value: "supervised" },
+      {
+        op: "add",
+        path: "/risk_profiles/yolo/allowed_tools",
+        value: approvedTools,
+      },
+      {
+        op: "add",
+        path: "/risk_profiles/yolo/deny_all_tools",
+        value: approvedTools.length === 0,
+      },
+      { op: "add", path: "/risk_profiles/yolo/always_ask", value: [] },
+      { op: "add", path: "/agents/default/skill_bundles", value: [] },
+    );
+    ops.push(
+      { op: "add", path: "/risk_profiles/yolo/allowed_commands", value: [] },
+      {
+        op: "add",
+        path: "/risk_profiles/yolo/auto_approve",
+        value: approvedTools,
+      },
+      { op: "add", path: "/risk_profiles/yolo/workspace_only", value: true },
+      { op: "add", path: "/risk_profiles/yolo/sandbox_enabled", value: true },
+      {
+        op: "add",
+        path: "/risk_profiles/yolo/block_high_risk_commands",
+        value: true,
+      },
+      {
+        op: "add",
+        path: "/risk_profiles/yolo/excluded_tools",
+        value: [
+          "shell",
+          "file_read",
+          "file_write",
+          "file_edit",
+          "browser_open",
+          "http_request",
+          "spawn_subagent",
+        ],
+      },
+    );
+  }
+  if (process.env.ZEROCLAW_MODEL_URL)
+    ops.push({
+      op: "add",
+      path: "/providers/models/custom/default/uri",
+      value: process.env.ZEROCLAW_MODEL_URL,
+    });
+  if (process.env.ZEROCLAW_MODEL)
+    ops.push({
+      op: "add",
+      path: "/providers/models/custom/default/model",
+      value: process.env.ZEROCLAW_MODEL,
+    });
   const key = modelApiKey();
   // Omitted rather than written as "" when unset: an empty patch value would overwrite a key
   // an operator had set by hand in the config dir.
   if (key) {
-    ops.push({ op: "add", path: "/providers/models/custom/default/api_key", value: key });
+    ops.push({
+      op: "add",
+      path: "/providers/models/custom/default/api_key",
+      value: key,
+    });
   }
-  await runZeroclaw(["config", "patch", "--config-dir", dir, "-"], JSON.stringify(ops));
+  await runZeroclaw(
+    ["config", "patch", "--config-dir", dir, "-"],
+    JSON.stringify(ops),
+  );
 };

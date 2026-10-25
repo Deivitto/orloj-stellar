@@ -1,0 +1,463 @@
+{
+  "testedAt": "2026-10-25T17:19:58.489Z",
+  "network": "testnet",
+  "wallet": "GDV4MWGY2KXBUPRZ4GFVMGXLY7FXSQFOYY36UQMZNIAXS64XFUBZ7FXK",
+  "issuer": "GAUISEVMIIOL2XVAUXRKA3MQS6OCPSVNVRNSPMG3MWSAPFF4EZFPDWCD",
+  "funding": [
+    {
+      "address": "GDV4MWGY2KXBUPRZ4GFVMGXLY7FXSQFOYY36UQMZNIAXS64XFUBZ7FXK",
+      "hash": "b443e7fe77d842c0f1b9c91a7c19438df2530b9adfe95551a191db9b9da533d4",
+      "status": "SUCCESS",
+      "ledger": 5385043,
+      "feeCharged": "100"
+    },
+    {
+      "address": "GAUISEVMIIOL2XVAUXRKA3MQS6OCPSVNVRNSPMG3MWSAPFF4EZFPDWCD",
+      "hash": "be68bbac1da43ad5baa7fc778779d941c82b9788877e71f782fda6420139a42c",
+      "status": "SUCCESS",
+      "ledger": 5385044,
+      "feeCharged": "100"
+    }
+  ],
+  "checks": [
+    {
+      "name": "account_balances",
+      "args": {
+        "account": "GDV4MWGY2KXBUPRZ4GFVMGXLY7FXSQFOYY36UQMZNIAXS64XFUBZ7FXK"
+      },
+      "result": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "classic:stellar-dex",
+        "source_kind": "classic_dex",
+        "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+        "function_name": "account_balances",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:20:09.107Z",
+        "data": [
+          {
+            "asset": "native",
+            "balance": "100000000000",
+            "buying_liabilities": "0",
+            "selling_liabilities": "0",
+            "authorized": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "change_trust",
+      "args": {
+        "asset": "ORLOJTEST:GAUISEVMIIOL2XVAUXRKA3MQS6OCPSVNVRNSPMG3MWSAPFF4EZFPDWCD",
+        "limit": "10000000000"
+      },
+      "result": {
+        "ok": true,
+        "data": null,
+        "mode": "WRITE",
+        "ledger": 5385046,
+        "network": "testnet",
+        "contract_id": "classic:stellar-dex",
+        "fee_charged": "100",
+        "source_kind": "classic_dex",
+        "function_name": "change_trust",
+        "result_status": "SUBMITTED_AND_CONFIRMED",
+        "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+        "transaction_hash": "22d121477b2cfc091be6b3ec1f09e33081425b600628ab99075306167df28027"
+      }
+    },
+    {
+      "name": "manage_offer",
+      "args": {
+        "selling": "ORLOJTEST:GAUISEVMIIOL2XVAUXRKA3MQS6OCPSVNVRNSPMG3MWSAPFF4EZFPDWCD",
+        "buying": "native",
+        "amount": "10000000",
+        "price": {
+          "n": 1,
+          "d": 1
+        },
+        "offer_id": "0"
+      },
+      "result": {
+        "ok": true,
+        "data": null,
+        "mode": "WRITE",
+        "ledger": 5385048,
+        "network": "testnet",
+        "contract_id": "classic:stellar-dex",
+        "fee_charged": "100",
+        "source_kind": "classic_dex",
+        "function_name": "manage_offer",
+        "result_status": "SUBMITTED_AND_CONFIRMED",
+        "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+        "transaction_hash": "645d19e6bbe0c200f52b56a1db76a1bf3d2ead7c6f4f80630099f0107648bc40"
+      }
+    },
+    {
+      "name": "manage_offer",
+      "args": {
+        "selling": "ORLOJTEST:GAUISEVMIIOL2XVAUXRKA3MQS6OCPSVNVRNSPMG3MWSAPFF4EZFPDWCD",
+        "buying": "native",
+        "amount": "10000000",
+        "price": {
+          "n": 1,
+          "d": 1
+        },
+        "offer_id": "0"
+      },
+      "result": {
+        "ok": true,
+        "data": null,
+        "mode": "WRITE",
+        "ledger": 5385048,
+        "network": "testnet",
+        "contract_id": "classic:stellar-dex",
+        "fee_charged": "100",
+        "source_kind": "classic_dex",
+        "function_name": "manage_offer",
+        "result_status": "SUBMITTED_AND_CONFIRMED",
+        "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+        "transaction_hash": "645d19e6bbe0c200f52b56a1db76a1bf3d2ead7c6f4f80630099f0107648bc40"
+      }
+    },
+    {
+      "name": "offers",
+      "args": {
+        "account": "GDV4MWGY2KXBUPRZ4GFVMGXLY7FXSQFOYY36UQMZNIAXS64XFUBZ7FXK",
+        "limit": 10
+      },
+      "result": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "classic:stellar-dex",
+        "source_kind": "classic_dex",
+        "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+        "function_name": "offers",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:20:30.377Z",
+        "data": [
+          {
+            "id": "931576",
+            "selling": "ORLOJTEST:GAUISEVMIIOL2XVAUXRKA3MQS6OCPSVNVRNSPMG3MWSAPFF4EZFPDWCD",
+            "buying": "native",
+            "amount": "10000000",
+            "price": {
+              "n": 1,
+              "d": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "orderbook",
+      "args": {
+        "selling": "ORLOJTEST:GAUISEVMIIOL2XVAUXRKA3MQS6OCPSVNVRNSPMG3MWSAPFF4EZFPDWCD",
+        "buying": "native",
+        "limit": 10
+      },
+      "result": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "classic:stellar-dex",
+        "source_kind": "classic_dex",
+        "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+        "function_name": "orderbook",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:20:31.266Z",
+        "data": {
+          "bids": [],
+          "asks": [
+            {
+              "amount": "10000000",
+              "price": {
+                "n": 1,
+                "d": 1
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "manage_offer",
+      "args": {
+        "selling": "ORLOJTEST:GAUISEVMIIOL2XVAUXRKA3MQS6OCPSVNVRNSPMG3MWSAPFF4EZFPDWCD",
+        "buying": "native",
+        "amount": "0",
+        "price": {
+          "n": 1,
+          "d": 1
+        },
+        "offer_id": "931576"
+      },
+      "result": {
+        "ok": true,
+        "data": null,
+        "mode": "WRITE",
+        "ledger": 5385050,
+        "network": "testnet",
+        "contract_id": "classic:stellar-dex",
+        "fee_charged": "100",
+        "source_kind": "classic_dex",
+        "function_name": "manage_offer",
+        "result_status": "SUBMITTED_AND_CONFIRMED",
+        "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+        "transaction_hash": "9b58ae7ce267d0ac4e56f91978db64d30adf0d3700717b54d1a60b99c846f925"
+      }
+    },
+    {
+      "name": "offers",
+      "args": {
+        "account": "GDV4MWGY2KXBUPRZ4GFVMGXLY7FXSQFOYY36UQMZNIAXS64XFUBZ7FXK",
+        "limit": 10
+      },
+      "result": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "classic:stellar-dex",
+        "source_kind": "classic_dex",
+        "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+        "function_name": "offers",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:20:42.574Z",
+        "data": []
+      }
+    },
+    {
+      "name": "trust_pool",
+      "args": {
+        "asset_a": "native",
+        "asset_b": "ORLOJTEST:GAUISEVMIIOL2XVAUXRKA3MQS6OCPSVNVRNSPMG3MWSAPFF4EZFPDWCD",
+        "limit": "10000000000"
+      },
+      "result": {
+        "ok": true,
+        "data": null,
+        "mode": "WRITE",
+        "ledger": 5385053,
+        "network": "testnet",
+        "contract_id": "classic:stellar-amm",
+        "fee_charged": "100",
+        "source_kind": "classic_amm",
+        "function_name": "trust_pool",
+        "result_status": "SUBMITTED_AND_CONFIRMED",
+        "interface_hash": "fa8b478cd8591a6e2941c893a25f94fe9859142e2e79f88996a6c08ae280f710",
+        "transaction_hash": "bdc38a7ff2838dbeffb177102cee7eb2c07b1dff2699a54da323bda30ac41e0e"
+      }
+    },
+    {
+      "name": "pool_deposit",
+      "args": {
+        "pool_id": "4a3d9566dbf6037fb31069d6a3edc73dfd0565ea6c043ced6031568878f37569",
+        "max_amount_a": "10000000",
+        "max_amount_b": "10000000",
+        "min_price": {
+          "n": 99,
+          "d": 100
+        },
+        "max_price": {
+          "n": 101,
+          "d": 100
+        }
+      },
+      "result": {
+        "ok": true,
+        "data": null,
+        "mode": "WRITE",
+        "ledger": 5385055,
+        "network": "testnet",
+        "contract_id": "classic:stellar-amm",
+        "fee_charged": "100",
+        "source_kind": "classic_amm",
+        "function_name": "pool_deposit",
+        "result_status": "SUBMITTED_AND_CONFIRMED",
+        "interface_hash": "fa8b478cd8591a6e2941c893a25f94fe9859142e2e79f88996a6c08ae280f710",
+        "transaction_hash": "444c6d77ebcaf12f7109835ff25be4bfe28c055e77d66db5fd95e3bdedd5c94a"
+      }
+    },
+    {
+      "name": "liquidity_pool",
+      "args": {
+        "pool_id": "4a3d9566dbf6037fb31069d6a3edc73dfd0565ea6c043ced6031568878f37569"
+      },
+      "result": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "classic:stellar-amm",
+        "source_kind": "classic_amm",
+        "interface_hash": "fa8b478cd8591a6e2941c893a25f94fe9859142e2e79f88996a6c08ae280f710",
+        "function_name": "liquidity_pool",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:21:05.096Z",
+        "data": {
+          "pool_id": "4a3d9566dbf6037fb31069d6a3edc73dfd0565ea6c043ced6031568878f37569",
+          "total_shares": "10000000",
+          "total_trustlines": "1",
+          "reserves": [
+            {
+              "asset": "native",
+              "amount": "10000000"
+            },
+            {
+              "asset": "ORLOJTEST:GAUISEVMIIOL2XVAUXRKA3MQS6OCPSVNVRNSPMG3MWSAPFF4EZFPDWCD",
+              "amount": "10000000"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "pool_withdraw",
+      "args": {
+        "pool_id": "4a3d9566dbf6037fb31069d6a3edc73dfd0565ea6c043ced6031568878f37569",
+        "amount": "5000000",
+        "min_amount_a": "4900000",
+        "min_amount_b": "4900000"
+      },
+      "result": {
+        "ok": true,
+        "data": null,
+        "mode": "WRITE",
+        "ledger": 5385057,
+        "network": "testnet",
+        "contract_id": "classic:stellar-amm",
+        "fee_charged": "100",
+        "source_kind": "classic_amm",
+        "function_name": "pool_withdraw",
+        "result_status": "SUBMITTED_AND_CONFIRMED",
+        "interface_hash": "fa8b478cd8591a6e2941c893a25f94fe9859142e2e79f88996a6c08ae280f710",
+        "transaction_hash": "dd4ae778de52787f5aa3c0b1b285c1a28b5f2bbb4a18e9a4f811d753593fdd7e"
+      }
+    },
+    {
+      "name": "liquidity_pool",
+      "args": {
+        "pool_id": "4a3d9566dbf6037fb31069d6a3edc73dfd0565ea6c043ced6031568878f37569"
+      },
+      "result": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "classic:stellar-amm",
+        "source_kind": "classic_amm",
+        "interface_hash": "fa8b478cd8591a6e2941c893a25f94fe9859142e2e79f88996a6c08ae280f710",
+        "function_name": "liquidity_pool",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:21:15.449Z",
+        "data": {
+          "pool_id": "4a3d9566dbf6037fb31069d6a3edc73dfd0565ea6c043ced6031568878f37569",
+          "total_shares": "5000000",
+          "total_trustlines": "1",
+          "reserves": [
+            {
+              "asset": "native",
+              "amount": "5000000"
+            },
+            {
+              "asset": "ORLOJTEST:GAUISEVMIIOL2XVAUXRKA3MQS6OCPSVNVRNSPMG3MWSAPFF4EZFPDWCD",
+              "amount": "5000000"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "account_balances",
+      "args": {
+        "account": "GDV4MWGY2KXBUPRZ4GFVMGXLY7FXSQFOYY36UQMZNIAXS64XFUBZ7FXK"
+      },
+      "result": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "classic:stellar-dex",
+        "source_kind": "classic_dex",
+        "interface_hash": "9f0ce2a9c256fce083cb9338545051c4c1a8b3e0eb53ab82dbee566bd9f27a49",
+        "function_name": "account_balances",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:21:16.230Z",
+        "data": [
+          {
+            "asset": "ORLOJTEST:GAUISEVMIIOL2XVAUXRKA3MQS6OCPSVNVRNSPMG3MWSAPFF4EZFPDWCD",
+            "balance": "995000000",
+            "buying_liabilities": "0",
+            "selling_liabilities": "0",
+            "authorized": true
+          },
+          {
+            "asset": "native",
+            "balance": "99994999400",
+            "buying_liabilities": "0",
+            "selling_liabilities": "0",
+            "authorized": true
+          }
+        ]
+      }
+    }
+  ],
+  "transactions": [
+    {
+      "name": "change_trust",
+      "hash": "22d121477b2cfc091be6b3ec1f09e33081425b600628ab99075306167df28027",
+      "status": "SUCCESS",
+      "ledger": 5385046,
+      "feeCharged": "100"
+    },
+    {
+      "name": "fixture_asset_issuance",
+      "hash": "cbbe7958ee07d8c7ea07ba32b558acfe49010034c7f03554a3203e0afec66821",
+      "status": "SUCCESS",
+      "ledger": 5385047,
+      "feeCharged": "100"
+    },
+    {
+      "name": "manage_offer",
+      "hash": "645d19e6bbe0c200f52b56a1db76a1bf3d2ead7c6f4f80630099f0107648bc40",
+      "status": "SUCCESS",
+      "ledger": 5385048,
+      "feeCharged": "100"
+    },
+    {
+      "name": "manage_offer",
+      "hash": "9b58ae7ce267d0ac4e56f91978db64d30adf0d3700717b54d1a60b99c846f925",
+      "status": "SUCCESS",
+      "ledger": 5385050,
+      "feeCharged": "100"
+    },
+    {
+      "name": "trust_pool",
+      "hash": "bdc38a7ff2838dbeffb177102cee7eb2c07b1dff2699a54da323bda30ac41e0e",
+      "status": "SUCCESS",
+      "ledger": 5385053,
+      "feeCharged": "100"
+    },
+    {
+      "name": "pool_deposit",
+      "hash": "444c6d77ebcaf12f7109835ff25be4bfe28c055e77d66db5fd95e3bdedd5c94a",
+      "status": "SUCCESS",
+      "ledger": 5385055,
+      "feeCharged": "100"
+    },
+    {
+      "name": "pool_withdraw",
+      "hash": "dd4ae778de52787f5aa3c0b1b285c1a28b5f2bbb4a18e9a4f811d753593fdd7e",
+      "status": "SUCCESS",
+      "ledger": 5385057,
+      "feeCharged": "100"
+    }
+  ],
+  "assertions": {
+    "duplicateReconciled": true,
+    "offerCreated": true,
+    "offerCancelled": true,
+    "poolDepositObserved": true,
+    "poolWithdrawalObserved": true
+  },
+  "mainnetSubmissions": 0
+}

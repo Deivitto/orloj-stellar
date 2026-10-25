@@ -16,6 +16,7 @@ const schema = z
     databaseUrl: z.string().min(1),
     simulationSource: z.string(),
     writeMode: z.boolean().default(false),
+    productMode: z.boolean().default(false),
     signerSecret: z.string().optional(),
     externalSignerAddress: z.string().optional(),
     maxFee: z
@@ -26,6 +27,7 @@ const schema = z
     port: z.number().int().min(1).max(65535).default(3002),
     host: z.string().default("127.0.0.1"),
     pollTimeoutMs: z.number().int().min(1).default(120000),
+    instructionLeeway: z.number().int().min(0).max(10000000).default(1000000),
     simulationMaxAgeMs: z.number().int().min(1).max(60000).default(60000),
     rateLimit: z.number().int().positive().default(60),
   })
@@ -48,14 +50,18 @@ export function parseConfig(input: unknown): Config {
     fail("INVALID_ARGUMENT");
   const seen = new Set<string>();
   for (const p of c.policies) {
-    if (!StrKey.isValidContract(p.contractId)) fail("INVALID_CONTRACT_ID");
+    if (
+      !StrKey.isValidContract(p.contractId) &&
+      !["classic:stellar-dex", "classic:stellar-amm"].includes(p.contractId)
+    )
+      fail("INVALID_CONTRACT_ID");
     const k = p.contractId + ":" + p.function;
     if (seen.has(k)) fail("INVALID_ARGUMENT");
     seen.add(k);
   }
   if (c.writeMode) {
     if (c.network !== "testnet") fail("WRITE_NOT_PERMITTED");
-    if (!!c.signerSecret === !!c.externalSignerAddress)
+    if (!c.productMode && !!c.signerSecret === !!c.externalSignerAddress)
       fail("SIGNER_NOT_CONFIGURED");
     if (
       c.externalSignerAddress &&
@@ -89,12 +95,17 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
       databaseUrl: env.DATABASE_URL,
       simulationSource: env.SIMULATION_SOURCE,
       writeMode: env.WRITE_MODE === "true",
+      productMode: env.PRODUCT_MODE === "true",
       signerSecret: env.STELLAR_SIGNER_SECRET,
       maxFee: env.MAX_FEE,
       policies: JSON.parse(env.STELLAR_POLICIES ?? "[]"),
       port: env.PORT ? Number(env.PORT) : 3002,
       host: env.HOST ?? "127.0.0.1",
       pollTimeoutMs: env.POLL_TIMEOUT_MS ? Number(env.POLL_TIMEOUT_MS) : 120000,
+      instructionLeeway:
+        env.CPU_INSTRUCTION_LEEWAY === undefined
+          ? 1000000
+          : Number(env.CPU_INSTRUCTION_LEEWAY),
       simulationMaxAgeMs: env.SIM_TO_SUBMIT_MAX_AGE_MS
         ? Number(env.SIM_TO_SUBMIT_MAX_AGE_MS)
         : 60000,

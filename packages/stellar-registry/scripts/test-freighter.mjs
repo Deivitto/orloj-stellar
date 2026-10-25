@@ -2,7 +2,13 @@ import { createServer } from "node:http";
 import { readFile, writeFile } from "node:fs/promises";
 import { once } from "node:events";
 import { randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
-import { rpc, TransactionBuilder } from "@stellar/stellar-sdk";
+import {
+  rpc,
+  TransactionBuilder,
+  Asset,
+  Networks,
+  StrKey,
+} from "@stellar/stellar-sdk";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { parseConfig } from "../dist/src/config.js";
@@ -17,6 +23,9 @@ async function main() {
     port = Number(process.env.WALLET_TEST_PORT ?? 3003);
   if (!wallet || !Number.isInteger(port) || port < 1024 || port > 65535)
     throw new Error("Invalid test options");
+  const assetRecipient = process.argv[3];
+  if (assetRecipient && !StrKey.isValidEd25519PublicKey(assetRecipient))
+    throw new Error("Invalid recipient");
   const local = await readFile(
     new URL("../.env.demo", import.meta.url),
     "utf8",
@@ -29,6 +38,8 @@ async function main() {
       "utf8",
     ),
   );
+  if (assetRecipient)
+    deployment.contractId = Asset.native().contractId(Networks.TESTNET);
   const principal = "freighter-test:" + wallet;
   const config = parseConfig({
     network: "testnet",
@@ -38,14 +49,15 @@ async function main() {
     writeMode: true,
     externalSignerAddress: wallet,
     maxFee: "2000000",
-    policies: ["count", "increment", "echo_address", "authorized"].map(
-      (fn) => ({
-        contractId: deployment.contractId,
-        function: fn,
-        mode: fn === "increment" ? "WRITE" : "READ",
-        principals: [principal],
-      }),
-    ),
+    policies: (assetRecipient
+      ? ["balance", "transfer"]
+      : ["count", "increment", "echo_address", "authorized"]
+    ).map((fn) => ({
+      contractId: deployment.contractId,
+      function: fn,
+      mode: ["increment", "transfer"].includes(fn) ? "WRITE" : "READ",
+      principals: [principal],
+    })),
   });
   const store = new Store(config.databaseUrl),
     server = new rpc.Server(config.rpcUrl, { timeout: 10000 }),
@@ -57,6 +69,7 @@ async function main() {
     origin = `http://127.0.0.1:${port}`;
   const state = {
     wallet,
+    assetRecipient,
     connected: false,
     started: false,
     done: false,
@@ -111,6 +124,45 @@ async function main() {
     async function run() {
       evidence.testedAt = new Date().toISOString();
       try {
+        if (assetRecipient) {
+          const balance = (addr) => call("balance", { addr });
+          const before = await balance(assetRecipient);
+          record("recipient_before", before);
+          assert(before.ok);
+          const key = randomUUID();
+          const args = {
+            from: wallet,
+            to_mux: assetRecipient,
+            amount: "1",
+            idempotency_key: key,
+          };
+          const write = await call("transfer", args);
+          record("asset_transfer", write);
+          assert(write.ok && write.result_status === "SUBMITTED_AND_CONFIRMED");
+          const duplicate = await call("transfer", args);
+          record("duplicate_reconciled", duplicate);
+          assert(
+            duplicate.transaction_hash === write.transaction_hash &&
+              signer.signatures === 1,
+          );
+          const after = await balance(assetRecipient);
+          record("recipient_after", after);
+          assert(after.ok && BigInt(after.data) === BigInt(before.data) + 1n);
+          const chain = await server.getTransaction(write.transaction_hash);
+          const submitted = TransactionBuilder.fromXdr(
+            chain.envelopeXdr.toXdr("base64"),
+            config.networkPassphrase,
+          );
+          assert(chain.status === "SUCCESS" && submitted.source === wallet);
+          record("wallet_signature_proof", {
+            ok: true,
+            source_account: submitted.source,
+            transaction_hash: write.transaction_hash,
+            freighter_signatures: signer.signatures,
+          });
+          state.ok = true;
+          return;
+        }
         const tools = await client.listTools();
         assert(tools.tools.some((t) => t.name === "increment"));
         record("mcp_discovery", {
@@ -159,7 +211,12 @@ async function main() {
       } finally {
         state.done = true;
         await writeFile(
-          new URL("../demo-contract/freighter-evidence.json", import.meta.url),
+          new URL(
+            assetRecipient
+              ? "../demo-contract/freighter-asset-evidence.json"
+              : "../demo-contract/freighter-evidence.json",
+            import.meta.url,
+          ),
           JSON.stringify(evidence, null, 2) + "\n",
         );
       }

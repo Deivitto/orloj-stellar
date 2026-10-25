@@ -1,0 +1,721 @@
+{
+  "testedAt": "2026-10-25T17:33:40.488Z",
+  "network": "testnet",
+  "maximumFeeStroops": "3000000000",
+  "instructionLeeway": 1000000,
+  "wallet": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX",
+  "funding": [
+    {
+      "source": "Stellar Friendbot",
+      "hash": "75e05f777a8f50dda96d41176ab60780eb25f808545cf35051c7e84b53dca92e",
+      "address": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX",
+      "rpcStatus": "SUCCESS"
+    }
+  ],
+  "projects": [
+    {
+      "project": "Blend Pools V2",
+      "contractId": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+      "source": "https://github.com/blend-capital/blend-utils/blob/main/testnet.contracts.json",
+      "checks": [
+        {
+          "name": "get_reserve_list",
+          "args": {},
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "source_kind": "wasm",
+          "interface_hash": "060f3fa2c9dbf173b53fe7bb5cbe6097f1adf6b1c1bb1b262ea42d0c447eec09",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "function_name": "get_reserve_list",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:33:52.609Z",
+          "data": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+            "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+            "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+          ]
+        },
+        {
+          "name": "get_positions",
+          "args": {
+            "address": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "source_kind": "wasm",
+          "interface_hash": "060f3fa2c9dbf173b53fe7bb5cbe6097f1adf6b1c1bb1b262ea42d0c447eec09",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "function_name": "get_positions",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:33:53.347Z",
+          "data": {
+            "collateral": [],
+            "liabilities": [],
+            "supply": []
+          }
+        },
+        {
+          "name": "submit",
+          "args": {
+            "from": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX",
+            "spender": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX",
+            "to": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX",
+            "requests": [
+              {
+                "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                "amount": "10000000",
+                "request_type": 0
+              }
+            ]
+          },
+          "ok": true,
+          "data": {
+            "supply": [
+              [
+                0,
+                "4047447"
+              ]
+            ],
+            "collateral": [],
+            "liabilities": []
+          },
+          "mode": "WRITE",
+          "ledger": 5385210,
+          "network": "testnet",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "fee_charged": "1988984447",
+          "source_kind": "wasm",
+          "function_name": "submit",
+          "result_status": "SUBMITTED_AND_CONFIRMED",
+          "interface_hash": "060f3fa2c9dbf173b53fe7bb5cbe6097f1adf6b1c1bb1b262ea42d0c447eec09",
+          "transaction_hash": "f15b4f40da14020d915d0ac12e9ab2af3cfc29ae4585a41291047659e3d15451"
+        },
+        {
+          "name": "get_positions",
+          "args": {
+            "address": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "source_kind": "wasm",
+          "interface_hash": "060f3fa2c9dbf173b53fe7bb5cbe6097f1adf6b1c1bb1b262ea42d0c447eec09",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "function_name": "get_positions",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:33:59.281Z",
+          "data": {
+            "collateral": [],
+            "liabilities": [],
+            "supply": [
+              [
+                0,
+                "4047447"
+              ]
+            ]
+          }
+        },
+        {
+          "name": "submit",
+          "args": {
+            "from": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX",
+            "spender": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX",
+            "to": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX",
+            "requests": [
+              {
+                "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                "amount": "5000000",
+                "request_type": 1
+              }
+            ]
+          },
+          "ok": true,
+          "data": {
+            "supply": [
+              [
+                0,
+                "2023724"
+              ]
+            ],
+            "collateral": [],
+            "liabilities": []
+          },
+          "mode": "WRITE",
+          "ledger": 5385212,
+          "network": "testnet",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "fee_charged": "12882",
+          "source_kind": "wasm",
+          "function_name": "submit",
+          "result_status": "SUBMITTED_AND_CONFIRMED",
+          "interface_hash": "060f3fa2c9dbf173b53fe7bb5cbe6097f1adf6b1c1bb1b262ea42d0c447eec09",
+          "transaction_hash": "e4bc54aa9e5ba7d9b1d27e9eecfb335ac617e3d173541dd71562708899d5f816"
+        },
+        {
+          "name": "get_positions",
+          "args": {
+            "address": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "source_kind": "wasm",
+          "interface_hash": "060f3fa2c9dbf173b53fe7bb5cbe6097f1adf6b1c1bb1b262ea42d0c447eec09",
+          "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+          "function_name": "get_positions",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:11.519Z",
+          "data": {
+            "collateral": [],
+            "liabilities": [],
+            "supply": [
+              [
+                0,
+                "2023724"
+              ]
+            ]
+          }
+        }
+      ],
+      "tools": [
+        "get_reserve_list",
+        "get_positions",
+        "submit"
+      ],
+      "depositPositionIncreased": true,
+      "withdrawalConfirmed": true,
+      "withdrawalPositionDecreased": true
+    },
+    {
+      "project": "DeFindex",
+      "contractId": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+      "source": "https://github.com/paltalabs/defindex/blob/main/public/testnet.contracts.json",
+      "checks": [
+        {
+          "name": "name",
+          "args": {},
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+          "source_kind": "wasm",
+          "interface_hash": "99dbf63d1c88c8702688aa1577f97f1773bfe8f774cda08054a7d47ce335832e",
+          "wasm_hash": "f345228dca59c6605789620e9ec62ff4847a0927c33dac7581a955fe746016be",
+          "function_name": "name",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:12.407Z",
+          "data": "DeFindex-Vault-Defindex Vault"
+        },
+        {
+          "name": "get_fees",
+          "args": {},
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+          "source_kind": "wasm",
+          "interface_hash": "99dbf63d1c88c8702688aa1577f97f1773bfe8f774cda08054a7d47ce335832e",
+          "wasm_hash": "f345228dca59c6605789620e9ec62ff4847a0927c33dac7581a955fe746016be",
+          "function_name": "get_fees",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:13.336Z",
+          "data": [
+            100,
+            2000
+          ]
+        },
+        {
+          "name": "get_assets",
+          "args": {},
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+          "source_kind": "wasm",
+          "interface_hash": "99dbf63d1c88c8702688aa1577f97f1773bfe8f774cda08054a7d47ce335832e",
+          "wasm_hash": "f345228dca59c6605789620e9ec62ff4847a0927c33dac7581a955fe746016be",
+          "function_name": "get_assets",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:14.504Z",
+          "data": {
+            "tag": "Ok",
+            "values": [
+              [
+                {
+                  "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                  "strategies": [
+                    {
+                      "address": "CDVLOSPJPQOTB6ZCWO5VSGTOLGMKTXSFWYTUP572GTPNOWX4F76X3HPM",
+                      "name": "XLM Blend Strategy",
+                      "paused": false
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        {
+          "name": "balance",
+          "args": {
+            "id": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+          "source_kind": "wasm",
+          "interface_hash": "99dbf63d1c88c8702688aa1577f97f1773bfe8f774cda08054a7d47ce335832e",
+          "wasm_hash": "f345228dca59c6605789620e9ec62ff4847a0927c33dac7581a955fe746016be",
+          "function_name": "balance",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:15.540Z",
+          "data": "0"
+        },
+        {
+          "name": "deposit",
+          "args": {
+            "amounts_desired": [
+              "10000000"
+            ],
+            "amounts_min": [
+              "9900000"
+            ],
+            "from": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX",
+            "invest": false
+          },
+          "ok": true,
+          "data": {
+            "tag": "Ok",
+            "values": [
+              [
+                [
+                  "10000000"
+                ],
+                "5996",
+                null
+              ]
+            ]
+          },
+          "mode": "WRITE",
+          "ledger": 5385215,
+          "network": "testnet",
+          "wasm_hash": "f345228dca59c6605789620e9ec62ff4847a0927c33dac7581a955fe746016be",
+          "contract_id": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+          "fee_charged": "263452",
+          "source_kind": "wasm",
+          "function_name": "deposit",
+          "result_status": "SUBMITTED_AND_CONFIRMED",
+          "interface_hash": "99dbf63d1c88c8702688aa1577f97f1773bfe8f774cda08054a7d47ce335832e",
+          "transaction_hash": "0783fb92fd74091a4d4d6d70adcf530b99b21f3519928dabd01a7dc4bf69088e"
+        },
+        {
+          "name": "balance",
+          "args": {
+            "id": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+          "source_kind": "wasm",
+          "interface_hash": "99dbf63d1c88c8702688aa1577f97f1773bfe8f774cda08054a7d47ce335832e",
+          "wasm_hash": "f345228dca59c6605789620e9ec62ff4847a0927c33dac7581a955fe746016be",
+          "function_name": "balance",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:24.930Z",
+          "data": "5996"
+        },
+        {
+          "name": "withdraw",
+          "args": {
+            "withdraw_shares": "2998",
+            "min_amounts_out": [
+              "0"
+            ],
+            "from": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX"
+          },
+          "ok": true,
+          "data": {
+            "tag": "Ok",
+            "values": [
+              [
+                "4999673"
+              ]
+            ]
+          },
+          "mode": "WRITE",
+          "ledger": 5385217,
+          "network": "testnet",
+          "wasm_hash": "f345228dca59c6605789620e9ec62ff4847a0927c33dac7581a955fe746016be",
+          "contract_id": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+          "fee_charged": "14911",
+          "source_kind": "wasm",
+          "function_name": "withdraw",
+          "result_status": "SUBMITTED_AND_CONFIRMED",
+          "interface_hash": "99dbf63d1c88c8702688aa1577f97f1773bfe8f774cda08054a7d47ce335832e",
+          "transaction_hash": "005568953730dd5b94660e2b9b1a12a7e5b942e98343f9564675e6a02fb237ba"
+        },
+        {
+          "name": "balance",
+          "args": {
+            "id": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+          "source_kind": "wasm",
+          "interface_hash": "99dbf63d1c88c8702688aa1577f97f1773bfe8f774cda08054a7d47ce335832e",
+          "wasm_hash": "f345228dca59c6605789620e9ec62ff4847a0927c33dac7581a955fe746016be",
+          "function_name": "balance",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:35.549Z",
+          "data": "2998"
+        }
+      ],
+      "tools": [
+        "deposit",
+        "get_fees",
+        "withdraw",
+        "get_assets",
+        "name",
+        "balance"
+      ],
+      "depositSharesIncreased": true,
+      "withdrawalConfirmed": true,
+      "withdrawalSharesDecreased": true,
+      "blocker": []
+    },
+    {
+      "project": "Aquarius Stellar",
+      "contractId": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+      "source": "https://docs.aqua.network/developers/code-examples/prerequisites-and-basics",
+      "checks": [
+        {
+          "name": "version",
+          "args": {},
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+          "source_kind": "wasm",
+          "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "version",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:36.556Z",
+          "data": 220
+        },
+        {
+          "name": "get_tokens_sets_count",
+          "args": {},
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+          "source_kind": "wasm",
+          "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "get_tokens_sets_count",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:37.591Z",
+          "data": "340"
+        },
+        {
+          "name": "get_pools_for_tokens_range",
+          "args": {
+            "start": "0",
+            "end": "1"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+          "source_kind": "wasm",
+          "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "get_pools_for_tokens_range",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:38.821Z",
+          "data": [
+            [
+              [
+                "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+                "CBL6KD2LFMLAUKFFWNNXWOXFN73GAXLEA4WMJRLQ5L76DMYTM3KWQVJN"
+              ],
+              [
+                [
+                  "24f9c991c44acf33fff5f44031c40385d235dc212d7379e824ba3db1c35371f3",
+                  "CCS6EFFKPQWG5SKMMYL4UQIXVYVDNIXAPHKHUM7IGJVN7QIAWXD2L7TO"
+                ],
+                [
+                  "4ffd5f56a9ff4ae92fc59d55a1663cee87fb1e0fab02a89462994b5c5e5cb5e5",
+                  "CDDLEQE6CPQGIK3RU4MK5CX2IAWN6CXWNJ2C3VOXV4FOVF3BBQFVZDIC"
+                ],
+                [
+                  "8328b65c4d32886fb1876be01b4ad13ef5ff14719d7c735d4060da683315473d",
+                  "CC2NBF7M6QBEOUNTV2C4BK42ID2WK2O3AJRC777BND4O3B6JUV7EY33J"
+                ],
+                [
+                  "9ac7a9cde23ac2ada11105eeaa42e43c2ea8332ca0aa8f41f58d7160274d718e",
+                  "CDLYWB5CCSNOEXPGHSKYO4FW3R4XFQVI2HR2QC735YDVCSEQJABQDFXI"
+                ],
+                [
+                  "a2baf8e09afee05df65a5803a48d575465d081f563728ac5261d16121dde4a98",
+                  "CDRT5VO5HMEBOLRAPZYSCFAKH2YB44BMBEG6EKKFTB2VHBFGBVIZLXCR"
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "name": "get_pools_for_tokens_range",
+          "args": {
+            "start": "1",
+            "end": "2"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+          "source_kind": "wasm",
+          "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "get_pools_for_tokens_range",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:39.892Z",
+          "data": [
+            [
+              [
+                "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+                "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+              ],
+              [
+                [
+                  "49136338380911dda8f39cc141fcdbfb001149f9a9fde30c7fa6a098e6a96fd6",
+                  "CAD5TBS4NKO35YDYZN3ULQFXDXVL7BPK4Q2RUG7N4DVPYNNOEAUAQJ6F"
+                ],
+                [
+                  "9ac7a9cde23ac2ada11105eeaa42e43c2ea8332ca0aa8f41f58d7160274d718e",
+                  "CD3LFMMLBQ6RBJUD3Z2LFDFE6544WDRMWHEZYPI5YDVESYRSO2TT32BX"
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "name": "estimate_swap",
+          "args": {
+            "tokens": [
+              "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+              "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+            ],
+            "token_in": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "token_out": "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+            "pool_index": "49136338380911dda8f39cc141fcdbfb001149f9a9fde30c7fa6a098e6a96fd6",
+            "in_amount": "100000"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+          "source_kind": "wasm",
+          "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "function_name": "estimate_swap",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:41.550Z",
+          "data": "16121"
+        },
+        {
+          "name": "trust",
+          "args": {
+            "addr": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX"
+          },
+          "ok": true,
+          "data": null,
+          "mode": "WRITE",
+          "ledger": 5385220,
+          "network": "testnet",
+          "contract_id": "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+          "fee_charged": "7432",
+          "source_kind": "stellar_asset",
+          "function_name": "trust",
+          "result_status": "SUBMITTED_AND_CONFIRMED",
+          "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+          "transaction_hash": "ef135c726fdea2ed3545f774ba561783d839d27606c348118a854e901091bb9b"
+        },
+        {
+          "name": "balance",
+          "args": {
+            "addr": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+          "source_kind": "stellar_asset",
+          "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+          "function_name": "balance",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:48.217Z",
+          "data": "0"
+        },
+        {
+          "name": "swap",
+          "args": {
+            "user": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX",
+            "tokens": [
+              "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+              "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+            ],
+            "token_in": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "token_out": "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+            "pool_index": "49136338380911dda8f39cc141fcdbfb001149f9a9fde30c7fa6a098e6a96fd6",
+            "in_amount": "100000",
+            "out_min": "15798"
+          },
+          "ok": true,
+          "data": "16121",
+          "mode": "WRITE",
+          "ledger": 5385221,
+          "network": "testnet",
+          "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+          "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+          "fee_charged": "23509",
+          "source_kind": "wasm",
+          "function_name": "swap",
+          "result_status": "SUBMITTED_AND_CONFIRMED",
+          "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+          "transaction_hash": "e6f5fb2fca5c19f07f3b2d6361d80142aeb11435079865049dd9e2a724a58634"
+        },
+        {
+          "name": "balance",
+          "args": {
+            "addr": "GC3GI6RXW4UVILAYBJZAOW7OKPO7BRKTGM6IYJCTFF5SWCEPPXOO7HHX"
+          },
+          "mode": "READ",
+          "network": "testnet",
+          "contract_id": "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+          "source_kind": "stellar_asset",
+          "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+          "function_name": "balance",
+          "ok": true,
+          "result_status": "SIMULATED",
+          "simulated_at": "2026-10-25T17:34:53.823Z",
+          "data": "16121"
+        }
+      ],
+      "tools": [
+        "swap",
+        "version",
+        "get_tokens",
+        "estimate_swap",
+        "get_tokens_sets_count",
+        "get_pools_for_tokens_range"
+      ],
+      "availableNativePair": [
+        [
+          "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+          "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+        ],
+        [
+          [
+            "49136338380911dda8f39cc141fcdbfb001149f9a9fde30c7fa6a098e6a96fd6",
+            "CAD5TBS4NKO35YDYZN3ULQFXDXVL7BPK4Q2RUG7N4DVPYNNOEAUAQJ6F"
+          ],
+          [
+            "9ac7a9cde23ac2ada11105eeaa42e43c2ea8332ca0aa8f41f58d7160274d718e",
+            "CD3LFMMLBQ6RBJUD3Z2LFDFE6544WDRMWHEZYPI5YDVESYRSO2TT32BX"
+          ]
+        ]
+      ],
+      "swapQuote": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+        "source_kind": "wasm",
+        "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+        "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+        "function_name": "estimate_swap",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:34:41.550Z",
+        "data": "16121"
+      },
+      "outputBalanceIncreased": true
+    }
+  ],
+  "transactions": [
+    {
+      "project": "Blend Pools V2",
+      "function": "submit",
+      "hash": "f15b4f40da14020d915d0ac12e9ab2af3cfc29ae4585a41291047659e3d15451",
+      "executorStatus": "SUBMITTED_AND_CONFIRMED",
+      "rpcStatus": "SUCCESS",
+      "ledger": 5385210
+    },
+    {
+      "project": "Blend Pools V2",
+      "function": "submit",
+      "hash": "e4bc54aa9e5ba7d9b1d27e9eecfb335ac617e3d173541dd71562708899d5f816",
+      "executorStatus": "SUBMITTED_AND_CONFIRMED",
+      "rpcStatus": "SUCCESS",
+      "ledger": 5385212
+    },
+    {
+      "project": "DeFindex",
+      "function": "deposit",
+      "hash": "0783fb92fd74091a4d4d6d70adcf530b99b21f3519928dabd01a7dc4bf69088e",
+      "executorStatus": "SUBMITTED_AND_CONFIRMED",
+      "rpcStatus": "SUCCESS",
+      "ledger": 5385215
+    },
+    {
+      "project": "DeFindex",
+      "function": "withdraw",
+      "hash": "005568953730dd5b94660e2b9b1a12a7e5b942e98343f9564675e6a02fb237ba",
+      "executorStatus": "SUBMITTED_AND_CONFIRMED",
+      "rpcStatus": "SUCCESS",
+      "ledger": 5385217
+    },
+    {
+      "project": "Aquarius Stellar",
+      "function": "trust",
+      "hash": "ef135c726fdea2ed3545f774ba561783d839d27606c348118a854e901091bb9b",
+      "executorStatus": "SUBMITTED_AND_CONFIRMED",
+      "rpcStatus": "SUCCESS",
+      "ledger": 5385220
+    },
+    {
+      "project": "Aquarius Stellar",
+      "function": "swap",
+      "hash": "e6f5fb2fca5c19f07f3b2d6361d80142aeb11435079865049dd9e2a724a58634",
+      "executorStatus": "SUBMITTED_AND_CONFIRMED",
+      "rpcStatus": "SUCCESS",
+      "ledger": 5385221
+    }
+  ],
+  "finalNativeBalance": {
+    "mode": "READ",
+    "network": "testnet",
+    "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "source_kind": "stellar_asset",
+    "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+    "function_name": "balance",
+    "ok": true,
+    "result_status": "SIMULATED",
+    "simulated_at": "2026-10-25T17:34:54.353Z",
+    "data": "98000593040"
+  }
+}

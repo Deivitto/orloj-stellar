@@ -1,0 +1,57 @@
+{
+  "verifiedAt": "2026-10-25T18:57:57.346Z",
+  "registryTests": 151,
+  "appAndLauncherTests": 7,
+  "appBuild": "passed",
+  "appTypecheck": "passed",
+  "lint": {
+    "errors": 0,
+    "existingWarnings": 9
+  },
+  "live": {
+    "managedAssetCalls": 15,
+    "operatorSetup": 3,
+    "managedWasmCalls": 2,
+    "deniedBeforeSubmission": [
+      {
+        "check": "holder:transfer",
+        "error_code": "ASSET_NOT_AUTHORIZED",
+        "hasHash": false
+      },
+      {
+        "check": "admin:mint",
+        "error_code": "AUTHORIZATION_FAILED",
+        "hasHash": false
+      },
+      {
+        "check": "holder:authorized",
+        "error_code": "AUTHORIZATION_FAILED",
+        "hasHash": false
+      }
+    ],
+    "taggedMainnetMcp": true,
+    "aquariusSchemas": [
+      75,
+      75
+    ]
+  },
+  "native": {
+    "migration": 8,
+    "wasmEncoding": 5,
+    "walletMode": "managed",
+    "existingUnattendedGrantsEnabled": false,
+    "ownerLoginVerified": true,
+    "exactGrantControlDefault": "unchecked"
+  },
+  "hostedActionsEnabled": false,
+  "independentReview": {
+    "status": "pending",
+    "reason": "workspace credits exhausted; prior review does not cover this followup"
+  },
+  "remaining": [
+    "Integrated isolated runtime/browser chat acceptance",
+    "Full combined Compose startup",
+    "Project-specific official testnet deployments/provenance previously listed in REPORT.md",
+    "Unsupported ambiguous/recursive signatures and external authorizers remain explicit limitations"
+  ]
+}

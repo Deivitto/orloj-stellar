@@ -66,7 +66,7 @@ Before installing any new dependency:
 
 ## Orloj Stellar build target
 
-This private mirror is the base for Orloj Stellar. Read `ORLOJ_STELLAR_MASTER.md` (version 1.1) and `ORLOJ_STELLAR_BUILD_PROMPT.md` before implementation. The master specification and its approved clarifications govern Stellar work; the existing EVM implementation is reference code. Decisions are recorded in `ORLOJ_STELLAR_OPEN_QUESTIONS.md`. If a requested change conflicts with the master, ask for clarification.
+This private mirror is the base for Orloj Stellar. Read `ORLOJ_STELLAR_MASTER.md` (version 1.5) and `ORLOJ_STELLAR_BUILD_PROMPT.md` before implementation. The master specification and its approved clarifications govern Stellar work; the existing EVM implementation is reference code. Decisions are recorded in `ORLOJ_STELLAR_OPEN_QUESTIONS.md`. If a requested change conflicts with the master, ask for clarification.
 
 ### Implemented Stellar service
 

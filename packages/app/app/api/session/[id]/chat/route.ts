@@ -1,8 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { headers } from "next/headers";
-import { createUIMessageStream, createUIMessageStreamResponse, type UIMessage } from "ai";
+import {
+  createUIMessageStream,
+  createUIMessageStreamResponse,
+  type UIMessage,
+} from "ai";
 import { auth } from "@/lib/auth";
-import { getSession, touch } from "@/lib/session/registry";
+import { getSession, touch, currentSessionOwner } from "@/lib/session/registry";
 
 // Parity with hosts that honour it; inert on a self-hosted Node server.
 export const maxDuration = 300;
@@ -21,7 +25,8 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session)
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await params;
 
   let body: unknown;
@@ -38,13 +43,18 @@ export async function POST(
   }
   const text = textOf(message);
   if (text.length < 1 || text.length > MAX_CHARS) {
-    return Response.json({ error: "Message must be 1–8000 characters" }, { status: 400 });
+    return Response.json(
+      { error: "Message must be 1–8000 characters" },
+      { status: 400 },
+    );
   }
 
   // Absent or foreign reads the same: the UI renders it as "Restart session".
   const entry = getSession(id, session.user.id);
-  if (!entry) return Response.json({ error: "Session expired" }, { status: 410 });
-  if (entry.busy) return Response.json({ error: "Session busy" }, { status: 409 });
+  if (!entry || !(await currentSessionOwner(entry)))
+    return Response.json({ error: "Session expired" }, { status: 410 });
+  if (entry.busy)
+    return Response.json({ error: "Session busy" }, { status: 409 });
 
   entry.busy = true;
   touch(entry);

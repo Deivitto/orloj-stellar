@@ -33,8 +33,11 @@ const getResend = () => {
 const emailFrom = process.env.EMAIL_FROM ?? "Orloj <onboarding@resend.dev>";
 
 const ENS_TIMEOUT_MS = 3000;
-const { chain: ensChain, rpcUrl: ensRpcUrl, key: ensChainKey } =
-  resolveEnsChain();
+const {
+  chain: ensChain,
+  rpcUrl: ensRpcUrl,
+  key: ensChainKey,
+} = resolveEnsChain();
 console.log(`[auth] ENS lookups via ${ensChainKey} (${ensRpcUrl})`);
 const ensClient = createPublicClient({
   chain: ensChain,
@@ -65,12 +68,37 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   database: new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
+    ssl:
+      process.env.DATABASE_SSL === "false"
+        ? false
+        : { rejectUnauthorized: true },
   }),
   plugins: [
     magicLink({
       sendMagicLink: async ({ email, url }) => {
         const { html, text } = renderMagicLinkEmail(url);
+        if (process.env.LOCAL_MAILBOX_URL) {
+          if (!["localhost", "127.0.0.1"].includes(new URL(baseURL).hostname))
+            throw new Error(
+              "Local email delivery requires a loopback app origin",
+            );
+          const response = await fetch(
+            new URL("/api/v1/send", process.env.LOCAL_MAILBOX_URL),
+            {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({
+                From: { Email: "login@orloj.local", Name: "Orloj" },
+                To: [{ Email: email }],
+                Subject: "Your sign-in link to Orloj",
+                HTML: html,
+                Text: text,
+              }),
+            },
+          );
+          if (!response.ok) throw new Error("Local mailbox unavailable");
+          return;
+        }
         const { error } = await getResend().emails.send({
           from: emailFrom,
           to: email,

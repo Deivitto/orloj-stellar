@@ -1,6 +1,6 @@
 # ORLOJ STELLAR — MASTER ARCHITECTURE & BUILD SPECIFICATION
 
-Version: 1.1 — Read + Write MCP Registry for Stellar/Soroban
+Version: 1.5 — Read + Write MCP Registry for Stellar/Soroban
 Status: Source of truth for AI coding agents
 Source: David's specification supplied by the user (24 October, 22:43). Typography normalized from the pasted message.
 
@@ -22,9 +22,9 @@ The agent never receives, holds, or transmits a private key.
 4. No runtime type guessing: decoded values must match the generated JSON Schema.
 5. The agent never sees secret keys, mnemonics, raw signing material, or raw RPC stack traces.
 6. Reads never submit transactions.
-7. Writes always simulate before signing and submission.
+7. Soroban writes always simulate before signing and submission; classic operations use explicit ledger preflight because Soroban simulation does not execute them.
 8. A write is successful only after `getTransaction` returns SUCCESS.
-9. All caches are keyed by `network + contract_id + wasm_hash`.
+9. All caches are keyed by `network + contract_id + interface_hash`.
 10. All errors use stable machine-readable codes.
 
 ## 3. System architecture
@@ -40,7 +40,7 @@ The agent never receives, holds, or transmits a private key.
    - Read function entries and referenced type definitions; expose only functions as tools.
    - Build canonical `FunctionModel` objects.
    - Apply eligibility rules.
-   - Cache by `network + contract_id + wasm_hash`.
+   - Cache by `network + contract_id + interface_hash`.
 3. **MCP Gateway**
    - Generate MCP tools from eligible `FunctionModel`s.
    - Validate tool arguments against generated JSON Schema.
@@ -87,7 +87,9 @@ Contract ID/WASM → Spec → FunctionModel → MCP Tool → JSON Schema validat
 {
   network: "testnet" | "mainnet",
   contractId: string,
-  wasmHash: string,
+  sourceKind: "wasm" | "stellar_asset",
+  interfaceHash: string,
+  wasmHash?: string,
   functions: FunctionModel[],
   generatedAt: string
 }
@@ -147,6 +149,8 @@ Contract ID/WASM → Spec → FunctionModel → MCP Tool → JSON Schema validat
 | i64 | string | canonical decimal string, -2^63 to 2^63-1 |
 | u128 | string | decimal string, 0 to 2^128-1 |
 | i128 | string | decimal string, -2^127 to 2^127-1 |
+| u256 | string | canonical decimal string, 0 to 2^256-1 |
+| i256 | string | canonical decimal string, -2^255 to 2^255-1 |
 | Symbol | string | valid Soroban symbol |
 | Address | string | SDK StrKey validation; G or C |
 | Bytes | string | lowercase hex |
@@ -154,29 +158,19 @@ Contract ID/WASM → Spec → FunctionModel → MCP Tool → JSON Schema validat
 | String | string | UTF-8 output only; otherwise STRING_NOT_UTF8 |
 | void | null | no value |
 
-### Supported composites
+### Supported composites (approved expansion, 25 October 2026)
 
-- `Option<Leaf>`
-- `Vec<Leaf>`, maximum 100 items
-- Struct with depth 1; fields must be Leaf or Option<Leaf>
-
-### Rejected forms
-
-- Nested Option
-- Vec<Option<T>>
-- Vec<Vec<T>>
-- Nested or recursive structs
-- Enum payloads
-- Maps
-- Tuples
-- BytesN longer than 256 bytes
-- Any type exceeding total depth 2
+- Nonrecursive nested structs, vectors, maps, tuples, enums, payload unions and unambiguous options.
+- Maps use arrays of `[key,value]` pairs, tuples fixed-length arrays, enums case-name strings, and unions strict `{tag, values}` objects.
+- Preserve all existing leaf representations; add SDK-validated MuxedAddress with protocol-gated address variants.
+- Maximum type depth 8, collection length 100, aggregate value nodes 1,000, and JSON payload 1 MiB (arguments and results independently).
+- Reject recursive definitions, nested Option, Option of a void-encoding type, untyped Val, unknown types and BytesN > 256. Entire unsupported functions remain excluded.
 
 ## 6. Function eligibility
 
 A function is eligible only if:
 
-1. It exists in `contractspecv0`.
+1. It exists in `contractspecv0` or the verified protocol-specific built-in asset specification.
 2. Every input and output type is supported.
 3. Its name does not collide after MCP sanitization.
 4. For READ: an explicit network/contract/function policy permits simulated execution.
@@ -336,9 +330,9 @@ Use the Stellar SDK assembled-transaction lifecycle. Do not manually reconstruct
 | Option<u64> null | null |
 | Vec<u64> 100 items | accepted |
 | Vec<u64> 101 items | rejected before RPC |
-| Nested Vec | function excluded |
-| Enum payload | function excluded |
-| Map | function excluded |
+| Nested Vec | bounded round-trip |
+| Enum payload | tagged round-trip |
+| Map | typed pairs, duplicate keys rejected |
 | Auth-required READ | AUTHORIZATION_REQUIRED |
 | Invalid argument | INVALID_ARGUMENT |
 | Simulation failure | SIMULATION_FAILED |
@@ -361,7 +355,7 @@ For confirmed on-chain failure, return `ok: false`, `result_status: "FAILED_ON_C
 
 ### WASM-only ingestion
 
-Unbound WASM uploads support inspection and preview only. They cannot register callable tools or enter the executable interface cache. Require a deployed contract ID and verify its network and WASM hash before binding. All executable interface caches retain the network + contract ID + WASM hash key.
+Unbound WASM uploads support inspection and preview only. They cannot register callable tools or enter the executable interface cache. Require a deployed contract ID and verify its network and WASM hash before binding. Executable interface caches use network + contract ID + interface hash; WASM interfaces retain their real WASM hash.
 
 ### Discovery and policy
 
@@ -382,3 +376,71 @@ Require a caller-supplied idempotency key for every write. Scope it to the authe
 Use a per-network/source-account lock covering sequence acquisition, assembly, signing, durable intent, and submission. Enforce equivalent cross-process serialization when multiple workers run. Persist intent and the deterministic signed-transaction hash before any send. A crash after intent but before a recorded send outcome is ambiguous and must be reconciled without resending. Never claim exactly-once delivery or successful execution from an accepted submission.
 
 Keep unresolved attempts and their hashes across restarts. NOT_FOUND remains pending until the polling deadline. A separate status lookup may continue reconciliation later. Never silently rebuild or re-sign a timed-out write. Any new attempt needs an explicit new request and a policy that prevents accidental duplication of an unresolved operation. No raw signed XDR or signing material is returned to agents or logged.
+
+## 14. Approved complete interface and asset support (25 October 2026)
+
+Detect WASM versus built-in Stellar Asset Contract executables before fetching code. Built-in assets have no WASM hash. Use pinned official, protocol-versioned SAC definitions with provenance and checksums; unknown protocols fail UNSUPPORTED_PROTOCOL. Support contract IDs and verified native/issued asset descriptors without deploying during registration.
+
+Interfaces carry sourceKind and interfaceHash. WASM retains its real wasmHash; SAC fingerprints canonical specification, protocol, adapter and encoding versions. Cache migration preserves existing records and write history. New response envelopes include source_kind/interface_hash and omit wasm_hash for SAC. Preserve historical idempotency fingerprints and reconcile submitted writes using their original metadata.
+
+Inventory includes all declared methods with signatures, eligibility, policy state and exclusion reasons; only explicitly permitted methods become callable tools. Support administrative methods with real authorization; possession does not confer issuer privileges. Native-asset restrictions remain visible. No classic operations outside the SAC API are implied. SAC amounts remain base-unit decimal strings, with exact formatting/parsing helpers. Default writes remain testnet only and individually allowlisted. No signing, submission, fee, account-lock or secret-handling invariant is relaxed.
+
+Asset diagnostic codes: ASSET_OPERATION_UNSUPPORTED, ASSET_BALANCE_ERROR, ASSET_NOT_AUTHORIZED, ASSET_TRUSTLINE_REQUIRED, ASSET_ALLOWANCE_ERROR, ASSET_RESERVE_ERROR. Map only typed diagnostic errors attributed to the target SAC; unknown failures remain SIMULATION_FAILED. Never return diagnostic payloads.
+
+## 15. Approved local testnet product (25 October 2026)
+
+The user approved a Stellar-first local product, preserving EVM compatibility. Integrate app registration/catalog/chat and existing agent credentials. Owner-authorize all control-plane actions. Registration grants no write permission. Signing modes: owner-linked Freighter approval and a separate encrypted managed testnet wallet per agent. Managed unattended execution is restricted to verified SAC transfers with explicit recipient, per-write, rolling-24-hour amount and fee budgets; default deny. Reserve pending exposure atomically, including unresolved old operations.
+
+MCP writes are durable asynchronous operations with operation IDs and AWAITING_APPROVAL/PENDING states. Add a collision-free read-only operation status tool. Signing payloads stay in the owner-only signing channel. Recheck credentials, current ownership, wallet binding and policy revision atomically at durable intent. Revocation blocks new intent; existing intent is reconciled, never automatically resubmitted. Persist signed sequence and maximum time before any send. Release an ambiguous reservation only under the source-account lock after confirmed terminal status or authoritative ledger expiry/non-inclusion proof; legacy incomplete metadata remains blocked.
+
+Managed keys use AES-256-GCM with random nonces and authenticated agent/network/key-version metadata. Master keys belong only to a dedicated signer service. Wallet secrets and signer material never enter agent runtime environment or mounts. Ownership changes suspend unattended grants. Provision actual isolated agent runtime and configurable model provider, magic-link local delivery and reproducible local stack. Mainnet writes, hosted deployment, KMS/HSM and arbitrary unattended contract methods remain outside this release. Real browser-to-chat acceptance and independent verification are mandatory; missing provider credentials or hosted CI billing failures must remain explicit blockers, not claimed passes.
+
+
+## 16. Approved audit remediation (25 October 2026)
+
+The user approved implementation of the audit remediation plan. Preserve mainnet read-only and manual verification; automatic GitHub checks remain disabled.
+
+### Resource budgets
+
+Execution resource allowances and resource-fee headroom are independent. Final authorization-enforced simulation must request configurable CPU instruction leeway (default 1,000,000; range 0..10,000,000). The RPC/SDK computes the resulting resource declarations and fees; never manually reconstruct authorization. Keep the configured maximum fee and network limits authoritative. Do not resubmit an existing intent. A new testnet retest is a fresh explicit request, not recovery of the historical failed transaction. Return only sanitized resource diagnostics.
+
+### Declared result types and errors
+
+Support top-level function return `Result<T,E>` where T is in the supported closed grammar and E is the declared contract error enum or the SDK-defined Error type. Generic Error keeps its numeric code without inventing a case name. Successful Soroban Result returns are encoded by the host as the bare T; expose JSON `{tag:"Ok", values:[T]}` to preserve the declared return type. A declared contract error is a failed execution, not a successful union value: return `CONTRACT_EXECUTION_FAILED` with sanitized `contract_error: {code, name}` when a typed diagnostic attributed to the invoked contract matches the declaration. Unknown codes, cross-contract errors, and malformed values must not be guessed. Never encode a Result as a Soroban vector. Result is a top-level return annotation, so the depth-8 limit applies to payload T itself; the host adds no Result value container. Result inputs, nested Results, recursive definitions and ambiguous nested options remain excluded.
+
+Resolve referenced contract-error definitions, preserving their numeric codes. Add precise exclusion location/type and the original declared signature to inventories. Version WASM interface identity to encoding v4; old WASM interfaces require re-registration before new execution. Existing attempts reconcile with original metadata and return models; write history and tool names are preserved. Newly supported methods remain disabled until individually permitted. SAC encoding remains unchanged.
+
+### Classic protocol adapters
+
+Authorize a separate, explicitly identified classic Stellar adapter for account balances, offers, order books and liquidity-pool discovery, and owner-approved testnet operations: trustline creation, offer management and liquidity-pool deposits/withdrawals. Classic adapters never invent a Soroban contract ID and never pass classic operations through Soroban simulation. Validate exact decimal amounts, rational prices, assets, authorization, account reserves, fees, time bounds and per-operation policy. Sign through the existing owner channel, persist intent/hash/sequence/expiry before one send, and confirm using authoritative ledger transaction status. Managed unattended signing remains limited to verified SAC transfers. Classic integration must remain visibly unavailable until its independent execution and app authorization gates pass.
+
+### Coverage and provenance
+
+Track signature eligibility, enabled policy, successful reads and confirmed writes separately. Verify project-published deployment provenance before claiming an official integration. A local deployment proves fixture compatibility only. Missing official testnet deployments remain an explicit external acceptance gap. Never equate a representative factory or experimental vault with an entire project's production interface or TVL. Completion requires actual app/session testing in addition to direct MCP harness tests.
+
+Full-width u256/i256 leaves use canonical decimal strings and exact BigInt conversion, with the same validation rules as u128/i128. Untyped Val remains excluded.
+
+Classic read envelopes use `READ_ONLY`, never `SIMULATED`. Classic writes use the shared testnet-only durable intent, account locking, owner approval, single RPC submission and getTransaction confirmation; they have no Soroban resource data. `CLASSIC_QUERY_FAILED` is a stable sanitized Horizon read error.
+
+A zero-element Tuple denotes Soroban unit: JSON `[]`, wire ScVal Void. Reject Option of this unit type because None and Some(unit) share the same wire value. Nonempty tuples keep their vector encoding.
+
+The user subsequently requested complete CI/CD disablement: GitHub Actions is disabled at repository level and the archived workflow lives outside `.github/workflows`. Local manual checks remain available and consume no hosted CI credits.
+
+
+## 17. Approved generic compatibility and unattended testnet calls
+
+On 25 October 2026 the user delegated the four followup decisions. Keep mainnet read-only. Broader managed writes use separate faucet-funded agent wallets and explicit owner grants bound to network, contract ID, interface/code hash, method and exact normalized arguments. Registration never grants writes. A grant authorizes repetition without a Freighter prompt; bounded call counts, per-transaction fees and rolling 24-hour fee budgets apply. Defaults for the isolated test harness are 300 test XLM maximum per transaction, 1,000 test XLM rolling fees and one call per exact grant per day. Unresolved reservations count regardless of age; duplicates reserve once. Existing SAC amount/recipient budgets remain supported and are never silently converted to broad grants. Exact-call grants authorize the complete invocation; do not infer asset-spending limits from arbitrary parameter names or claim generic balance accounting. Expose this distinction to the owner. Keys remain isolated and encrypted; all live owner/credential/policy/expiry checks still apply at intent. Contract upgrades invalidate exact-call grants.
+
+Authorize project-controlled testnet fixtures and separate administrator/user agents, allowing positive tests with genuine test roles. This does not grant privileges on third-party deployments. Reject unavailable authorizers; do not bypass contract authorization.
+
+For declared Val, use an explicit tagged JSON ScVal format, with strict schemas, exact integer strings, SDK address validation, duplicate-map-key rejection and the existing node/payload/collection limits. Tags are part of the documented encoding; never guess types or business semantics from plain strings. Add SDK-supported Timepoint/Duration and explicitly typed Error leaves. Normal declared types retain existing JSON representations. Unknown protocol/internal-only ScVal variants remain excluded. Optional schema overrides must be verified and code-hash bound before they can replace this representation. A typed specification is enough for automatic generation; source verification alone cannot supply missing business semantics.
+
+Version WASM and asset codec identities when encoding capabilities change; retain historical attempt metadata and write history. Local validation replaces hosted CI/CD. Do not claim every possible call succeeds: contract state, ownership, authentication, supported network protocol and documented resource limits still govern execution.
+
+Each declared Val permits eight nested value containers, independently from the declared type depth; JSON transport nesting permits at most48 levels to accommodate explicit tags/map pairs. Aggregate nodes1,000 and payload1MiB still apply. Option<Val> remains excluded because its payload includes Void, so it cannot distinguish None from Some(Void).
+
+Exact-call quotas count each wallet/contract/method across policy revisions within the rolling window; editing another policy or changing argument literals does not reset consumed call counts. Pending reservations are counted regardless of age.
+
+Direct declared contract-error enums use case-name strings and encode as typed contract ScVal Errors, preserving their declared numeric codes.
+
+This section supersedes section 15's SAC-transfer-only managed scope and section 16's Val exclusion. WASM encoding identity is now v5; re-registration is required, preserving historical attempts. SAC encoding remains v2 because its verified type grammar and wire encoding are unchanged.

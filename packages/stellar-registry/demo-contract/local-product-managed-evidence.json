@@ -1,0 +1,103 @@
+{
+  "testedAt": "2026-10-25T15:15:04.896Z",
+  "network": "testnet",
+  "agentId": "9e71ea0f-19e0-436c-abd1-b8a8f126bc17",
+  "mode": "managed",
+  "checks": [
+    {
+      "check": "actual_app_token_discovery",
+      "ok": true,
+      "tools": [
+        "balance",
+        "transfer",
+        "orloj_operation_status"
+      ]
+    },
+    {
+      "check": "recipient_before",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "source_kind": "stellar_asset",
+      "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+      "function_name": "balance",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T15:15:05.779Z",
+      "data": "99999983091"
+    },
+    {
+      "check": "recipient_policy_denial",
+      "ok": false,
+      "error_code": "WRITE_NOT_PERMITTED",
+      "retryable": false,
+      "human_message": "Write policy does not permit this operation."
+    },
+    {
+      "check": "amount_policy_denial",
+      "ok": false,
+      "error_code": "WRITE_NOT_PERMITTED",
+      "retryable": false,
+      "human_message": "Write policy does not permit this operation."
+    },
+    {
+      "check": "queued_write",
+      "ok": true,
+      "operation_id": "6d52e69a-be2d-4948-881f-ebfdc81a2874",
+      "result_status": "PENDING",
+      "mode": "WRITE",
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "function_name": "transfer",
+      "can_cancel": true
+    },
+    {
+      "check": "confirmed_write",
+      "ok": true,
+      "data": null,
+      "mode": "WRITE",
+      "ledger": 5383545,
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "fee_charged": "6943",
+      "source_kind": "stellar_asset",
+      "function_name": "transfer",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+      "transaction_hash": "9c527d2f06fdbd54c4e72b140e200739a51872883529c3856c1033908f1df078",
+      "operation_id": "6d52e69a-be2d-4948-881f-ebfdc81a2874",
+      "can_cancel": false
+    },
+    {
+      "check": "duplicate_reconciled",
+      "ok": true,
+      "data": null,
+      "mode": "WRITE",
+      "ledger": 5383545,
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "fee_charged": "6943",
+      "source_kind": "stellar_asset",
+      "function_name": "transfer",
+      "result_status": "SUBMITTED_AND_CONFIRMED",
+      "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+      "transaction_hash": "9c527d2f06fdbd54c4e72b140e200739a51872883529c3856c1033908f1df078",
+      "operation_id": "6d52e69a-be2d-4948-881f-ebfdc81a2874",
+      "can_cancel": false
+    },
+    {
+      "check": "recipient_after",
+      "mode": "READ",
+      "network": "testnet",
+      "contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "source_kind": "stellar_asset",
+      "interface_hash": "b16f8aadd2df0574269a2a70e090aa882d1128a0d1f0e15649bccbeb8f26bfc4",
+      "function_name": "balance",
+      "ok": true,
+      "result_status": "SIMULATED",
+      "simulated_at": "2026-10-25T15:15:15.553Z",
+      "data": "99999983092"
+    }
+  ],
+  "ok": true
+}

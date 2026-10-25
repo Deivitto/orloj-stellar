@@ -1,0 +1,221 @@
+{
+  "verifiedAt": "2026-10-25T17:56:30.348Z",
+  "network": "mainnet",
+  "mode": "READ",
+  "encodingVersion": 4,
+  "checks": [
+    {
+      "project": "Blend Pools V2",
+      "name": "reward_zone",
+      "passed": true,
+      "interfaceIdentityVerified": true,
+      "result": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CAQQR5SWBXKIGZKPBZDH3KM5GQ5GUTPKB7JAFCINLZBC5WXPJKRG3IM7",
+        "source_kind": "wasm",
+        "interface_hash": "3f38800d7f2a6bdaa561a83ad910c8170fb982fb8a659c5a744353b0a509aac5",
+        "wasm_hash": "c1f4502a757e25c611f5a159bc1ab0eef64085adac6c68123dca66e87faffbc2",
+        "function_name": "reward_zone",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:56:31.077Z",
+        "data": []
+      }
+    },
+    {
+      "project": "Stellar DeFi Hub",
+      "name": "name",
+      "passed": true,
+      "interfaceIdentityVerified": true,
+      "result": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CALFCZ4TY2CLHDHNJWCZX6JKYGUPV7P3GNQ3UVABXNE5JCV2E774APUM",
+        "source_kind": "wasm",
+        "interface_hash": "bc72fe039a4fbc7439857188be846142fa027987b3038242cfc5ac95eaa4bfbe",
+        "wasm_hash": "3bd05dfa2bf65299d359e86a4672a45900e8c5768d9f056ad8da5ccd779bcd12",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:56:31.538Z",
+        "data": "Sentora USDC"
+      }
+    },
+    {
+      "project": "Aquarius Stellar",
+      "name": "version",
+      "passed": true,
+      "interfaceIdentityVerified": true,
+      "result": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+        "source_kind": "wasm",
+        "interface_hash": "629cafe4e1139f8bc85a5ddafbfcc63bc9cfd993b3039d8d9659833ab76d9994",
+        "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+        "function_name": "version",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:56:31.890Z",
+        "data": 220
+      }
+    },
+    {
+      "project": "Upshift",
+      "name": "name",
+      "passed": true,
+      "interfaceIdentityVerified": true,
+      "result": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+        "source_kind": "wasm",
+        "interface_hash": "609eda01fb8bc19a27920ed621d11d94a93d46ee46e8abe3ca80ea68c0f3488d",
+        "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:56:32.246Z",
+        "data": "earnXLM"
+      }
+    },
+    {
+      "project": "Gami Labs",
+      "name": "name",
+      "passed": true,
+      "interfaceIdentityVerified": true,
+      "result": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CCL3WITWFFXIHV2I52ECV5DPIEOFSTU3PBPR53ILPLF2IP5KHECXRUTY",
+        "source_kind": "wasm",
+        "interface_hash": "609eda01fb8bc19a27920ed621d11d94a93d46ee46e8abe3ca80ea68c0f3488d",
+        "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:56:32.618Z",
+        "data": "earnUSDC"
+      }
+    },
+    {
+      "project": "DeFindex",
+      "name": "name",
+      "passed": true,
+      "interfaceIdentityVerified": true,
+      "result": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+        "source_kind": "wasm",
+        "interface_hash": "cf2a4d1fdaf5c5fd8a45db926dbb96ce5d7de0fc0bd4eab418bc448135a31b87",
+        "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:56:32.991Z",
+        "data": "DeFindex-Vault-BeansUsdcVault"
+      }
+    },
+    {
+      "project": "Sushi Stellar",
+      "name": "get_owner",
+      "passed": true,
+      "interfaceIdentityVerified": true,
+      "result": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CD3KRKGDRVWPXVB3VXLUMQKMX6XZ6Q2H334IVZD4XXNAMKSRVQL5GLYF",
+        "source_kind": "wasm",
+        "interface_hash": "80acbef81f1ba2004d862aaa1d20e9b8d24d0e24cf2fa203e249078c3023da07",
+        "wasm_hash": "9f94c577ea24c2f71cbb0c964c9c9d321e02448d1fe946020afb18974b1c2602",
+        "function_name": "get_owner",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:56:33.345Z",
+        "data": "GC7RIP4D7UETKBZU7FNUYW5XIR2IPLUQDV2DUTZRKVF6C3P2A5QEDSZI"
+      }
+    },
+    {
+      "project": "Templar Protocol",
+      "name": "name",
+      "passed": true,
+      "interfaceIdentityVerified": true,
+      "result": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CDBBJXSK22AFN34GHAHOLZVEZOHSXGWZYMBMYPFRYBJSO5D7BTN7P6QX",
+        "source_kind": "wasm",
+        "interface_hash": "ef41323d29eda2c4b814d63b0096e170a31ee1207fb00754bc5cce93759625f2",
+        "wasm_hash": "6e00a774d7ad80e70d4243049c23be3a8f7159dcb2a1da540140c0fee9fa6fa1",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:56:33.711Z",
+        "data": {
+          "tag": "Ok",
+          "values": [
+            "Test Templar USDC"
+          ]
+        }
+      }
+    },
+    {
+      "project": "Stellar DEX",
+      "name": "account_balances",
+      "passed": true,
+      "result": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "classic:stellar-dex",
+        "source_kind": "classic_dex",
+        "interface_hash": "ee717b8ae6be1346205daccd034754897e2016c39d48a5faef93123c5c60c9ba",
+        "function_name": "account_balances",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:56:33.741Z",
+        "data": [
+          {
+            "asset": "native",
+            "balance": "336717608013",
+            "buying_liabilities": "0",
+            "selling_liabilities": "0",
+            "authorized": true
+          }
+        ]
+      }
+    },
+    {
+      "project": "Stellar AMM",
+      "name": "liquidity_pool",
+      "passed": true,
+      "result": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "classic:stellar-amm",
+        "source_kind": "classic_amm",
+        "interface_hash": "cb04e5b6ec7d604192be4d523d55205822cf4da38481c48b56168d3acebf40d2",
+        "function_name": "liquidity_pool",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:56:34.359Z",
+        "data": {
+          "pool_id": "0000a8198b5e25994c1ca5b0556faeb27325ac746296944144e0a7406d501e8a",
+          "total_shares": "54942144063",
+          "total_trustlines": "1",
+          "reserves": [
+            {
+              "asset": "native",
+              "amount": "2687758"
+            },
+            {
+              "asset": "GOLDBANK001:GDEUQ2MX3YXMITFOTC3CO3GW5V3XE3IVG7JKLZZAOZ7WFYIN256INDUS",
+              "amount": "2094082988023562"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

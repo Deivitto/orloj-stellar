@@ -1,3 +1,4 @@
+import {RuntimeUnavailableError} from "./runtime-readiness";
 import { headers } from "next/headers";
 import { GatewayError } from "@orloj/skills-marketplace/gateway";
 import { SkillPlanError } from "@orloj/skills-marketplace/install-plan";
@@ -79,7 +80,7 @@ export const errorResponse = (err: unknown): Response => {
     console.error("[session] registry manifest unreachable", err);
     return Response.json({ error: "Registry unreachable" }, { status: 502 });
   }
-  if (err instanceof ZeroclawBinaryMissingError || err instanceof TemplateUnavailableError) {
+  if (err instanceof RuntimeUnavailableError || err instanceof ZeroclawBinaryMissingError || err instanceof TemplateUnavailableError) {
     console.error("[session] runtime unavailable", err);
     return Response.json(RUNTIME_UNAVAILABLE, { status: 503 });
   }

@@ -100,3 +100,73 @@ it.skipIf(!url)(
     });
   },
 );
+it.skipIf(!url)(
+  "migrates legacy WASM identities without changing durable write records",
+  async () => {
+    const { readFile } = await import("node:fs/promises");
+    const schema = "migration_" + randomUUID().replaceAll("-", "");
+    await store!.pool.query(`CREATE SCHEMA ${schema}`);
+    const scoped = new URL(url!);
+    scoped.searchParams.set("options", `-c search_path=${schema}`);
+    const s = new Store(scoped.toString());
+    try {
+      await s.pool.query(
+        "CREATE TABLE stellar_migrations(version integer PRIMARY KEY); INSERT INTO stellar_migrations VALUES(1),(2)",
+      );
+      for (const file of ["001_initial.sql", "002_rate_limits.sql"])
+        await s.pool.query(
+          await readFile(
+            new URL("../migrations/" + file, import.meta.url),
+            "utf8",
+          ),
+        );
+      const old = {
+        network: "testnet",
+        contractId: "old",
+        wasmHash: "realhash",
+        functions: [],
+        excluded: [],
+        generatedAt: new Date().toISOString(),
+      };
+      await s.pool.query(
+        "INSERT INTO stellar_interfaces(network,contract_id,wasm_hash,interface) VALUES('testnet','old','realhash',$1)",
+        [old],
+      );
+      await s.lock("testnet", "migration-account", async (client) => {
+        const a = await s.begin(client, {
+          network: "testnet",
+          principal: "legacy",
+          idempotency_key: "key",
+          fingerprint: "original",
+          source_account: "migration-account",
+          request: { wasm_hash: "realhash" },
+        });
+        await s.update(a.id, "INTENT", undefined, "retainedhash");
+      });
+      await s.migrate();
+      expect(await s.get("testnet", "old")).toMatchObject({
+        wasmHash: "realhash",
+        interfaceHash: "realhash",
+        sourceKind: "wasm",
+      });
+      expect(await s.find("legacy", "testnet", "key")).toMatchObject({
+        fingerprint: "original",
+        state: "INTENT",
+        transaction_hash: "retainedhash",
+      });
+      await s.save({
+        network: "testnet",
+        contractId: "asset",
+        sourceKind: "stellar_asset",
+        interfaceHash: "spechash",
+        functions: [],
+        excluded: [],
+        generatedAt: new Date().toISOString(),
+      });
+      expect((await s.get("testnet", "asset"))?.wasmHash).toBeUndefined();
+    } finally {
+      await s.close();
+      await store!.pool.query(`DROP SCHEMA ${schema} CASCADE`);
+    }
+  },
+);

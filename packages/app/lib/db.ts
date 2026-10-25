@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { Pool } from "pg";
 
 let poolPromise: Promise<Pool> | null = null;
@@ -84,6 +86,15 @@ const ensureSchema = async (pool: Pool): Promise<void> => {
     CREATE INDEX IF NOT EXISTS agent_ownership_user_idx
       ON agent_ownership(user_id)
   `);
+  await pool.query(
+    `ALTER TABLE agent_ownership ADD COLUMN IF NOT EXISTS instance_id uuid NOT NULL DEFAULT gen_random_uuid()`,
+  );
+  await pool.query(
+    `ALTER TABLE agent_ownership ADD COLUMN IF NOT EXISTS stellar_policy_revision integer NOT NULL DEFAULT 0`,
+  );
+  await pool.query(
+    `CREATE TABLE IF NOT EXISTS stellar_local_agents(id text PRIMARY KEY,name text NOT NULL,description text NOT NULL DEFAULT '',created_at timestamptz NOT NULL DEFAULT now())`,
+  );
   // Per-agent MCP assignment was removed: a valid bearer token authorizes an agent for every
   // registry MCP. There is no migration runner in this repo, so the one-time drop lives here —
   // idempotent, and safe to delete once every environment has booted once.
@@ -116,6 +127,25 @@ const ensureSchema = async (pool: Pool): Promise<void> => {
     CREATE INDEX IF NOT EXISTS mcp_api_key_agent_id_idx
       ON mcp_api_key(agent_id)
   `);
+  await pool.query(
+    `ALTER TABLE mcp_api_key ADD COLUMN IF NOT EXISTS owner_id text; ALTER TABLE mcp_api_key ADD COLUMN IF NOT EXISTS instance_id uuid`,
+  );
+  await pool.query(
+    `UPDATE mcp_api_key k SET owner_id=a.user_id,instance_id=a.instance_id FROM agent_ownership a WHERE k.agent_id=a.agent_id AND k.owner_id IS NULL AND k.instance_id IS NULL`,
+  );
+  if (
+    process.env.STELLAR_REGISTRY_URL ||
+    process.env.ORLOJ_PRODUCT === "stellar"
+  )
+    await pool.query(
+      await readFile(
+        path.resolve(
+          process.cwd(),
+          "../stellar-registry/migrations/005_app_identity.sql",
+        ),
+        "utf8",
+      ),
+    );
   await pool.query(`
     CREATE TABLE IF NOT EXISTS tool_call_log (
       id             BIGSERIAL PRIMARY KEY,
@@ -150,7 +180,10 @@ export const getPool = (): Promise<Pool> => {
   poolPromise = (async () => {
     const pool = new Pool({
       connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false },
+      ssl:
+        process.env.DATABASE_SSL === "false"
+          ? false
+          : { rejectUnauthorized: true },
     });
     await ensureSchema(pool);
     return pool;

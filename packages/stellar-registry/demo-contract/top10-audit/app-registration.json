@@ -1,0 +1,103 @@
+{
+  "registeredAt": "2026-10-25T16:33:40.614Z",
+  "network": "testnet",
+  "agentId": "9e71ea0f-19e0-436c-abd1-b8a8f126bc17",
+  "projects": [
+    {
+      "project": "Blend Pools V2",
+      "contractId": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+      "readFunctions": [
+        "get_reserve_list",
+        "get_positions"
+      ],
+      "registered": true,
+      "tools": [
+        "get_reserve_list",
+        "get_positions",
+        "orloj_operation_status"
+      ],
+      "visibleInManifest": true,
+      "readResult": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+        "source_kind": "wasm",
+        "interface_hash": "f397c6fe4265881e401b794b70d8183f85a7f5ae16057c03ab9ba5ab5615ad92",
+        "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+        "function_name": "get_reserve_list",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T16:34:09.307Z",
+        "data": [
+          "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+          "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+          "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+        ]
+      },
+      "appCredentialVerified": true
+    },
+    {
+      "project": "DeFindex",
+      "contractId": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+      "readFunctions": [
+        "name",
+        "get_fees"
+      ],
+      "registered": true,
+      "tools": [
+        "get_fees",
+        "name",
+        "orloj_operation_status"
+      ],
+      "visibleInManifest": true,
+      "readResult": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+        "source_kind": "wasm",
+        "interface_hash": "8d33db8814966230864104e5d19bed75fb94b1319ba284d13206cf1674f9fe61",
+        "wasm_hash": "f345228dca59c6605789620e9ec62ff4847a0927c33dac7581a955fe746016be",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T16:34:10.286Z",
+        "data": "DeFindex-Vault-Defindex Vault"
+      },
+      "appCredentialVerified": true
+    },
+    {
+      "project": "Aquarius Stellar",
+      "contractId": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+      "readFunctions": [
+        "version",
+        "get_tokens_sets_count",
+        "get_pools_for_tokens_range",
+        "estimate_swap"
+      ],
+      "registered": true,
+      "tools": [
+        "version",
+        "estimate_swap",
+        "get_tokens_sets_count",
+        "get_pools_for_tokens_range",
+        "orloj_operation_status"
+      ],
+      "visibleInManifest": true,
+      "readResult": {
+        "mode": "READ",
+        "network": "testnet",
+        "contract_id": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+        "source_kind": "wasm",
+        "interface_hash": "cb33a2c7e6a5c707f75ac0e900bfb832d0778550ebe24c45303abd592e7f1d62",
+        "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+        "function_name": "version",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T16:34:11.102Z",
+        "data": 220
+      },
+      "appCredentialVerified": true
+    }
+  ]
+}

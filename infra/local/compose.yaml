@@ -1,0 +1,108 @@
+name: orloj
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: orloj
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run setup-local-product first}
+      POSTGRES_DB: orloj
+    volumes: ["database:/var/lib/postgresql/data"]
+    networks: [control]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U orloj -d orloj"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  mail:
+    image: axllent/mailpit:v1.32.0
+    ports: ["127.0.0.1:${MAIL_PORT:-8025}:8025"]
+    networks: [control]
+  signer:
+    build: {context: ../.., dockerfile: infra/local/Product.Dockerfile, target: signer}
+    environment:
+      DATABASE_URL: postgres://orloj:${POSTGRES_PASSWORD}@postgres:5432/orloj
+      SIGNER_MASTER_KEY_FILE: /run/orloj-secrets/master
+      SIGNER_TOKEN_FILE: /run/orloj-secrets/signer
+      HOST: 0.0.0.0
+      PORT: 3005
+      MAX_FEE: "2000000"
+    secrets: [master, signer]
+    networks: [control]
+    depends_on: {postgres: {condition: service_healthy}}
+    restart: unless-stopped
+  registry:
+    build: {context: ../.., dockerfile: infra/local/Product.Dockerfile, target: registry}
+    environment:
+      DATABASE_URL: postgres://orloj:${POSTGRES_PASSWORD}@postgres:5432/orloj
+      SIMULATION_SOURCE: ${SIMULATION_SOURCE:?A funded testnet simulation account is required}
+      PRODUCT_MODE: "true"
+      WRITE_MODE: "true"
+      MAX_FEE: "2000000"
+      CONTROL_TOKEN_FILE: /run/orloj-secrets/control
+      SIGNER_TOKEN_FILE: /run/orloj-secrets/signer
+      SIGNER_URL: http://signer:3005
+      APP_ORIGIN: http://localhost:${APP_PORT:-3000}
+      HOST: 0.0.0.0
+      PORT: 3002
+    secrets: [control, signer]
+    networks: [control, agents]
+    ports: ["127.0.0.1:${REGISTRY_PORT:-3002}:3002"]
+    depends_on: {postgres: {condition: service_healthy}}
+    restart: unless-stopped
+  runtime-image:
+    image: orloj-zeroclaw:0.8.6
+    build: {context: ../.., dockerfile: infra/local/Runtime.Dockerfile}
+    profiles: [build]
+    entrypoint: [/usr/local/bin/zeroclaw, --version]
+  broker:
+    build: {context: ../.., dockerfile: infra/local/Broker.Dockerfile}
+    environment:
+      RUNTIME_TOKEN_FILE: /run/secrets/runtime
+      RUNTIME_IMAGE: orloj-zeroclaw:0.8.6
+      AGENT_VOLUME: orloj-agent-state
+      AGENT_NETWORK: orloj-agents
+    secrets: [runtime]
+    volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
+    networks: [control]
+    restart: unless-stopped
+  app:
+    build: {context: ../.., dockerfile: infra/local/Product.Dockerfile, target: app}
+    environment:
+      DATABASE_URL: postgres://orloj:${POSTGRES_PASSWORD}@postgres:5432/orloj
+      DATABASE_SSL: "false"
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Run setup-local-product first}
+      BETTER_AUTH_URL: http://localhost:${APP_PORT:-3000}
+      LOCAL_MAILBOX_URL: http://mail:8025
+      ORLOJ_PRODUCT: stellar
+      AGENT_PROVIDER: local
+      STELLAR_REGISTRY_URL: http://registry:3002
+      PUBLIC_STELLAR_REGISTRY_URL: http://localhost:${REGISTRY_PORT:-3002}
+      CONTROL_TOKEN_FILE: /run/orloj-secrets/control
+      ZEROCLAW_BIN: /opt/orloj/infra/local/runtime-launcher.mjs
+      ZEROCLAW_AGENTS_DIR: /agents
+      ZEROCLAW_MODEL_API_KEY: ${ZEROCLAW_MODEL_API_KEY:-}
+      ZEROCLAW_MODEL_URL: ${ZEROCLAW_MODEL_URL:-https://router-api.0g.ai/v1}
+      ZEROCLAW_MODEL: ${ZEROCLAW_MODEL:-qwen3.7-max}
+      RUNTIME_BROKER_URL: http://broker:3010
+      RUNTIME_TOKEN_FILE: /run/orloj-secrets/runtime
+    secrets: [control, runtime]
+    volumes: ["agent-state:/agents"]
+    ports: ["127.0.0.1:${APP_PORT:-3000}:3000"]
+    networks: [control]
+    depends_on:
+      postgres: {condition: service_healthy}
+      registry: {condition: service_started}
+      mail: {condition: service_started}
+      broker: {condition: service_started}
+    restart: unless-stopped
+networks:
+  control: {internal: true}
+  agents: {name: orloj-agents}
+volumes:
+  database:
+  agent-state: {name: orloj-agent-state}
+secrets:
+  master: {file: ../../.local/secrets/master}
+  control: {file: ../../.local/secrets/control}
+  signer: {file: ../../.local/secrets/signer}
+  runtime: {file: ../../.local/secrets/runtime}

@@ -1,0 +1,155 @@
+{
+  "testedAt": "2026-10-25T16:28:45.341Z",
+  "model": "openai/gpt-oss-20b",
+  "network": "mainnet",
+  "mode": "READ",
+  "projects": [
+    {
+      "project": "Blend Pools V2",
+      "prompt": "Read the current reward zone.",
+      "providerStatus": 200,
+      "tool": "reward_zone",
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CAQQR5SWBXKIGZKPBZDH3KM5GQ5GUTPKB7JAFCINLZBC5WXPJKRG3IM7",
+        "source_kind": "wasm",
+        "interface_hash": "fcad8901cec335d75990780b64fe75176445c9ae6d5a58cacc5f2d7cc911a3f9",
+        "wasm_hash": "c1f4502a757e25c611f5a159bc1ab0eef64085adac6c68123dca66e87faffbc2",
+        "function_name": "reward_zone",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T16:28:46.535Z",
+        "data": []
+      },
+      "ok": true
+    },
+    {
+      "project": "Stellar DeFi Hub",
+      "prompt": "Read the total assets in this vault.",
+      "providerStatus": 200,
+      "tool": "total_assets",
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CALFCZ4TY2CLHDHNJWCZX6JKYGUPV7P3GNQ3UVABXNE5JCV2E774APUM",
+        "source_kind": "wasm",
+        "interface_hash": "942c0310da4be8961c431a907b0d8afce7b6e95f4a455de2f3a1696ac27820d5",
+        "wasm_hash": "3bd05dfa2bf65299d359e86a4672a45900e8c5768d9f056ad8da5ccd779bcd12",
+        "function_name": "total_assets",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T16:28:47.498Z",
+        "data": "402480021191530"
+      },
+      "ok": true
+    },
+    {
+      "project": "Aquarius Stellar",
+      "prompt": "How many token sets does this router have?",
+      "providerStatus": 200,
+      "tool": "get_tokens_sets_count",
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+        "source_kind": "wasm",
+        "interface_hash": "cb33a2c7e6a5c707f75ac0e900bfb832d0778550ebe24c45303abd592e7f1d62",
+        "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+        "function_name": "get_tokens_sets_count",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T16:28:48.107Z",
+        "data": "325"
+      },
+      "ok": true
+    },
+    {
+      "project": "Upshift",
+      "prompt": "What is the name of this vault?",
+      "providerStatus": 200,
+      "tool": "name",
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+        "source_kind": "wasm",
+        "interface_hash": "383b7568cd63056f5b44e00aed0b2cd74960e980af388de7cc73274145e47d80",
+        "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T16:28:49.009Z",
+        "data": "earnXLM"
+      },
+      "ok": true
+    },
+    {
+      "project": "Gami Labs",
+      "prompt": "What is the name of this vault?",
+      "providerStatus": 200,
+      "tool": "name",
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CCL3WITWFFXIHV2I52ECV5DPIEOFSTU3PBPR53ILPLF2IP5KHECXRUTY",
+        "source_kind": "wasm",
+        "interface_hash": "383b7568cd63056f5b44e00aed0b2cd74960e980af388de7cc73274145e47d80",
+        "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T16:28:49.597Z",
+        "data": "earnUSDC"
+      },
+      "ok": true
+    },
+    {
+      "project": "DeFindex",
+      "prompt": "What is the name of this vault?",
+      "providerStatus": 200,
+      "tool": "name",
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+        "source_kind": "wasm",
+        "interface_hash": "3f4dbb1bc2e6e1dcd3058a15cd661826d729ff22635ac71967e6a1f684aaacbe",
+        "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T16:28:50.097Z",
+        "data": "DeFindex-Vault-BeansUsdcVault"
+      },
+      "ok": true
+    },
+    {
+      "project": "Sushi Stellar",
+      "prompt": "Read the protocol fee for token 0.",
+      "providerStatus": 200,
+      "tool": "get_protocol_fee_0",
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CD3KRKGDRVWPXVB3VXLUMQKMX6XZ6Q2H334IVZD4XXNAMKSRVQL5GLYF",
+        "source_kind": "wasm",
+        "interface_hash": "ae013ca822e267cb2dd79de6af663c515a7f3cc681bbefe51b44fa944da42d26",
+        "wasm_hash": "9f94c577ea24c2f71cbb0c964c9c9d321e02448d1fe946020afb18974b1c2602",
+        "function_name": "get_protocol_fee_0",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T16:28:50.644Z",
+        "data": 4
+      },
+      "ok": true
+    }
+  ]
+}

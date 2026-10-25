@@ -1,0 +1,267 @@
+{
+  "testedAt": "2026-10-25T17:35:43.293Z",
+  "model": "openai/gpt-oss-20b",
+  "network": "mainnet",
+  "mode": "READ",
+  "projects": [
+    {
+      "project": "Blend Pools V2",
+      "prompt": "Read the current reward zone.",
+      "providerStatus": 200,
+      "tool": "reward_zone",
+      "expectedTool": "reward_zone",
+      "toolMatchesRequest": true,
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CAQQR5SWBXKIGZKPBZDH3KM5GQ5GUTPKB7JAFCINLZBC5WXPJKRG3IM7",
+        "source_kind": "wasm",
+        "interface_hash": "814abb7be2989f1907ce676b01b782a826dcbae4adf28b67666ee333f63932ae",
+        "wasm_hash": "c1f4502a757e25c611f5a159bc1ab0eef64085adac6c68123dca66e87faffbc2",
+        "function_name": "reward_zone",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:35:45.271Z",
+        "data": []
+      },
+      "ok": true
+    },
+    {
+      "project": "Stellar DeFi Hub",
+      "prompt": "Read the total assets in this vault.",
+      "providerStatus": 200,
+      "tool": "total_assets",
+      "expectedTool": "total_assets",
+      "toolMatchesRequest": true,
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CALFCZ4TY2CLHDHNJWCZX6JKYGUPV7P3GNQ3UVABXNE5JCV2E774APUM",
+        "source_kind": "wasm",
+        "interface_hash": "5dec4475b10b18e6099b48402c7c1dc63d328348883d820501c972ba45193e70",
+        "wasm_hash": "3bd05dfa2bf65299d359e86a4672a45900e8c5768d9f056ad8da5ccd779bcd12",
+        "function_name": "total_assets",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:35:45.952Z",
+        "data": "402480021191530"
+      },
+      "ok": true
+    },
+    {
+      "project": "Aquarius Stellar",
+      "prompt": "How many token sets does this router have?",
+      "providerStatus": 200,
+      "tool": "get_tokens_sets_count",
+      "expectedTool": "get_tokens_sets_count",
+      "toolMatchesRequest": true,
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+        "source_kind": "wasm",
+        "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+        "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+        "function_name": "get_tokens_sets_count",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:35:46.549Z",
+        "data": "325"
+      },
+      "ok": true
+    },
+    {
+      "project": "Upshift",
+      "prompt": "What is the name of this vault?",
+      "providerStatus": 200,
+      "tool": "name",
+      "expectedTool": "name",
+      "toolMatchesRequest": true,
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+        "source_kind": "wasm",
+        "interface_hash": "84d159f821d7c760c465d812c1254ddce4857c89aa895f1dfd5ede5b910340bd",
+        "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:35:47.342Z",
+        "data": "earnXLM"
+      },
+      "ok": true
+    },
+    {
+      "project": "Gami Labs",
+      "prompt": "What is the name of this vault?",
+      "providerStatus": 200,
+      "tool": "name",
+      "expectedTool": "name",
+      "toolMatchesRequest": true,
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CCL3WITWFFXIHV2I52ECV5DPIEOFSTU3PBPR53ILPLF2IP5KHECXRUTY",
+        "source_kind": "wasm",
+        "interface_hash": "84d159f821d7c760c465d812c1254ddce4857c89aa895f1dfd5ede5b910340bd",
+        "wasm_hash": "4b3d9f6b09f7127b0ce81b0ce9d8428f3f960e4e3ce13c11c1cbb446cccc9e73",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:35:48.223Z",
+        "data": "earnUSDC"
+      },
+      "ok": true
+    },
+    {
+      "project": "DeFindex",
+      "prompt": "What is the name of this vault? Use its name tool.",
+      "providerStatus": 200,
+      "tool": "name",
+      "expectedTool": "name",
+      "toolMatchesRequest": true,
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+        "source_kind": "wasm",
+        "interface_hash": "a9f6b8697f677d82f021656cdb93e2427c7158f6378de7605dbc4c3dd03ce657",
+        "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:35:49.060Z",
+        "data": "DeFindex-Vault-BeansUsdcVault"
+      },
+      "ok": true
+    },
+    {
+      "project": "Sushi Stellar",
+      "prompt": "Read the protocol fee for token 0.",
+      "providerStatus": 200,
+      "tool": "get_protocol_fee_0",
+      "expectedTool": "get_protocol_fee_0",
+      "toolMatchesRequest": true,
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CD3KRKGDRVWPXVB3VXLUMQKMX6XZ6Q2H334IVZD4XXNAMKSRVQL5GLYF",
+        "source_kind": "wasm",
+        "interface_hash": "2a6a12b1f92fbe5c46279a08dbd20c7442dd920a0ec61f4f795713590458c6ad",
+        "wasm_hash": "9f94c577ea24c2f71cbb0c964c9c9d321e02448d1fe946020afb18974b1c2602",
+        "function_name": "get_protocol_fee_0",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:35:49.840Z",
+        "data": 4
+      },
+      "ok": true
+    },
+    {
+      "project": "Templar Protocol",
+      "prompt": "Read the name of this experimental vault.",
+      "providerStatus": 200,
+      "tool": "name",
+      "expectedTool": "name",
+      "toolMatchesRequest": true,
+      "arguments": {},
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CDBBJXSK22AFN34GHAHOLZVEZOHSXGWZYMBMYPFRYBJSO5D7BTN7P6QX",
+        "source_kind": "wasm",
+        "interface_hash": "899d21735bec1b7872b280ff0c3fd527d926af2f57cf6a00802b614aee9bff2e",
+        "wasm_hash": "6e00a774d7ad80e70d4243049c23be3a8f7159dcb2a1da540140c0fee9fa6fa1",
+        "function_name": "name",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:35:50.731Z",
+        "data": {
+          "tag": "Ok",
+          "values": [
+            "Test Templar USDC"
+          ]
+        }
+      },
+      "ok": true
+    },
+    {
+      "project": "Stellar DEX",
+      "prompt": "Read the account balances for GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA.",
+      "providerStatus": 200,
+      "tool": "account_balances",
+      "expectedTool": "account_balances",
+      "toolMatchesRequest": true,
+      "arguments": {
+        "account": "GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
+      },
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "classic:stellar-dex",
+        "source_kind": "classic_dex",
+        "interface_hash": "ee717b8ae6be1346205daccd034754897e2016c39d48a5faef93123c5c60c9ba",
+        "function_name": "account_balances",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:35:51.222Z",
+        "data": [
+          {
+            "asset": "native",
+            "balance": "336717608013",
+            "buying_liabilities": "0",
+            "selling_liabilities": "0",
+            "authorized": true
+          }
+        ]
+      },
+      "ok": true
+    },
+    {
+      "project": "Stellar AMM",
+      "prompt": "Read the reserves of classic liquidity pool 0000a8198b5e25994c1ca5b0556faeb27325ac746296944144e0a7406d501e8a.",
+      "providerStatus": 200,
+      "tool": "liquidity_pool",
+      "expectedTool": "liquidity_pool",
+      "toolMatchesRequest": true,
+      "arguments": {
+        "pool_id": "0000a8198b5e25994c1ca5b0556faeb27325ac746296944144e0a7406d501e8a"
+      },
+      "mcp": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "classic:stellar-amm",
+        "source_kind": "classic_amm",
+        "interface_hash": "cb04e5b6ec7d604192be4d523d55205822cf4da38481c48b56168d3acebf40d2",
+        "function_name": "liquidity_pool",
+        "ok": true,
+        "result_status": "READ_ONLY",
+        "read_at": "2026-10-25T17:35:52.107Z",
+        "data": {
+          "pool_id": "0000a8198b5e25994c1ca5b0556faeb27325ac746296944144e0a7406d501e8a",
+          "total_shares": "54942144063",
+          "total_trustlines": "1",
+          "reserves": [
+            {
+              "asset": "native",
+              "amount": "2687758"
+            },
+            {
+              "asset": "GOLDBANK001:GDEUQ2MX3YXMITFOTC3CO3GW5V3XE3IVG7JKLZZAOZ7WFYIN256INDUS",
+              "amount": "2094082988023562"
+            }
+          ]
+        }
+      },
+      "ok": true
+    }
+  ]
+}

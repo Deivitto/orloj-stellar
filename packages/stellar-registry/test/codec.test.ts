@@ -78,9 +78,7 @@ describe("strict codec", () => {
     );
   });
   for (const node of [
-    { kind: "Vec", item: { kind: "Option", item: { kind: "u32" } } },
     { kind: "Option", item: { kind: "Option", item: { kind: "u32" } } },
-    { kind: "Vec", item: { kind: "Vec", item: { kind: "u32" } } },
     { kind: "BytesN", size: 257 },
   ] as TypeNode[])
     it(`excludes unsupported ${JSON.stringify(node)}`, () =>

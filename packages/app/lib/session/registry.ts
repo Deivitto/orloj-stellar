@@ -1,3 +1,5 @@
+import {assertRuntimeReady} from "./runtime-readiness";
+import { getPool } from "@/lib/db";
 import { randomUUID } from "node:crypto";
 import { getActiveTokenForAgent } from "@/lib/mcp-tokens";
 import { ZeroClawAcpSession } from "./acp-client";
@@ -21,6 +23,7 @@ export type LiveSession = {
   sessionId: string;
   agentId: string;
   userId: string;
+  instanceId: string;
   acpSessionId: string;
   session: ZeroClawAcpSession;
   mcps: McpSelectionItem[];
@@ -73,7 +76,10 @@ export const killByAgent = (agentId: string): void => {
   }
 };
 
-export const sessionForAgent = (agentId: string, userId: string): LiveSession | undefined => {
+export const sessionForAgent = (
+  agentId: string,
+  userId: string,
+): LiveSession | undefined => {
   for (const entry of store.sessions.values()) {
     if (entry.agentId === agentId && entry.userId === userId) return entry;
   }
@@ -81,7 +87,10 @@ export const sessionForAgent = (agentId: string, userId: string): LiveSession | 
 };
 
 // A userId mismatch reads as absent, so session ids are not probeable.
-export const getSession = (sessionId: string, userId: string): LiveSession | undefined => {
+export const getSession = (
+  sessionId: string,
+  userId: string,
+): LiveSession | undefined => {
   const entry = store.sessions.get(sessionId);
   return entry && entry.userId === userId ? entry : undefined;
 };
@@ -134,6 +143,7 @@ const doCreate = async (opts: {
   acpSessionId?: string;
 }): Promise<CreateResult> => {
   const { agentId, userId, mcpNames, acpSessionId } = opts;
+  await assertRuntimeReady();
 
   const token = await getActiveTokenForAgent(agentId);
   if (!token) throw new NoActiveTokenError(agentId);
@@ -145,7 +155,18 @@ const doCreate = async (opts: {
   // start's selection.
   const { entries, dropped } = await resolveMcpServers(mcpNames, token);
 
-  const { dir } = await provisionConfigDir(agentId);
+  const pool = await getPool();
+  const owned = (
+    await pool.query(
+      "SELECT instance_id FROM agent_ownership WHERE agent_id=$1 AND user_id=$2",
+      [agentId, userId],
+    )
+  ).rows[0];
+  if (!owned) throw new Error("Agent ownership changed");
+  const { dir } = await provisionConfigDir(agentId, {
+    userId,
+    instanceId: owned.instance_id,
+  });
   // session/new rejects a cwd that does not exist yet, and zeroclaw only creates the
   // workspace once a session exists. Idempotent, so it also repairs an older dir.
   const workspaceDir = await ensureWorkspaceDir(agentId);
@@ -159,7 +180,12 @@ const doCreate = async (opts: {
   const mcps = await writeMcpSelection(dir, entries);
   // Must follow writeMcpSelection: it validates the config it patches, and the `remote` bundle
   // grant does not resolve until the managed block has defined the bundle.
-  await applyManagedConfig(dir);
+  await applyManagedConfig(
+    dir,
+    entries.flatMap((e) =>
+      (e.approvedTools ?? []).map((t) => `${e.serverName}__${t}`),
+    ),
+  );
 
   const session = new ZeroClawAcpSession({ configDir: dir, workspaceDir });
   try {
@@ -183,12 +209,23 @@ const doCreate = async (opts: {
     sessionId: randomUUID(),
     agentId,
     userId,
+    instanceId: owned.instance_id,
     acpSessionId: acpId,
     session,
     mcps,
     lastSeen: Date.now(),
     busy: false,
   };
+  const current = (
+    await pool.query(
+      "SELECT 1 FROM agent_ownership WHERE agent_id=$1 AND user_id=$2 AND instance_id=$3",
+      [agentId, userId, owned.instance_id],
+    )
+  ).rowCount;
+  if (!current) {
+    session.destroy();
+    throw new Error("Agent ownership changed");
+  }
   store.sessions.set(entry.sessionId, entry);
   ensureSweeper();
   ensureShutdownHooks();
@@ -210,10 +247,19 @@ export const createSession = async (opts: {
   mcpNames: string[];
   acpSessionId?: string;
 }): Promise<CreateResult> => {
-  const inflight = store.creating.get(opts.agentId);
+  const pool = await getPool();
+  const owned = (
+    await pool.query(
+      "SELECT instance_id FROM agent_ownership WHERE agent_id=$1 AND user_id=$2",
+      [opts.agentId, opts.userId],
+    )
+  ).rows[0];
+  if (!owned) throw new Error("Agent ownership changed");
+  const key = `${opts.agentId}:${owned.instance_id}:${opts.userId}`;
+  const inflight = store.creating.get(key);
   if (inflight) return inflight;
-  const promise = doCreate(opts).finally(() => store.creating.delete(opts.agentId));
-  store.creating.set(opts.agentId, promise);
+  const promise = doCreate(opts).finally(() => store.creating.delete(key));
+  store.creating.set(key, promise);
   return promise;
 };
 
@@ -223,9 +269,27 @@ export const resetSession = async (
   userId: string,
 ): Promise<string | null> => {
   const entry = getSession(sessionId, userId);
-  if (!entry) return null;
+  if (!entry || !(await currentSessionOwner(entry))) return null;
   const next = await entry.session.resetSession();
   entry.acpSessionId = next;
   touch(entry);
   return next;
+};
+
+export const currentSessionOwner = async (
+  entry: LiveSession,
+): Promise<boolean> => {
+  const pool = await getPool();
+  const valid = (
+    await pool.query(
+      "SELECT 1 FROM agent_ownership WHERE agent_id=$1 AND user_id=$2 AND instance_id=$3",
+      [entry.agentId, entry.userId, entry.instanceId],
+    )
+  ).rowCount;
+  if (!valid) {
+    entry.session.destroy();
+    store.sessions.delete(entry.sessionId);
+    return false;
+  }
+  return true;
 };

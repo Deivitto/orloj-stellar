@@ -1,6 +1,6 @@
 # Orloj Stellar registry
 
-A separate TypeScript service for Soroban WASM contracts. It exposes strict MCP tools, simulates reads, and supports explicitly allowed testnet writes. The existing EVM registry and web app remain separate. See the repository's master specification v1.1.
+A separate TypeScript service for Soroban WASM and built-in Stellar asset contracts. It exposes strict MCP tools, simulates reads, and supports explicitly allowed testnet writes. The existing EVM registry remains separate. The app has a Stellar-first local product mode. See the repository's master specification v1.5 and the [full local product runbook](../../infra/local/README.md) for app login, wallets, managed limits, runtime isolation, backup and recovery.
 
 ## Local setup
 
@@ -43,7 +43,7 @@ The credential command writes a new token file with mode 0600 and never prints i
 - Operator CLI: `inspect <wasm>`, `register <contractId> [matching-wasm]`, `credential <principal> <new-token-file>`, `revoke <token-file>`, `migrate`.
 - Authenticated CLI: `list <contractId>`, `call <contractId> <tool> <arguments-json-file> [idempotency-key]`, `status <idempotency-key>`. Arguments are read from a file to avoid shell quoting and accidental secret interpolation. JSON envelopes go to stdout; sanitized operational events go to stderr.
 
-WASM uploads are inspection-only until matched to a deployed contract. Built-in Stellar Asset Contracts have no deployed WASM and are outside this release. Unsupported functions are reported with exclusion reasons. Re-register after a WASM upgrade; invocation rejects stale cached code.
+WASM uploads are inspection-only until matched to a deployed contract. Built-in Stellar Asset Contracts use a verified protocol-specific specification and have no WASM hash. Unsupported functions are reported with exclusion reasons. Re-register after a WASM upgrade; invocation rejects stale cached code.
 
 ## Writes and recovery
 
@@ -57,7 +57,7 @@ A crash after durable intent but before submission can leave an attempt that was
 
 If on-chain execution succeeds but its result cannot be decoded, the response retains `SUBMITTED_AND_CONFIRMED`, the hash, and a decoding error. Do not repeat that action. Confirmed failures use `FAILED_ON_CHAIN`; polling deadlines use `TIMEOUT` and `TRANSACTION_PENDING_TIMEOUT`.
 
-Credentials are hashed at rest. Logs omit arguments, secrets, signatures, raw XDR, RPC exceptions, and stacks. Requests are limited to 2 MiB and 60 requests per principal/contract per minute, shared through PostgreSQL. The HTTP server binds to loopback by default; place it behind a TLS reverse proxy for remote use. Protect operator filesystem/database access separately from agent credentials.
+Credentials are hashed at rest. Logs omit arguments, secrets, signatures, raw XDR, RPC exceptions, and stacks. Requests are limited to 1 MiB and 60 requests per principal/contract per minute, shared through PostgreSQL. The HTTP server binds to loopback by default; place it behind a TLS reverse proxy for remote use. Protect operator filesystem/database access separately from agent credentials.
 
 ## Tests and reproducible testnet demo
 
@@ -102,3 +102,77 @@ The browser SDK is pinned and served locally from the installed package. Signing
 Keep this operator harness on loopback. It injects `BrowserSigner` into the existing executor; the normal service CLI retains its environment-signer setup. Each explicit process restart can start a new test, subject to the durable account reservation rules. Use Ctrl+C to close the local harness and revoke its temporary MCP credential.
 
 Evidence is written to `demo-contract/wallet-read-evidence.json` and `demo-contract/freighter-evidence.json`, containing public account/transaction data only. Built-in USDC contract support remains a separate adapter task; this wallet test uses the WASM counter contract.
+
+## Complete interfaces and assets (v1.2)
+
+Run `pnpm cli migrate` before starting this release. Migration 003 adds source kind and interface identity, backfills existing WASM records, and preserves write attempts and hashes. Re-register contracts to regenerate expanded schemas and the complete inventory. Existing WASM responses retain `wasm_hash`; all new responses include `source_kind` and `interface_hash`. Asset responses omit `wasm_hash`.
+
+```sh
+pnpm cli register-asset native
+pnpm cli register-asset USDC GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5
+pnpm cli inventory YOUR_CONTRACT_ID
+pnpm cli amount parse 1.0000001 7
+```
+
+Registration verifies the executable and never deploys or signs. A contract ID works for both WASM and assets. Asset descriptors derive IDs using the configured network; they do not prove deployment until RPC verification succeeds. The initial SAC adapter verifies protocol **29** only. Other protocols return `UNSUPPORTED_PROTOCOL`; upgrades require a verified adapter and re-registration. Provenance and the upstream license are in `fixtures/`.
+
+MCP `resources/list` exposes `orloj://contracts/<contractId>/interface`; `resources/read` returns all public signatures, eligibility, native-asset restrictions, exclusion reasons and the caller's current tool availability. `tools/list` exposes policy-enabled methods only. All 17 public asset methods are represented, including `trust`, allowance operations and administrative methods. Initialization belongs to deployment and is excluded. Native XLM cannot mint, burn, claw back, change administrators or create asset trustlines. Issued assets require actual admin authority; balances, trustlines, authorization and clawback flags still govern calls. Currently, the signer supports one G account per executor; arbitrary multisignature or contract-account authorization is not implemented.
+
+SAC parameter names follow the pinned host interface: `balance` takes `addr`, `transfer` takes `from`, `to_mux`, `amount`, and `approve` takes `from`, `spender`, `amount`, `live_until_ledger`. Use discovery for exact names. `Address` accepts G/C; protocol-29 `MuxedAddress` also accepts M. Future W addresses remain disabled until the protocol adapter is verified. Stable asset error codes explain balance, authorization, missing trustline, allowance, reserve and unsupported-operation failures without exposing RPC diagnostics.
+
+Amounts are i128 decimal strings in **base units**. Verified SAC decimals are 7, so 1 USDC is `"10000000"`. `parseAmount`/`formatAmount` in `src/assets.ts` and the `amount` CLI convert exactly without rounding. Resolve asset identity by network and contract/issuer, not symbol alone. The AI client translates plain text into these discovered tools; Orloj does not add an AI chat model.
+
+The expanded grammar supports bounded vectors, typed maps as pair arrays, fixed tuples, enums as case-name strings, unions as strict `{tag,values}` objects and nested nonrecursive structs. Options use null for None; nested options and Option<void> remain excluded. u64/i64/u128/i128 retain decimal strings. Limits: type depth 8, 100 items per collection, 1,000 aggregate value nodes and 1 MiB arguments/results. A function with any unsupported type is excluded in full. Recursive definitions, ambiguous options and nested/input Result annotations remain excluded. Declared Val uses explicit tagged JSON; Result returns and u256/i256 are supported as described below. Map keys are encoded and canonically sorted by the SDK; duplicate encoded keys are rejected.
+
+### Reproducible asset checks
+
+```sh
+pnpm build
+pnpm assets:read YOUR_PUBLIC_G_ADDRESS
+pnpm assets:test
+pnpm wallet:test YOUR_PUBLIC_G_ADDRESS PROJECT_TEST_RECIPIENT_G_ADDRESS
+```
+
+The read script checks live XLM and Circle USDC through authenticated MCP. The write script creates isolated Friendbot-funded accounts and a disposable ORLOJTEST asset, then exercises all 17 public methods, expected authorization failures and duplicate reconciliation. Its keys exist only inside the test process. Setup uses classic operations separately; registry registration never submits them. Freighter's optional recipient argument selects a single **one-stroop testnet XLM transfer**, while omitting it retains the counter test. The local page displays the recipient and amount before running.
+
+Public evidence is saved in `demo-contract/assets-read-evidence.json`, `assets-write-evidence.json`, and `freighter-asset-evidence.json`. The Freighter asset test confirmed transaction `9eceeeeac7a61007427ebadbb199ab09d3cddabf4958df32d94a11669f4e3bdc` at ledger 5382311 with one signature; its duplicate returned the same hash. Tests do not enable production write policies or mainnet writes.
+
+
+## Audit remediation and classic Stellar
+
+WASM schema identity now uses encoding v5. Re-register existing WASM contracts before invoking them with this build; old write attempts remain reconcilable with their original schemas and hashes. New eligible functions do not acquire policies automatically.
+
+Top-level declared `Result<T,E>` returns produce `{ "tag": "Ok", "values": [value] }` on successful execution. Declared contract failures use `CONTRACT_EXECUTION_FAILED` and sanitized numeric/name metadata. Result inputs/nested Results and ambiguous options remain excluded. u256/i256 use exact canonical decimal strings. Inventory exclusions now retain the declared signature and failing type location.
+
+`CPU_INSTRUCTION_LEEWAY` defaults to 1,000,000 instructions and accepts integers from 0 through 10,000,000. It is passed to the final enforced SDK simulation. It changes resource declarations and their fee estimate; `MAX_FEE` remains the hard cap. The separate 20% resource-fee buffer does not add CPU instructions. A rejected fee estimate never authorizes increasing a wallet grant.
+
+Register classic adapters with `register classic:stellar-dex` or `register classic:stellar-amm`, or use the app's registration buttons. These identifiers are explicit adapter IDs, not Soroban addresses. Their MCP routes are `/contracts/classic:stellar-dex/mcp` and `/contracts/classic:stellar-amm/mcp`, preserving the registry's shared routing/policy convention. They have `source_kind` classic_dex/classic_amm and no WASM hash. Run migration 007 before starting the upgraded service.
+
+Classic tools cover account balances, offers, order books, constant-product pool reads, asset/pool trustlines, sell-offer creation/update/cancellation, pool deposits and withdrawals. Assets use `native` or `CODE:ISSUER`; amounts use base-unit decimal strings (seven decimals), and prices use exact `{n,d}` rational objects. READ_ONLY means a Horizon query, not Soroban simulation. Writes perform ledger/account/reserve/authorization preflight, use the shared durable lock/intent/single-submission/getTransaction pipeline, and require owner Freighter approval in product mode. Managed wallets cannot execute classic writes. Network state can still change after preflight, so confirmed failure remains a possible terminal result.
+
+Manual acceptance commands (no scheduled or push-triggered checks):
+
+```sh
+TEST_DATABASE_URL=postgres://... pnpm --filter @orloj/stellar-registry test
+node --test packages/app/test/stellar-mcp-selection.test.mjs
+DATABASE_URL=postgres://... node packages/stellar-registry/scripts/test-classic-testnet.mjs
+```
+
+The last command creates disposable Friendbot-funded wallets and a project fixture asset; it does not use a Freighter key. Public audit evidence is in `demo-contract/top10-audit/`. User-wallet signing payloads remain confined to the owner signing channel. Browser owner acceptance is separately recorded in `classic-app-results.json`.
+
+### Managed exact-call grants and declared Val
+
+The owner can enable a managed Testnet wallet for an exact invocation from the wallet/tool screen. The grant binds `interfaceHash` and normalized `arguments`, with `maxCalls` (1–100 calls per rolling day), `maxFee` (at most 3,000,000,000 stroops = 300 test XLM), and `rollingFee` (at most 10,000,000,000 stroops = 1,000 test XLM). Defaults allow one call. Writes remain disabled until explicitly configured. Classic adapters still require Freighter.
+
+An exact grant authorizes the complete invocation, including its asset effects. It does not infer spending amounts from arbitrary arguments. Existing SAC transfer grants continue to enforce recipients and exact amount budgets. Call quotas span policy revisions for each wallet/contract/method, unresolved reservations count regardless of age, and all managed calls share the rolling fee exposure. Credential, owner, wallet, code identity and policy checks still apply before durable intent. No automatic resubmission is added. Upgrades require re-registration and an owner-issued grant for the new interface hash.
+
+Declared `Val` uses `{ "type": "i128", "value": "123" }`, `{ "type": "address", "value": "G..." }`, `{ "type": "vec", "value": [...] }` or `{ "type": "map", "value": [[key,value],...] }`. Other tags mirror supported ScVal leaves: bool, u32, i32, u64, i64, u128, u256, i256, string, symbol, bytes, void, timepoint, duration and error. Void carries null. Error carries `{kind:"sceContract",code:7}` or an SDK error category and code. Values retain exact existing integer/address encodings; nothing guesses a type from its contents. Eight value containers, 100 items/collection, 1,000 aggregate nodes and 1 MiB payload limits apply. Option<Val> is excluded because Void makes its encoding ambiguous. Internal ledger-key/contract-instance values are excluded. Direct declared error enums encode their real contract error codes and expose declared case names.
+
+Manual live acceptance (requires an existing local PostgreSQL test database; consumes free Testnet assets only):
+
+```sh
+pnpm --filter @orloj/stellar-registry build
+TEST_DATABASE_URL=postgres://localhost/orloj_stellar node packages/stellar-registry/scripts/test-managed-calls.mjs
+```
+
+This creates an isolated schema and managed administrator/holder/delegate wallets, then exercises real MCP asset methods and confirms each submitted hash. The isolated signer master key is ephemeral: these test wallets are disposable, cannot be recovered after the script exits, and are separate from product wallets. History is retained in the test schema for inspection. It neither configures existing user grants nor claims browser-chat acceptance. The mainnet `test-tagged-mainnet.mjs` probe requires a private read-only mainnet env file and performs no submissions.

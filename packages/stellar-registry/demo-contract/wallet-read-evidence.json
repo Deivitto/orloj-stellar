@@ -1,5 +1,5 @@
 {
-  "testedAt": "2026-10-25T12:26:34.176Z",
+  "testedAt": "2026-10-25T13:37:36.001Z",
   "network": "testnet",
   "wallet": "GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK",
   "contractId": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
@@ -15,7 +15,7 @@
         },
         {
           "asset": "XLM",
-          "balance": "9999.9999900"
+          "balance": "9999.9990035"
         }
       ]
     },
@@ -34,23 +34,27 @@
       "mode": "READ",
       "network": "testnet",
       "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "source_kind": "wasm",
+      "interface_hash": "56103eb00b203c24344038bc47676d9657e7d718df9d9bc8e20a2f8bd9e0e5db",
       "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
       "function_name": "count",
       "ok": true,
       "result_status": "SIMULATED",
-      "simulated_at": "2026-10-25T12:26:36.120Z",
-      "data": 2
+      "simulated_at": "2026-10-25T13:37:38.009Z",
+      "data": 3
     },
     {
       "check": "wallet_address_round_trip",
       "mode": "READ",
       "network": "testnet",
       "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "source_kind": "wasm",
+      "interface_hash": "56103eb00b203c24344038bc47676d9657e7d718df9d9bc8e20a2f8bd9e0e5db",
       "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
       "function_name": "echo_address",
       "ok": true,
       "result_status": "SIMULATED",
-      "simulated_at": "2026-10-25T12:26:36.650Z",
+      "simulated_at": "2026-10-25T13:37:38.880Z",
       "data": "GAKOUU3TK4VZQEOKAYCGLGXILNXS2TC43KC63CGFIZDJWPYBS2Y7KPTK"
     },
     {
@@ -58,6 +62,8 @@
       "mode": "READ",
       "network": "testnet",
       "contract_id": "CDE5GSVKUT3KOITP6XL6LLLXXKFNRLC7PN34WUCLG565HC46S6QYPKWB",
+      "source_kind": "wasm",
+      "interface_hash": "56103eb00b203c24344038bc47676d9657e7d718df9d9bc8e20a2f8bd9e0e5db",
       "wasm_hash": "2a628b0bf8bbf4454de5e130cbdfc095ba89e5584405483ace1c76e14ef82f86",
       "function_name": "authorized",
       "ok": false,

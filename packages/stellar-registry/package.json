@@ -14,7 +14,9 @@
     "demo:deploy": "node scripts/deploy-testnet.mjs",
     "demo": "node scripts/demo-testnet.mjs",
     "wallet:test": "node scripts/test-freighter.mjs",
-    "wallet:read": "node scripts/test-wallet-read.mjs"
+    "wallet:read": "node scripts/test-wallet-read.mjs",
+    "assets:read": "node scripts/test-assets-read.mjs",
+    "assets:test": "node scripts/test-assets-write.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.2",

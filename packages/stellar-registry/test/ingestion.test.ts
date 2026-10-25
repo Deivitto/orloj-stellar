@@ -8,7 +8,7 @@ const c = parseConfig({
   databaseUrl: "postgres://localhost/test",
   simulationSource: Keypair.random().publicKey(),
 });
-it("extracts the real demo WASM spec and excludes its nested vector function", async () => {
+it("extracts the real demo WASM spec including its newly supported nested vector", async () => {
   const wasm = await readFile(
     new URL(
       "../demo-contract/artifacts/orloj_stellar_demo.wasm",
@@ -16,23 +16,17 @@ it("extracts the real demo WASM spec and excludes its nested vector function", a
     ),
   );
   const i = inspect(wasm, c);
-  expect(i.functions.length).toBe(19);
+  expect(i.functions.length).toBe(20);
   expect(
     i.functions.find((f) => f.sorobanName === "echo_record")?.params[0].type
       .structFields,
   ).toHaveLength(3);
-  expect(i.excluded).toContainEqual({
-    name: "unsupported",
-    error_code: "UNSUPPORTED_SOROBAN_TYPE",
-  });
+  expect(i.functions.some((f) => f.sorobanName === "unsupported")).toBe(true);
   expect(i.contractId).toBe("");
 });
-it("rejects malformed WASM and unsupported map, tuple, result, val and recursive types", () => {
+it("rejects malformed WASM and unknown referenced types", () => {
   expect(() => inspect(new Uint8Array([1, 2, 3]), c)).toThrow("specification");
-  const types = [
-    xdr.ScSpecTypeDef.scSpecTypeVal(),
-    xdr.ScSpecTypeDef.scSpecTypeU256(),
-  ];
+  const types = [xdr.ScSpecTypeDef.scSpecTypeUdt(new xdr.ScSpecTypeUdt({name:"Missing"}))];
   for (const t of types) expect(() => parseType(t, [])).toThrow("unsupported");
 });
 it("rejects duplicate exported functions and sanitized name collisions", async () => {
@@ -64,7 +58,7 @@ it("rejects duplicate exported functions and sanitized name collisions", async (
 it("reports excessive depth distinctly and does not assign modes to unbound uploads", async () => {
   const { inspectUpload } = await import("../src/ingestion.js");
   let t = xdr.ScSpecTypeDef.scSpecTypeU32() as xdr.ScSpecTypeDef;
-  for (let n = 0; n < 4; n++)
+  for (let n = 0; n < 10; n++)
     t = xdr.ScSpecTypeDef.scSpecTypeOption(
       new xdr.ScSpecTypeOption({ valueType: t }),
     );
@@ -78,4 +72,72 @@ it("reports excessive depth distinctly and does not assign modes to unbound uplo
   const preview = inspectUpload(wasm, c);
   expect(preview.callable).toBe(false);
   expect(preview.functions.every((f) => !("mode" in f))).toBe(true);
+});
+it("resolves map/tuple/enum/union specifications and rejects recursive definitions", () => {
+  const leaf = xdr.ScSpecTypeDef.scSpecTypeU32();
+  const udt = (name: string) =>
+    xdr.ScSpecTypeDef.scSpecTypeUdt(new xdr.ScSpecTypeUdt({ name }));
+  const en = xdr.ScSpecEntry.scSpecEntryUdtEnumV0(
+    new xdr.ScSpecUdtEnumV0({
+      doc: "",
+      lib: "",
+      name: "Choice",
+      cases: [new xdr.ScSpecUdtEnumCaseV0({ doc: "", name: "Yes", value: 7 })],
+    }),
+  );
+  const un = xdr.ScSpecEntry.scSpecEntryUdtUnionV0(
+    new xdr.ScSpecUdtUnionV0({
+      doc: "",
+      lib: "",
+      name: "Payload",
+      cases: [
+        xdr.ScSpecUdtUnionCaseV0.scSpecUdtUnionCaseTupleV0(
+          new xdr.ScSpecUdtUnionCaseTupleV0({
+            doc: "",
+            name: "Value",
+            type: [leaf],
+          }),
+        ),
+      ],
+    }),
+  );
+  const rec = xdr.ScSpecEntry.scSpecEntryUdtStructV0(
+    new xdr.ScSpecUdtStructV0({
+      doc: "",
+      lib: "",
+      name: "Recursive",
+      fields: [
+        new xdr.ScSpecUdtStructFieldV0({
+          doc: "",
+          name: "next",
+          type: udt("Recursive"),
+        }),
+      ],
+    }),
+  );
+  expect(parseType(udt("Choice"), [en])).toEqual({
+    kind: "Enum",
+    cases: [{ name: "Yes", value: 7 }],
+  });
+  expect(parseType(udt("Payload"), [un])).toEqual({
+    kind: "Union",
+    cases: [{ name: "Value", items: [{ kind: "u32" }] }],
+  });
+  expect(() => parseType(udt("Recursive"), [rec])).toThrow("unsupported");
+  expect(
+    parseType(
+      xdr.ScSpecTypeDef.scSpecTypeMap(
+        new xdr.ScSpecTypeMap({ keyType: leaf, valueType: udt("Choice") }),
+      ),
+      [en],
+    ).kind,
+  ).toBe("Map");
+  expect(
+    parseType(
+      xdr.ScSpecTypeDef.scSpecTypeTuple(
+        new xdr.ScSpecTypeTuple({ valueTypes: [leaf] }),
+      ),
+      [],
+    ).kind,
+  ).toBe("Tuple");
 });

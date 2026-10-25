@@ -1,0 +1,12 @@
+.git
+**/node_modules
+**/.next
+**/dist
+.local
+**/.env
+**/.env.*
+!**/.env.example
+**/target
+**/artifacts
+**/*.token
+.DS_Store

@@ -67,6 +67,12 @@ export class Store {
       for (const [version, file] of [
         [1, "001_initial.sql"],
         [2, "002_rate_limits.sql"],
+        [3, "003_interface_identity.sql"],
+        [4, "004_local_product.sql"],
+        [5, "005_app_identity.sql"],
+        [6, "006_signer_epoch.sql"],
+        [7, "007_classic_adapters.sql"],
+        [8, "008_exact_grants.sql"],
       ] as const) {
         const seen = await client.query(
           "SELECT version FROM stellar_migrations WHERE version=$1",
@@ -97,6 +103,28 @@ export class Store {
       client.release();
     }
   }
+  async intent(
+    client: pg.PoolClient,
+    id: string,
+    hash: string,
+    sequence: string,
+    maxTime: string,
+    guard?: (client: pg.PoolClient) => Promise<void>,
+  ) {
+    await client.query("BEGIN");
+    try {
+      if (guard) await guard(client);
+      const r = await client.query(
+        "UPDATE stellar_write_attempts SET state='INTENT',transaction_hash=$2,signed_sequence=$3,signed_max_time=$4,updated_at=now() WHERE id=$1 AND state='PREPARING' RETURNING id",
+        [id, hash, sequence, maxTime],
+      );
+      if (!r.rowCount) fail("WRITE_NOT_PERMITTED");
+      await client.query("COMMIT");
+    } catch (e) {
+      await client.query("ROLLBACK");
+      throw e;
+    }
+  }
   async rate(principal: string, contract: string, limit: number) {
     const minute = Math.floor(Date.now() / 60000);
     const result = await this.pool.query(
@@ -110,8 +138,15 @@ export class Store {
   }
   async save(i: ContractInterface) {
     await this.pool.query(
-      "INSERT INTO stellar_interfaces(network,contract_id,wasm_hash,interface) VALUES($1,$2,$3,$4) ON CONFLICT(network,contract_id,wasm_hash) DO UPDATE SET interface=EXCLUDED.interface,created_at=now()",
-      [i.network, i.contractId, i.wasmHash, i],
+      "INSERT INTO stellar_interfaces(network,contract_id,wasm_hash,interface,source_kind,interface_hash) VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT(network,contract_id,interface_hash) DO UPDATE SET interface=EXCLUDED.interface,created_at=now()",
+      [
+        i.network,
+        i.contractId,
+        i.wasmHash ?? null,
+        i,
+        i.sourceKind ?? "wasm",
+        i.interfaceHash ?? i.wasmHash,
+      ],
     );
   }
   async get(

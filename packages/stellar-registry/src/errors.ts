@@ -1,5 +1,13 @@
 export const codes = [
   "INVALID_CONTRACT_ID",
+  "UNSUPPORTED_PROTOCOL",
+  "ASSET_OPERATION_UNSUPPORTED",
+  "ASSET_BALANCE_ERROR",
+  "ASSET_NOT_AUTHORIZED",
+  "ASSET_TRUSTLINE_REQUIRED",
+  "ASSET_ALLOWANCE_ERROR",
+  "ASSET_RESERVE_ERROR",
+
   "SPEC_PARSE_FAILED",
   "DUPLICATE_FUNCTION_NAME",
   "UNSUPPORTED_SOROBAN_TYPE",
@@ -9,6 +17,8 @@ export const codes = [
   "AUTHORIZATION_REQUIRED",
   "SIMULATION_FAILED",
   "RESULT_DECODE_FAILED",
+  "CONTRACT_EXECUTION_FAILED",
+  "CLASSIC_QUERY_FAILED",
   "STRING_NOT_UTF8",
   "WRITE_NOT_PERMITTED",
   "SIGNER_NOT_CONFIGURED",
@@ -29,6 +39,16 @@ export const codes = [
 ] as const;
 export type ErrorCode = (typeof codes)[number];
 const messages: Record<ErrorCode, string> = {
+  UNSUPPORTED_PROTOCOL: "This network protocol has no verified asset adapter.",
+  ASSET_BALANCE_ERROR:
+    "The asset balance is insufficient or below its required reserve.",
+  ASSET_NOT_AUTHORIZED:
+    "The asset balance or trustline is not authorized for this operation.",
+  ASSET_TRUSTLINE_REQUIRED: "The destination needs a trustline for this asset.",
+  ASSET_ALLOWANCE_ERROR: "The delegated allowance is insufficient or expired.",
+  ASSET_RESERVE_ERROR:
+    "The account has insufficient XLM reserve to create the trustline.",
+  ASSET_OPERATION_UNSUPPORTED: "This operation is unavailable for this asset.",
   INVALID_CONTRACT_ID: "A valid Stellar contract address is required.",
   SPEC_PARSE_FAILED: "The contract specification could not be read.",
   DUPLICATE_FUNCTION_NAME: "The specification has duplicate functions.",
@@ -39,6 +59,8 @@ const messages: Record<ErrorCode, string> = {
   AUTHORIZATION_REQUIRED:
     "This function requires authorization that is not configured.",
   SIMULATION_FAILED: "Contract simulation failed.",
+  CLASSIC_QUERY_FAILED: "Classic Stellar ledger data could not be read.",
+  CONTRACT_EXECUTION_FAILED: "The contract returned an execution error.",
   RESULT_DECODE_FAILED: "The result does not match the declared type.",
   STRING_NOT_UTF8: "The returned string is not valid UTF-8.",
   WRITE_NOT_PERMITTED: "Write policy does not permit this operation.",
@@ -61,7 +83,10 @@ const messages: Record<ErrorCode, string> = {
   INTERNAL_ERROR: "The operation could not be completed.",
 };
 export class RegistryError extends Error {
-  constructor(public code: ErrorCode) {
+  constructor(
+    public code: ErrorCode,
+    public contractError?: { code: number; name?: string },
+  ) {
     super(messages[code]);
   }
 }
@@ -80,6 +105,7 @@ export function envelope(
     ...context,
     ok: false,
     error_code: e.code,
+    ...(e.contractError ? { contract_error: e.contractError } : {}),
     retryable: false,
     human_message: e.message,
   };

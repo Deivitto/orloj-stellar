@@ -12,7 +12,12 @@ import {
   type RequestPermissionRequest,
   type SessionNotification,
 } from "@agentclientprotocol/sdk";
-import { sessionTimeoutSecs, zeroclawBin, ZeroclawBinaryMissingError } from "./zeroclaw-config";
+import {
+  runtimeEnvironment,
+  sessionTimeoutSecs,
+  zeroclawBin,
+  ZeroclawBinaryMissingError,
+} from "./zeroclaw-config";
 
 export type ChunkSink = (text: string) => void;
 
@@ -47,13 +52,25 @@ export class ZeroClawAcpSession {
       "--session-timeout",
       String(sessionTimeoutSecs()),
     ];
-    const child = spawn(zeroclawBin(), args, { stdio: ["pipe", "pipe", "pipe"] });
+    if (
+      process.env.ORLOJ_PRODUCT === "stellar" &&
+      !process.env.RUNTIME_BROKER_URL
+    )
+      throw new ZeroclawBinaryMissingError("isolated runtime broker");
+    const child = spawn(zeroclawBin(), args, {
+      stdio: ["pipe", "pipe", "pipe"],
+      env: runtimeEnvironment(),
+    });
     this.child = child;
 
     await new Promise<void>((resolve, reject) => {
       const onError = (err: NodeJS.ErrnoException) => {
         this.exited = true;
-        reject(err.code === "ENOENT" ? new ZeroclawBinaryMissingError(zeroclawBin()) : err);
+        reject(
+          err.code === "ENOENT"
+            ? new ZeroclawBinaryMissingError(zeroclawBin())
+            : err,
+        );
       };
       child.once("error", onError);
       // No ready signal on stdout before initialize, so a spawn is "up" once the process
@@ -86,16 +103,24 @@ export class ZeroClawAcpSession {
 
   private handler(): Client {
     return {
-      // Yolo: prefer allow_always, then allow_once, then whatever is offered. Never a
+      // Stellar requests fail closed; contract approvals use the owner signing channel.
+      // Legacy behavior remains available for EVM sessions. Never a
       // reject outcome — this is the seam an approval UI would replace.
       requestPermission: (params: RequestPermissionRequest) => {
         const opts = params.options ?? [];
+        if (process.env.ORLOJ_PRODUCT === "stellar")
+          return { outcome: { outcome: "cancelled" as const } };
         const pick =
           opts.find((o: PermissionOption) => o.kind === "allow_always") ??
           opts.find((o: PermissionOption) => o.kind === "allow_once") ??
           opts[0];
         return pick
-          ? { outcome: { outcome: "selected" as const, optionId: pick.optionId } }
+          ? {
+              outcome: {
+                outcome: "selected" as const,
+                optionId: pick.optionId,
+              },
+            }
           : { outcome: { outcome: "cancelled" as const } };
       },
       sessionUpdate: (params: SessionNotification) => {
@@ -141,7 +166,10 @@ export class ZeroClawAcpSession {
 
   // Resolves false on a not-found-class error so the caller falls back to newSession rather
   // than surfacing an error for the ordinary case of an aged-out session.
-  async loadSession(acpSessionId: string, onChunk?: ChunkSink): Promise<boolean> {
+  async loadSession(
+    acpSessionId: string,
+    onChunk?: ChunkSink,
+  ): Promise<boolean> {
     this.chunkSink = onChunk ?? null;
     try {
       await this.conn().loadSession({
@@ -152,7 +180,8 @@ export class ZeroClawAcpSession {
       return true;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      if (/not found|unknown session|no such session|expired/i.test(msg)) return false;
+      if (/not found|unknown session|no such session|expired/i.test(msg))
+        return false;
       throw err;
     } finally {
       this.chunkSink = null;

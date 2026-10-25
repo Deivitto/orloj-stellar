@@ -1,0 +1,48 @@
+{
+  "verifiedAt": "2026-10-25T17:34:19.186Z",
+  "network": "mainnet",
+  "mode": "READ",
+  "checks": [
+    {
+      "project": "Aquarius Stellar",
+      "method": "get_total_liquidity",
+      "result": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+        "source_kind": "wasm",
+        "interface_hash": "7356cde89a22fafd555d1fc4853beb14396d925da225b58c30f75ebdca6f0d48",
+        "wasm_hash": "c99539b023df4a28d7857d33ca4c915c2e20fec04f12b125132b84fbdf94dad3",
+        "function_name": "get_total_liquidity",
+        "ok": true,
+        "result_status": "SIMULATED",
+        "simulated_at": "2026-10-25T17:34:20.251Z",
+        "data": "3618349816916918"
+      },
+      "passed": true
+    },
+    {
+      "project": "DeFindex",
+      "method": "quote",
+      "expected": "CONTRACT_EXECUTION_FAILED",
+      "result": {
+        "mode": "READ",
+        "network": "mainnet",
+        "contract_id": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+        "source_kind": "wasm",
+        "interface_hash": "a9f6b8697f677d82f021656cdb93e2427c7158f6378de7605dbc4c3dd03ce657",
+        "wasm_hash": "ae3409a4090bc087b86b4e9b444d2b8017ccd97b90b069d44d005ab9f8e1468b",
+        "function_name": "quote",
+        "ok": false,
+        "error_code": "CONTRACT_EXECUTION_FAILED",
+        "contract_error": {
+          "code": 301,
+          "name": "InsufficientAmount"
+        },
+        "retryable": false,
+        "human_message": "The contract returned an execution error."
+      },
+      "passed": true
+    }
+  ]
+}
