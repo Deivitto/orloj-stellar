@@ -1,3 +1,35 @@
+# Orloj Stellar — latest verified status
+
+Updated 25 October 2026. **Run the hackathon demo locally at [localhost:3000/en](http://localhost:3000/en).** The full Stellar app is not deployed on Vercel; the older `app.orloj.xyz` link below describes the original EVM project, not this fork's hosted Stellar release. No paid hosting has been provisioned.
+
+## What has been verified
+
+- Stellar/Soroban interfaces become typed MCP tools, with explicit method policies, strict argument/result validation and visible exclusions. Built-in XLM/issued assets and separate classic DEX/AMM adapters are supported.
+- **39 unique Testnet transactions independently returned SUCCESS**, including protocol calls, fixture setup, funding and retained diagnostic probes. This is transaction evidence, not 39 independent integrations.
+- Fresh Blend, DeFindex and Aquarius acceptance passed **six writes and twelve safety assertions**. Classic offer/pool state checks and managed administrator/holder/delegate permission tests also passed. Duplicate protocol requests reused the original hash without signing or submitting again.
+- A real browser-chat prompt sent **one stroop (0.0000001 Testnet XLM)** and the ledger confirmed it. After a provider interruption, chat recovered the same durable operation without repeating the transfer. The temporary spending grant was removed.
+- Chat now uses a bounded runtime context, explicit recovery without automatic replay, registry-sourced operation receipts and exact fee metadata. The verified example is **7228 stroops = 0.0007228 XLM**. Free model-provider quotas still apply.
+- The refreshed Stellar TVL audit includes **eleven entries**. Rank eleven, **DeFa by InvoiceMate**, passed three read-only MCP calls against its deployed TVL logger; all sixteen declared signatures are supported. This does not establish lending-pool integration or privileged write access.
+- **168 local checks passed:** 153 registry tests, nine app tests and six runtime mount/launcher tests. App/registry builds, typechecks and Compose configuration passed; lint has zero errors and nine existing warnings. GitHub Actions remains disabled.
+
+See the [live transaction and project audit](packages/stellar-registry/demo-contract/top10-audit/REPORT.md), [chat recovery evidence](packages/stellar-registry/demo-contract/top10-audit/chat-recovery-fix-evidence.json), [local verification notes](infra/local/VERIFICATION.md) and [master specification](ORLOJ_STELLAR_MASTER.md).
+
+## Zero-cost hackathon demo
+
+On the prepared development machine, open [the local app](http://localhost:3000/en). Local magic-link email is delivered to [Mailpit](http://localhost:8025); the registry readiness endpoint is [localhost:3002/readyz](http://localhost:3002/readyz). Keep the app, PostgreSQL, registry/worker, isolated signer, Docker runtime broker and model connection running during the demo. Fresh-machine setup and service startup are documented in the [local deployment guide](infra/local/README.md); the combined container stack has not yet passed full end-to-end acceptance.
+
+A useful demonstration is: sign in, register a Testnet contract or XLM, enable selected tools, query a balance through MCP/chat, then request a small owner-approved write and show its confirmed hash and exact fee. Managed unattended grants remain disabled until explicitly configured. Use only faucet-funded Testnet assets. Retain a recording and the checked-in evidence as a fallback for network/provider outages. Whether a public URL is mandatory depends on the hackathon's submission rules.
+
+## Keys, privacy and hosting boundary
+
+The private repository, `.local/` files and signing material must remain private. Freighter keys stay in Freighter. Managed wallet keys are encrypted with AES-256-GCM; the master key belongs only to the isolated signer. Wallet secrets must never be added to Git, browser bundles, MCP responses, chat, logs or agent workspaces. Provider credentials also belong in private service configuration. Database access and write permissions remain owner-authorized; registration alone grants no write authority.
+
+For a future hosted release, Vercel can provide the public entry point while a persistent backend runs the app's session processes, registry/worker, PostgreSQL, signer and isolated runtime. The current implementation is not a drop-in Vercel Functions deployment: sessions and agent files require persistence. Publishing just the UI would not make the wallet/MCP/chat flow ready to use. A backend host, HTTPS origin, production email delivery, private configuration, backups and fresh hosted acceptance are still needed. The local backend has not been exposed publicly.
+
+**Coverage limits:** confirmed third-party/protocol Testnet write coverage exists for five of the eleven ranked entries. Missing official deployments, project attribution and privileged roles remain explicit gaps. Mainnet stayed read-only. Support for a signature does not guarantee every call succeeds or that an account has the required privileges. Full hosted deployment and fresh independent verification remain open.
+
+---
+
 # Orloj Registry [app.orloj.xyz](https://app.orloj.xyz/)
 
 **Stellar/Soroban development:** the independent [Orloj Stellar service](packages/stellar-registry/README.md) provides the registry, CLI, testnet demo, and durable write reconciliation. The original EVM application is documented below.

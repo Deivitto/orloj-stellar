@@ -40,8 +40,10 @@ tools. Registry readiness is <http://localhost:3002/readyz>.
 The optional in-app chat needs a compatible model endpoint and private provider
 key in `ZEROCLAW_MODEL_API_KEY`, with `ZEROCLAW_MODEL_URL` and `ZEROCLAW_MODEL`.
 The default provider remains 0G. Restart the app after changing configuration.
-Live natural-language chat acceptance is deferred at the user's request; MCP
-execution does not need a model key. There is no mocked chat acceptance.
+Live Groq/ZeroClaw browser reads, a one-stroop chat-requested transfer and
+read-only recovery have been verified; see the latest [verification notes](VERIFICATION.md).
+MCP execution itself does not need a model key. Free-provider quotas still apply;
+there is no mocked chat acceptance.
 
 ## Wallets and amounts
 
