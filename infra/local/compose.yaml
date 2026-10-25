@@ -15,7 +15,7 @@ services:
       retries: 30
   mail:
     image: axllent/mailpit:v1.32.0
-    ports: ["127.0.0.1:8025:8025"]
+    ports: ["127.0.0.1:${MAIL_PORT:-8025}:8025"]
     networks: [control]
   signer:
     build: {context: ../.., dockerfile: infra/local/Product.Dockerfile, target: signer}
@@ -41,12 +41,12 @@ services:
       CONTROL_TOKEN_FILE: /run/orloj-secrets/control
       SIGNER_TOKEN_FILE: /run/orloj-secrets/signer
       SIGNER_URL: http://signer:3005
-      APP_ORIGIN: http://localhost:3000
+      APP_ORIGIN: http://localhost:${APP_PORT:-3000}
       HOST: 0.0.0.0
       PORT: 3002
     secrets: [control, signer]
     networks: [control, agents]
-    ports: ["127.0.0.1:3002:3002"]
+    ports: ["127.0.0.1:${REGISTRY_PORT:-3002}:3002"]
     depends_on: {postgres: {condition: service_healthy}}
     restart: unless-stopped
   runtime-image:
@@ -71,12 +71,12 @@ services:
       DATABASE_URL: postgres://orloj:${POSTGRES_PASSWORD}@postgres:5432/orloj
       DATABASE_SSL: "false"
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Run setup-local-product first}
-      BETTER_AUTH_URL: http://localhost:3000
+      BETTER_AUTH_URL: http://localhost:${APP_PORT:-3000}
       LOCAL_MAILBOX_URL: http://mail:8025
       ORLOJ_PRODUCT: stellar
       AGENT_PROVIDER: local
       STELLAR_REGISTRY_URL: http://registry:3002
-      PUBLIC_STELLAR_REGISTRY_URL: http://localhost:3002
+      PUBLIC_STELLAR_REGISTRY_URL: http://localhost:${REGISTRY_PORT:-3002}
       CONTROL_TOKEN_FILE: /run/orloj-secrets/control
       ZEROCLAW_BIN: /opt/orloj/infra/local/runtime-launcher.mjs
       ZEROCLAW_AGENTS_DIR: /agents
@@ -87,7 +87,7 @@ services:
       RUNTIME_TOKEN_FILE: /run/orloj-secrets/runtime
     secrets: [control, runtime]
     volumes: ["agent-state:/agents"]
-    ports: ["127.0.0.1:3000:3000"]
+    ports: ["127.0.0.1:${APP_PORT:-3000}:3000"]
     networks: [control]
     depends_on:
       postgres: {condition: service_healthy}

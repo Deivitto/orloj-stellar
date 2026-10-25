@@ -19,6 +19,19 @@ export async function main(argv = process.argv.slice(2)) {
     );
     return;
   }
+  if (command === "migrate") {
+    const databaseUrl = process.env.DATABASE_URL;
+    if (!databaseUrl || !/^postgres(?:ql)?:\/\//.test(databaseUrl))
+      fail("INVALID_ARGUMENT");
+    const store = new Store(databaseUrl);
+    try {
+      await store.migrate();
+      console.log(JSON.stringify({ ok: true }));
+    } finally {
+      await store.close();
+    }
+    return;
+  }
   const c = loadConfig();
   const store = new Store(c.databaseUrl);
   const server = new rpc.Server(c.rpcUrl, {

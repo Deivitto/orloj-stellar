@@ -12,7 +12,7 @@ RUN mkdir -p /agents && chown -R node:node /agents
 USER root
 ENTRYPOINT ["sh","/opt/orloj/infra/local/service-entrypoint.sh"]
 WORKDIR /opt/orloj/packages/app
-CMD ["sh","-c","node scripts/migrate-local.mjs && pnpm start --hostname 0.0.0.0"]
+CMD ["sh","-c","node scripts/migrate-local.mjs && node node_modules/next/dist/bin/next start --hostname 0.0.0.0"]
 FROM base AS registry
 USER root
 ENTRYPOINT ["sh","/opt/orloj/infra/local/service-entrypoint.sh"]

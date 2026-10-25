@@ -18,6 +18,9 @@ docker compose --env-file .local/product.env -f infra/local/compose.yaml build r
 docker compose --env-file .local/product.env -f infra/local/compose.yaml up -d
 ```
 
+For a parallel smoke stack, set `APP_PORT`, `REGISTRY_PORT` and `MAIL_PORT` to
+unused local ports; origins and public MCP URLs follow those overrides.
+
 The setup command preserves existing secrets. Review `.local/product.env`
 privately. `SIMULATION_SOURCE` must be a funded public Testnet G account. The
 default is this project's test wallet; replace it for an independent installation.

@@ -12,7 +12,7 @@ retention, expiry proof, worker bounds, runtime isolation and atomic recovery.
 | Managed grant approved by owner | Own Freighter recipient only; 1000 stroops/transfer, 10000 rolling outgoing stroops, 10000000 rolling fee stroops |
 | Backend regression and PostgreSQL integration | 108 tests passed across 10 files, with `TEST_DATABASE_URL` configured |
 | Existing marketplace regression | 95 tests passed |
-| App validation | Typecheck, production build, selection reconstruction test passed; lint has zero errors and nine existing warnings |
+| App validation | Typecheck, production build, credential rotation/ownership and selection reconstruction tests passed; lint has zero errors and nine existing warnings |
 | Actual pinned runtime lifecycle/isolation | `local-product-runtime-evidence.json`; real Docker patch/ACP/disconnect/restart, nonroot, read-only, capability removal, per-agent volume, no app/signer secret environment |
 | Service secret permissions | Real Node container copied a host-owned mode-0600 file into its granted private directory, dropped to UID 1000 and read it successfully without printing its value |
 | Readiness and migrations | Native app/auth migrations and registry migration 006 passed; readiness checks RPC network/protocol and signer epoch health |
@@ -30,3 +30,13 @@ virtualization; the build is running under software-emulated Colima/QEMU. Do not
 interpret source inspection or `compose config` as proof that every service has
 started together. Hosted CI must also be reported separately; earlier runs were
 rejected before jobs started because of the repository account's billing limit.
+
+Hosted CI attempted on review commit `07dfd17`: run `40207645870` was rejected
+before starting the verification job: recent account payments failed or the
+spending limit must be increased. This is an account billing blocker, not a
+reported test failure.
+
+Final verifier review found no remaining source-level blocker after correcting
+signer migration configuration and avoiding runtime Corepack activation. Actual
+CLI migration was also tested with the signer environment, without a simulation
+account. The combined Compose startup gate remains separate.
