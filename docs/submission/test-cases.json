@@ -1,6 +1,7 @@
 {
   "network": "testnet",
-  "verifiedAt": "2026-10-26T12:06:42.762Z",
+  "verifiedAt": "2026-10-26T12:11:51.962Z",
+  "uniqueTransactionCount": 13,
   "cases": [
     {
       "project": "PageBook",
@@ -12,14 +13,42 @@
       "status": "SUCCESS",
       "ledger": 5397614,
       "feeStroops": "38747",
-      "explorer": "https://stellar.expert/explorer/testnet/tx/721446af6c482efbc898509778fb7a8cb75dc543ae6ea1b7522835c751bede0e"
+      "explorer": "https://stellar.expert/explorer/testnet/tx/721446af6c482efbc898509778fb7a8cb75dc543ae6ea1b7522835c751bede0e",
+      "method": "place",
+      "arguments": {
+        "taker": "GCLEKFNVDD75POJDCTVNWN7OBZZ2C6MQT5RANBFSEX6HCE6NQ26CUX3S",
+        "market": 0,
+        "is_bid": true,
+        "limit_tick": 16911,
+        "qty_lots": "1",
+        "start_tick": 16911,
+        "nonce": "117506811297810232",
+        "flags": {
+          "post_only": false,
+          "fill_or_kill": true,
+          "no_rest": true
+        }
+      }
     },
     {
       "project": "Blend Pools V2",
       "test": "Deposit 1 XLM",
       "contractId": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
       "hash": "af146584981eaea52b0cc7c1d95e011de95b8c7e679254f001955e4ad413a9f4",
-      "scope": "Historical direct MCP protocol test; separate wallet and transaction from PageBook",
+      "method": "submit",
+      "arguments": {
+        "from": "GBSBUPFN5LVHMXIUWOTCD2PQ6NSI27TDS72FNYCNSJQXWFAFCC7DCGZA",
+        "spender": "GBSBUPFN5LVHMXIUWOTCD2PQ6NSI27TDS72FNYCNSJQXWFAFCC7DCGZA",
+        "to": "GBSBUPFN5LVHMXIUWOTCD2PQ6NSI27TDS72FNYCNSJQXWFAFCC7DCGZA",
+        "requests": [
+          {
+            "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "amount": "10000000",
+            "request_type": 0
+          }
+        ]
+      },
+      "scope": "Historical direct MCP protocol test",
       "status": "SUCCESS",
       "ledger": 5387417,
       "feeStroops": "454527",
@@ -30,11 +59,419 @@
       "test": "Withdraw 0.5 XLM",
       "contractId": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
       "hash": "7591ba9cf404bd143eb5fd082b555568190c561f04f413053f3eca59933e26de",
-      "scope": "Historical direct MCP protocol test; separate wallet and transaction from PageBook",
+      "method": "submit",
+      "arguments": {
+        "from": "GBSBUPFN5LVHMXIUWOTCD2PQ6NSI27TDS72FNYCNSJQXWFAFCC7DCGZA",
+        "spender": "GBSBUPFN5LVHMXIUWOTCD2PQ6NSI27TDS72FNYCNSJQXWFAFCC7DCGZA",
+        "to": "GBSBUPFN5LVHMXIUWOTCD2PQ6NSI27TDS72FNYCNSJQXWFAFCC7DCGZA",
+        "requests": [
+          {
+            "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "amount": "5000000",
+            "request_type": 1
+          }
+        ]
+      },
+      "scope": "Historical direct MCP protocol test",
       "status": "SUCCESS",
       "ledger": 5387419,
       "feeStroops": "12925",
       "explorer": "https://stellar.expert/explorer/testnet/tx/7591ba9cf404bd143eb5fd082b555568190c561f04f413053f3eca59933e26de"
+    },
+    {
+      "project": "DeFindex",
+      "test": "Vault deposit: 10,000,000 desired base units",
+      "contractId": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+      "hash": "8540a061a950195f41204f743a056f275dfce33f4cffb8d0caa8e0a71b3bb45a",
+      "method": "deposit",
+      "arguments": {
+        "amounts_desired": [
+          "10000000"
+        ],
+        "amounts_min": [
+          "9900000"
+        ],
+        "from": "GBSBUPFN5LVHMXIUWOTCD2PQ6NSI27TDS72FNYCNSJQXWFAFCC7DCGZA",
+        "invest": false
+      },
+      "scope": "Historical direct MCP protocol test",
+      "status": "SUCCESS",
+      "ledger": 5387422,
+      "feeStroops": "263452",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/8540a061a950195f41204f743a056f275dfce33f4cffb8d0caa8e0a71b3bb45a"
+    },
+    {
+      "project": "DeFindex",
+      "test": "Withdraw 2,998 vault-share base units",
+      "contractId": "CCLV4H7WTLJQ7ATLHBBQV2WW3OINF3FOY5XZ7VPHZO7NH3D2ZS4GFSF6",
+      "hash": "bcf2bc685f7d9f421045c51485c1a47b9028bed46e03cf0092e5cc91382acfcb",
+      "method": "withdraw",
+      "arguments": {
+        "withdraw_shares": "2998",
+        "min_amounts_out": [
+          "0"
+        ],
+        "from": "GBSBUPFN5LVHMXIUWOTCD2PQ6NSI27TDS72FNYCNSJQXWFAFCC7DCGZA"
+      },
+      "scope": "Historical direct MCP protocol test",
+      "status": "SUCCESS",
+      "ledger": 5387426,
+      "feeStroops": "14911",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/bcf2bc685f7d9f421045c51485c1a47b9028bed46e03cf0092e5cc91382acfcb"
+    },
+    {
+      "project": "Aquarius Stellar",
+      "test": "Output-asset trustline setup (SAC)",
+      "contractId": "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+      "hash": "30dd5b5837c3e8b5300d889d884d7c9dcb16e8786129ad7ae3c3a35b8715624a",
+      "method": "trust",
+      "arguments": {
+        "addr": "GBSBUPFN5LVHMXIUWOTCD2PQ6NSI27TDS72FNYCNSJQXWFAFCC7DCGZA"
+      },
+      "scope": "Token setup for Aquarius; not a router swap",
+      "status": "SUCCESS",
+      "ledger": 5387429,
+      "feeStroops": "7432",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/30dd5b5837c3e8b5300d889d884d7c9dcb16e8786129ad7ae3c3a35b8715624a"
+    },
+    {
+      "project": "Aquarius Stellar",
+      "test": "Swap 0.01 XLM with a minimum output",
+      "contractId": "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+      "hash": "32a6faac221b286c657b10ee86b43f501e40b516eb69c8dc99bac73e9ffa8472",
+      "method": "swap",
+      "arguments": {
+        "user": "GBSBUPFN5LVHMXIUWOTCD2PQ6NSI27TDS72FNYCNSJQXWFAFCC7DCGZA",
+        "tokens": [
+          "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+          "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+        ],
+        "token_in": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "token_out": "CAZRY5GSFBFXD7H6GAFBA5YGYQTDXU4QKWKMYFWBAZFUCURN3WKX6LF5",
+        "pool_index": "49136338380911dda8f39cc141fcdbfb001149f9a9fde30c7fa6a098e6a96fd6",
+        "in_amount": "100000",
+        "out_min": "15798"
+      },
+      "scope": "Historical direct MCP protocol test",
+      "status": "SUCCESS",
+      "ledger": 5387431,
+      "feeStroops": "23509",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/32a6faac221b286c657b10ee86b43f501e40b516eb69c8dc99bac73e9ffa8472"
+    },
+    {
+      "project": "Stellar DEX",
+      "test": "Fixture-asset trustline setup",
+      "contractId": "classic:stellar-dex",
+      "hash": "af0192c10749c4ea9c56c824c3bb5826c98b1f98d9270f87962dae82b9a47d71",
+      "method": "change_trust",
+      "arguments": {
+        "asset": "ORLOJTEST:GCDFNP5M2C3F5KNZBUICFXEFE5IBKQVSE6HC4FSRONXG56L443MSCX3L",
+        "limit": "10000000000"
+      },
+      "scope": "Classic Stellar adapter with a project-controlled Testnet fixture asset; not a Soroban contract",
+      "status": "SUCCESS",
+      "ledger": 5387414,
+      "feeStroops": "100",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/af0192c10749c4ea9c56c824c3bb5826c98b1f98d9270f87962dae82b9a47d71"
+    },
+    {
+      "project": "Stellar DEX",
+      "test": "Create a fixture-asset offer",
+      "contractId": "classic:stellar-dex",
+      "hash": "215830b18dd02540d45ecad245e409cb4434bdca1605463c9d2c04a7ae436a03",
+      "method": "manage_offer",
+      "arguments": {
+        "selling": "ORLOJTEST:GCDFNP5M2C3F5KNZBUICFXEFE5IBKQVSE6HC4FSRONXG56L443MSCX3L",
+        "buying": "native",
+        "amount": "10000000",
+        "price": {
+          "n": 1,
+          "d": 1
+        },
+        "offer_id": "0"
+      },
+      "scope": "Classic Stellar adapter with a project-controlled Testnet fixture asset; not a Soroban contract",
+      "status": "SUCCESS",
+      "ledger": 5387417,
+      "feeStroops": "100",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/215830b18dd02540d45ecad245e409cb4434bdca1605463c9d2c04a7ae436a03"
+    },
+    {
+      "project": "Stellar DEX",
+      "test": "Cancel the recorded offer",
+      "contractId": "classic:stellar-dex",
+      "hash": "b9782a87e954c94072472b47db7c3bf957c9ecd7c07d272b509f4236554768c5",
+      "method": "manage_offer",
+      "arguments": {
+        "selling": "ORLOJTEST:GCDFNP5M2C3F5KNZBUICFXEFE5IBKQVSE6HC4FSRONXG56L443MSCX3L",
+        "buying": "native",
+        "amount": "0",
+        "price": {
+          "n": 1,
+          "d": 1
+        },
+        "offer_id": "931660"
+      },
+      "scope": "Classic Stellar adapter with a project-controlled Testnet fixture asset; not a Soroban contract",
+      "status": "SUCCESS",
+      "ledger": 5387419,
+      "feeStroops": "100",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/b9782a87e954c94072472b47db7c3bf957c9ecd7c07d272b509f4236554768c5"
+    },
+    {
+      "project": "Stellar AMM",
+      "test": "Pool-share trustline setup",
+      "contractId": "classic:stellar-amm",
+      "hash": "784506abf665f81279e1e858ea352639d6ea88837c0db5f4cf2812fd2b01d6b5",
+      "method": "trust_pool",
+      "arguments": {
+        "asset_a": "native",
+        "asset_b": "ORLOJTEST:GCDFNP5M2C3F5KNZBUICFXEFE5IBKQVSE6HC4FSRONXG56L443MSCX3L",
+        "limit": "10000000000"
+      },
+      "scope": "Classic Stellar adapter with a project-controlled Testnet fixture asset; not a Soroban contract",
+      "status": "SUCCESS",
+      "ledger": 5387421,
+      "feeStroops": "100",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/784506abf665f81279e1e858ea352639d6ea88837c0db5f4cf2812fd2b01d6b5"
+    },
+    {
+      "project": "Stellar AMM",
+      "test": "Deposit into the fixture liquidity pool",
+      "contractId": "classic:stellar-amm",
+      "hash": "2cbeaef85d6d48fe92a20ccce0110ee97cf4e3e0834bbb2fd752fa2290b357e2",
+      "method": "pool_deposit",
+      "arguments": {
+        "pool_id": "62778a1506337f4a7781157b673a7892b918729c931741cd7a7bac427a4aa330",
+        "max_amount_a": "10000000",
+        "max_amount_b": "10000000",
+        "min_price": {
+          "n": 99,
+          "d": 100
+        },
+        "max_price": {
+          "n": 101,
+          "d": 100
+        }
+      },
+      "scope": "Classic Stellar adapter with a project-controlled Testnet fixture asset; not a Soroban contract",
+      "status": "SUCCESS",
+      "ledger": 5387423,
+      "feeStroops": "100",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/2cbeaef85d6d48fe92a20ccce0110ee97cf4e3e0834bbb2fd752fa2290b357e2"
+    },
+    {
+      "project": "Stellar AMM",
+      "test": "Withdraw fixture pool shares",
+      "contractId": "classic:stellar-amm",
+      "hash": "f25300dd50b6785c627f687cdd52b893b528571ff4619399cd31a01efb805f85",
+      "method": "pool_withdraw",
+      "arguments": {
+        "pool_id": "62778a1506337f4a7781157b673a7892b918729c931741cd7a7bac427a4aa330",
+        "amount": "5000000",
+        "min_amount_a": "4900000",
+        "min_amount_b": "4900000"
+      },
+      "scope": "Classic Stellar adapter with a project-controlled Testnet fixture asset; not a Soroban contract",
+      "status": "SUCCESS",
+      "ledger": 5387426,
+      "feeStroops": "100",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/f25300dd50b6785c627f687cdd52b893b528571ff4619399cd31a01efb805f85"
     }
-  ]
+  ],
+  "ranking": {
+    "retrievedAt": "2026-10-25T16:13:53.706262+00:00",
+    "source": "https://api.llama.fi/protocols",
+    "method": "Sort Stellar-specific TVL descending; exclude CEX; preserve source protocol categories and overlapping vault products.",
+    "projects": [
+      {
+        "rank": 1,
+        "name": "Blend Pools V2",
+        "slug": "blend-pools-v2",
+        "tvl_stellar_usd": 132510611.25383648,
+        "category": "Lending",
+        "url": "https://www.blend.capital",
+        "parentProtocol": "parent#blend"
+      },
+      {
+        "rank": 2,
+        "name": "Stellar DeFi Hub",
+        "slug": "stellar-defi-hub",
+        "tvl_stellar_usd": 112433646.34239522,
+        "category": "Farm",
+        "url": "https://stellardefihub.com/",
+        "parentProtocol": "parent#sentora"
+      },
+      {
+        "rank": 3,
+        "name": "Aquarius Stellar",
+        "slug": "aquarius-stellar",
+        "tvl_stellar_usd": 37837156.973771825,
+        "category": "Dexs",
+        "url": "https://aqua.network",
+        "parentProtocol": null
+      },
+      {
+        "rank": 4,
+        "name": "Upshift",
+        "slug": "upshift",
+        "tvl_stellar_usd": 30277239.64556867,
+        "category": "Onchain Capital Allocator",
+        "url": "https://app.upshift.finance",
+        "parentProtocol": null
+      },
+      {
+        "rank": 5,
+        "name": "Gami Labs",
+        "slug": "gami-labs",
+        "tvl_stellar_usd": 30277233.72268942,
+        "category": "Risk Curators",
+        "url": "https://gamilabs.io/",
+        "parentProtocol": null
+      },
+      {
+        "rank": 6,
+        "name": "DeFindex",
+        "slug": "defindex",
+        "tvl_stellar_usd": 19122707.70099707,
+        "category": "Yield Aggregator",
+        "url": "https://www.defindex.io/",
+        "parentProtocol": null
+      },
+      {
+        "rank": 7,
+        "name": "Sushi Stellar",
+        "slug": "sushi-stellar",
+        "tvl_stellar_usd": 15353198.919112977,
+        "category": "Dexs",
+        "url": "https://sushi.com/",
+        "parentProtocol": "parent#sushi"
+      },
+      {
+        "rank": 8,
+        "name": "Stellar DEX",
+        "slug": "stellar-dex",
+        "tvl_stellar_usd": 14894953.592984816,
+        "category": "Dexs",
+        "url": "https://developers.stellar.org/docs/learn/fundamentals/liquidity-on-stellar-sdex-liquidity-pools",
+        "parentProtocol": null
+      },
+      {
+        "rank": 9,
+        "name": "Templar Protocol",
+        "slug": "templar-protocol",
+        "tvl_stellar_usd": 11858177.29463603,
+        "category": "Lending",
+        "url": "https://www.templarfi.org/",
+        "parentProtocol": null
+      },
+      {
+        "rank": 10,
+        "name": "Stellar AMM",
+        "slug": "stellar-amm",
+        "tvl_stellar_usd": 8453183.342968479,
+        "category": "Dexs",
+        "url": "https://developers.stellar.org/docs/learn/fundamentals/liquidity-on-stellar-sdex-liquidity-pools#automated-market-makers-amms",
+        "parentProtocol": null
+      }
+    ]
+  },
+  "interfaceReviews": {
+    "testedAt": "2026-10-25T17:02:39.241Z",
+    "scope": "Historical representative Mainnet reads; no Mainnet writes",
+    "projects": [
+      {
+        "project": "Blend Pools V2",
+        "representativeInterface": "CAQQR5SWBXKIGZKPBZDH3KM5GQ5GUTPKB7JAFCINLZBC5WXPJKRG3IM7",
+        "successfulReads": [
+          "reward_zone",
+          "backstop_token"
+        ]
+      },
+      {
+        "project": "Stellar DeFi Hub",
+        "representativeInterface": "CALFCZ4TY2CLHDHNJWCZX6JKYGUPV7P3GNQ3UVABXNE5JCV2E774APUM",
+        "successfulReads": [
+          "name",
+          "query_asset",
+          "total_assets"
+        ]
+      },
+      {
+        "project": "Aquarius Stellar",
+        "representativeInterface": "CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK",
+        "successfulReads": [
+          "version",
+          "contract_name",
+          "get_tokens_sets_count",
+          "get_pools_for_tokens_range"
+        ]
+      },
+      {
+        "project": "Upshift",
+        "representativeInterface": "CC6TRAPQD3NK7THUKWPV5SL2JHKQGNXZVB6S6MVYFSLRWAKEFUWZKZ7J",
+        "successfulReads": [
+          "name",
+          "query_asset",
+          "total_assets",
+          "get_strategy_balances"
+        ]
+      },
+      {
+        "project": "Gami Labs",
+        "representativeInterface": "CCL3WITWFFXIHV2I52ECV5DPIEOFSTU3PBPR53ILPLF2IP5KHECXRUTY",
+        "successfulReads": [
+          "name",
+          "query_asset",
+          "total_assets"
+        ]
+      },
+      {
+        "project": "DeFindex",
+        "representativeInterface": "CBNKCU3HGFKHFOF7JTGXQCNKE3G3DXS5RDBQUKQMIIECYKXPIOUGB2S3",
+        "successfulReads": [
+          "name",
+          "decimals",
+          "get_fees",
+          "get_assets",
+          "fetch_total_managed_funds",
+          "quote"
+        ]
+      },
+      {
+        "project": "Sushi Stellar",
+        "representativeInterface": "CD3KRKGDRVWPXVB3VXLUMQKMX6XZ6Q2H334IVZD4XXNAMKSRVQL5GLYF",
+        "successfulReads": [
+          "get_owner",
+          "get_pool_wasm_hash",
+          "get_protocol_fee_0"
+        ]
+      },
+      {
+        "project": "Templar Protocol",
+        "representativeInterface": "CDBBJXSK22AFN34GHAHOLZVEZOHSXGWZYMBMYPFRYBJSO5D7BTN7P6QX",
+        "successfulReads": [
+          "asset",
+          "total_assets",
+          "name"
+        ]
+      },
+      {
+        "project": "Stellar DEX",
+        "representativeInterface": "classic:stellar-dex",
+        "successfulReads": [
+          "account_balances",
+          "offers",
+          "orderbook"
+        ]
+      },
+      {
+        "project": "Stellar AMM",
+        "representativeInterface": "classic:stellar-amm",
+        "successfulReads": [
+          "liquidity_pool"
+        ]
+      }
+    ]
+  }
 }

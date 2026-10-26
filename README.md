@@ -6,15 +6,11 @@
 
 ## Some test cases
 
-Confirmed Stellar Testnet transactions through Orloj MCP:
+We use the **top ten Stellar TVL entries** from our dated DeFiLlama snapshot as an MCP compatibility benchmark: representative reads across ten entries, recorded Testnet writes for five. PageBook is an additional integration.
 
-| Protocol | Test | Transaction |
-| --- | --- | --- |
-| PageBook | Buy one 10-XLM lot; receive 9.995 XLM after protocol fee | [721446af6c48…](https://stellar.expert/explorer/testnet/tx/721446af6c482efbc898509778fb7a8cb75dc543ae6ea1b7522835c751bede0e) |
-| Blend Pools V2 | Deposit 1 XLM | [af146584981e…](https://stellar.expert/explorer/testnet/tx/af146584981eaea52b0cc7c1d95e011de95b8c7e679254f001955e4ad413a9f4) |
-| Blend Pools V2 | Withdraw 0.5 XLM | [7591ba9cf404…](https://stellar.expert/explorer/testnet/tx/7591ba9cf404bd143eb5fd082b555568190c561f04f413053f3eca59933e26de) |
+**13 unique confirmed Testnet transactions** cover PageBook, Blend, DeFindex, Aquarius and separate classic Stellar DEX/AMM adapters. [Open the full list, exact hashes, fees and collapsed MCP-call examples](docs/submission/test-cases.md).
 
-[Full transaction IDs, contract addresses and exact fees](docs/submission/test-cases.md). These are separate protocol tests; the video shows quote-only PageBook chat.
+These are separate protocol tests. The video shows quote-only PageBook chat; it does not show a newly executed atomic cross-protocol workflow.
 
 ---
 
