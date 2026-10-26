@@ -1,3 +1,11 @@
+# Orloj Stellar: HackMeridian materials
+
+[Pitch deck (PDF)](docs/submission/orloj-stellar-pitch.pdf) | [Historical demo video (MP4)](demo-site/assets/walkthrough.mp4) | [Public showcase](https://orloj-stellar-demo.vercel.app)
+
+The full new demonstration is being prepared separately. The linked clip is a historical edited Testnet walkthrough; the working backend runs locally. See [presentation scope and confirmed PageBook evidence](docs/submission/README.md).
+
+---
+
 # Orloj Registry [app.orloj.xyz](https://app.orloj.xyz/)
 
 **Stellar/Soroban development:** the independent [Orloj Stellar service](packages/stellar-registry/README.md) provides the registry, CLI, testnet demo, and durable write reconciliation. The original EVM application is documented below.
