@@ -1,0 +1,40 @@
+{
+  "network": "testnet",
+  "verifiedAt": "2026-10-26T12:06:42.762Z",
+  "cases": [
+    {
+      "project": "PageBook",
+      "test": "Buy one 10-XLM lot; receive 9.995 XLM after protocol fee",
+      "contractId": "CAYPAQDKNWMHRATKU5DQ327VDHVRSIVK7UGVWT2A5SUZCUFTLUHXH2JA",
+      "hash": "721446af6c482efbc898509778fb7a8cb75dc543ae6ea1b7522835c751bede0e",
+      "spent": "1.6911 Circle Testnet USDC",
+      "scope": "Direct authenticated Orloj MCP; separate from the quote-only video",
+      "status": "SUCCESS",
+      "ledger": 5397614,
+      "feeStroops": "38747",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/721446af6c482efbc898509778fb7a8cb75dc543ae6ea1b7522835c751bede0e"
+    },
+    {
+      "project": "Blend Pools V2",
+      "test": "Deposit 1 XLM",
+      "contractId": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+      "hash": "af146584981eaea52b0cc7c1d95e011de95b8c7e679254f001955e4ad413a9f4",
+      "scope": "Historical direct MCP protocol test; separate wallet and transaction from PageBook",
+      "status": "SUCCESS",
+      "ledger": 5387417,
+      "feeStroops": "454527",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/af146584981eaea52b0cc7c1d95e011de95b8c7e679254f001955e4ad413a9f4"
+    },
+    {
+      "project": "Blend Pools V2",
+      "test": "Withdraw 0.5 XLM",
+      "contractId": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+      "hash": "7591ba9cf404bd143eb5fd082b555568190c561f04f413053f3eca59933e26de",
+      "scope": "Historical direct MCP protocol test; separate wallet and transaction from PageBook",
+      "status": "SUCCESS",
+      "ledger": 5387419,
+      "feeStroops": "12925",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/7591ba9cf404bd143eb5fd082b555568190c561f04f413053f3eca59933e26de"
+    }
+  ]
+}

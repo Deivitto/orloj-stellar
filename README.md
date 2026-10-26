@@ -2,7 +2,19 @@
 
 [Pitch deck (PDF)](docs/submission/orloj-stellar-pitch.pdf) | [Historical demo video (MP4)](demo-site/assets/walkthrough.mp4) | [Public showcase](https://orloj-stellar-demo.vercel.app)
 
-The full new demonstration is being prepared separately. The linked clip is a historical edited Testnet walkthrough; the working backend runs locally. See [presentation scope and confirmed PageBook evidence](docs/submission/README.md).
+[Watch the completed three-minute submission video](https://www.youtube.com/watch?v=Dph5C0768c8). The older MP4 linked above remains a historical edited Testnet walkthrough; the working backend runs locally. See [presentation scope](docs/submission/README.md).
+
+## Some test cases
+
+Confirmed Stellar Testnet transactions through Orloj MCP:
+
+| Protocol | Test | Transaction |
+| --- | --- | --- |
+| PageBook | Buy one 10-XLM lot; receive 9.995 XLM after protocol fee | [721446af6c48…](https://stellar.expert/explorer/testnet/tx/721446af6c482efbc898509778fb7a8cb75dc543ae6ea1b7522835c751bede0e) |
+| Blend Pools V2 | Deposit 1 XLM | [af146584981e…](https://stellar.expert/explorer/testnet/tx/af146584981eaea52b0cc7c1d95e011de95b8c7e679254f001955e4ad413a9f4) |
+| Blend Pools V2 | Withdraw 0.5 XLM | [7591ba9cf404…](https://stellar.expert/explorer/testnet/tx/7591ba9cf404bd143eb5fd082b555568190c561f04f413053f3eca59933e26de) |
+
+[Full transaction IDs, contract addresses and exact fees](docs/submission/test-cases.md). These are separate protocol tests; the video shows quote-only PageBook chat.
 
 ---
 
